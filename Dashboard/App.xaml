@@ -1,0 +1,97 @@
+﻿<Application
+    x:Class="Dashboard.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Dashboard"
+    xmlns:converters="clr-namespace:Dashboard.Tools.Converters"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- material design styles -->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/Generic.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignLightTheme.xaml" />
+
+                <!-- primary colors -->
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary
+                            Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                    <SolidColorBrush
+                        x:Key="PrimaryHueLightBrush"
+                        Color="{StaticResource Primary100}" />
+                    <SolidColorBrush
+                        x:Key="PrimaryHueLightForegroundBrush"
+                        Color="{StaticResource Primary100Foreground}" />
+                    <SolidColorBrush
+                        x:Key="PrimaryHueMidBrush"
+                        Color="{StaticResource Primary500}" />
+                    <SolidColorBrush
+                        x:Key="PrimaryHueMidForegroundBrush"
+                        Color="{StaticResource Primary500Foreground}" />
+                    <SolidColorBrush
+                        x:Key="PrimaryHueDarkBrush"
+                        Color="{StaticResource Primary600}" />
+                    <SolidColorBrush
+                        x:Key="PrimaryHueDarkForegroundBrush"
+                        Color="{StaticResource Primary600Foreground}" />
+                </ResourceDictionary>
+
+                <!-- accent color -->
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary
+                            Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.LightBlue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                    <SolidColorBrush
+                        x:Key="SecondaryAccentBrush"
+                        Color="{StaticResource Accent400}" />
+                    <SolidColorBrush
+                        x:Key="SecondaryAccentForegroundBrush"
+                        Color="{StaticResource Accent400Foreground}" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            
+            
+            <converters:BoolToVisibilityConverter
+                x:Key="BoolToVisibilityConverter" />
+
+            <Style
+                x:Key="FadeOutMaterialDesignFlatButton"
+                TargetType="{x:Type Button}"
+                BasedOn="{StaticResource MaterialDesignFlatButton}">
+                <Style.Triggers>
+                    <EventTrigger
+                        RoutedEvent="Control.MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Duration="0:0:0.3"
+                                    To="1"
+                                    Storyboard.TargetProperty="Opacity" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger
+                        RoutedEvent="Control.MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Duration="0:0:0.3"
+                                    To="0"
+                                    Storyboard.TargetProperty="Opacity" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
