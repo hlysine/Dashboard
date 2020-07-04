@@ -113,10 +113,29 @@ namespace Dashboard.Tools
         {
             var windowHelper = new WindowInteropHelper(window);
 
-            var accent = new AccentPolicy
-            {
-                AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND
-            };
+            var accent = new AccentPolicy();
+
+            //var currentVersion = SystemInfo.Version.Value;
+            //if (currentVersion >= VersionInfos.Windows10_1903)
+            //{
+            //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            //}
+            //else if (currentVersion >= VersionInfos.Windows10_1809)
+            //{
+            //    accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
+            //}
+            //else if (currentVersion >= VersionInfos.Windows10)
+            //{
+            //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            //}
+            //else
+            //{
+            //    accent.AccentState = AccentState.ACCENT_ENABLE_TRANSPARENTGRADIENT;
+            //}
+            accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
+
+            accent.AccentFlags = 2;
+            accent.GradientColor = 0x00ffffff;
 
             var accentStructSize = Marshal.SizeOf(accent);
 

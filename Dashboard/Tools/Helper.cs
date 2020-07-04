@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Google.Apis.Calendar.v3.Data;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,6 +42,21 @@ namespace Dashboard.Tools
         public static bool IsNullOrWhiteSpace(this string str)
         {
             return string.IsNullOrWhiteSpace(str);
+        }
+
+        public static DateTime GetDateTime(this EventDateTime eventDateTime)
+        {
+            if (eventDateTime.DateTime == null)
+            {
+                return DateTime.ParseExact(eventDateTime.Date,
+                                        "yyyy-MM-dd",
+                                        CultureInfo.InvariantCulture,
+                                        DateTimeStyles.None);
+            }
+            else
+            {
+                return eventDateTime.DateTime.GetValueOrDefault();
+            }
         }
 
         public static string GetProgramVersion()

@@ -7,13 +7,20 @@ namespace Dashboard.Tools
 {
     public static class Native
     {
+        internal enum AccentFlagsType
+        {
+            Window = 0,
+            Popup,
+        }
+
         internal enum AccentState
         {
-            ACCENT_DISABLED,
-            ACCENT_ENABLE_GRADIENT,
-            ACCENT_ENABLE_TRANSPARENTGRADIENT,
-            ACCENT_ENABLE_BLURBEHIND,
-            ACCENT_INVALID_STATE,
+            ACCENT_DISABLED = 0,
+            ACCENT_ENABLE_GRADIENT = 1,
+            ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+            ACCENT_ENABLE_BLURBEHIND = 3,
+            ACCENT_ENABLE_ACRYLICBLURBEHIND = 4,
+            ACCENT_INVALID_STATE = 5
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -21,7 +28,7 @@ namespace Dashboard.Tools
         {
             public AccentState AccentState;
             public int AccentFlags;
-            public int GradientColor;
+            public uint GradientColor;
             public int AnimationId;
         }
 
@@ -35,7 +42,9 @@ namespace Dashboard.Tools
 
         internal enum WindowCompositionAttribute
         {
+            // ...
             WCA_ACCENT_POLICY = 19,
+            // ...
         }
 
         [DllImport("user32.dll")]

@@ -68,7 +68,7 @@ namespace Dashboard
             {
                 foreach (var prop in serviceType.GetProperties())
                 {
-                    if ((serviceType.IsAbstract || !prop.IsDefined(typeof(PersistentConfigAttribute), true)) && !props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
+                    if (!prop.IsDefined(typeof(PersistentConfigAttribute), true) && !props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
                     {
                         props.Add(prop);
                         configXmlOverrides.Add(prop.DeclaringType, prop.Name, attributes);

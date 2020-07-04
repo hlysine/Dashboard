@@ -32,7 +32,7 @@
     <Window.Background>
         <SolidColorBrush
             Color="{DynamicResource Primary800}"
-            Opacity="0.3" />
+            Opacity="0.4" />
     </Window.Background>
     <Grid
         Name="root">

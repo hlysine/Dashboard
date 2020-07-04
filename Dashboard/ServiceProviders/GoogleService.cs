@@ -25,7 +25,7 @@ namespace Dashboard.ServiceProviders
 
         public override bool IsAuthorized => credential != null;
 
-        private readonly string credPath = "token.json".ToAbsolutePath();
+        private readonly string credPath = "google-tokens".ToAbsolutePath();
 
         private UserCredential credential;
 
@@ -48,14 +48,16 @@ namespace Dashboard.ServiceProviders
                 "user",
                 cancel,
                 new FileDataStore(credPath, true));
+            AuthorizedScopes = requiredScopes;
             RaiseConfigUpdated(EventArgs.Empty);
         }
 
         public override async Task Unauthorize(CancellationToken cancel = default)
         {
             //TODO: delete saved token.json
-            if (File.Exists(credPath))
-                File.Delete(credPath);
+            if (Directory.Exists(credPath))
+                Directory.Delete(credPath);
+            AuthorizedScopes.Clear();
             RaiseConfigUpdated(EventArgs.Empty);
         }
 
