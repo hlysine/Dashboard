@@ -15,24 +15,24 @@ using System.Windows.Shapes;
 namespace Dashboard.Components
 {
     /// <summary>
-    /// Interaction logic for GoogleCalendarComponent.xaml
+    /// Interaction logic for GoogleTasksComponent.xaml
     /// </summary>
-    public partial class GoogleCalendarComponent : GoogleCalendarComponentBase
+    public partial class GoogleTasksComponent : GoogleTasksComponentBase
     {
-        public GoogleCalendarComponent(ComponentManager manager = null) : base(manager)
+        public GoogleTasksComponent(ComponentManager manager = null) : base(manager)
         {
             InitializeComponent();
         }
     }
 
-    public class GoogleCalendarComponentBase : DashboardComponent<GoogleCalendarController>
+    public class GoogleTasksComponentBase : DashboardComponent<GoogleTasksController>
     {
-        protected GoogleCalendarComponentBase(ComponentManager manager) : base(manager)
+        protected GoogleTasksComponentBase(ComponentManager manager) : base(manager)
         {
 
         }
 
-        protected GoogleCalendarComponentBase() : this(null)
+        protected GoogleTasksComponentBase() : this(null)
         {
 
         }

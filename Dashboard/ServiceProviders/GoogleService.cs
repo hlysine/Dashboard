@@ -2,6 +2,7 @@
 using Dashboard.Tools;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
+using Newtonsoft.Json;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using Swan.Parsers;
@@ -27,6 +28,8 @@ namespace Dashboard.ServiceProviders
 
         private readonly string credPath = "google-tokens".ToAbsolutePath();
 
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+
         private UserCredential credential;
 
         /// <summary>
@@ -36,27 +39,40 @@ namespace Dashboard.ServiceProviders
         /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
         public override async Task Authorize(CancellationToken cancel = default)
         {
-            // The file token.json stores the user's access and refresh tokens, and is created
-            // automatically when the authorization flow completes for the first time.
-            credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                new ClientSecrets
+            // Use a semaphore to avoid opening multiple consent screens when multiple Google services are authenticating
+            await semaphore.WaitAsync();
+            try
+            {
+                if (!requiredScopes.IsSubsetOf(AuthorizedScopes))
                 {
-                    ClientId = ClientId,
-                    ClientSecret = ClientSecret
-                },
-                requiredScopes,
-                "user",
-                cancel,
-                new FileDataStore(credPath, true));
-            AuthorizedScopes = requiredScopes;
-            RaiseConfigUpdated(EventArgs.Empty);
+                    await Unauthorize();
+                }
+                // The file token.json stores the user's access and refresh tokens, and is created
+                // automatically when the authorization flow completes for the first time.
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    new ClientSecrets
+                    {
+                        ClientId = ClientId,
+                        ClientSecret = ClientSecret
+                    },
+                    requiredScopes,
+                    "user",
+                    cancel,
+                    new FileDataStore(credPath, true));
+                AuthorizedScopes = requiredScopes;
+                RaiseConfigUpdated(EventArgs.Empty);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         public override async Task Unauthorize(CancellationToken cancel = default)
         {
             //TODO: delete saved token.json
             if (Directory.Exists(credPath))
-                Directory.Delete(credPath);
+                Directory.Delete(credPath, true);
             AuthorizedScopes.Clear();
             RaiseConfigUpdated(EventArgs.Empty);
         }

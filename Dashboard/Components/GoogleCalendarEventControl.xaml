@@ -9,7 +9,6 @@
     xmlns:comp="clr-namespace:Dashboard.Components"
     xmlns:con="clr-namespace:Dashboard.Controllers"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
-    TextElement.Foreground="{DynamicResource MaterialDesignDarkForeground}"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
     TextOptions.TextFormattingMode="Ideal"
@@ -44,15 +43,19 @@
             Grid.Column="1">
             <TextBlock
                 Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                TextWrapping="Wrap"
                 Text="{Binding Name}">
             </TextBlock>
             <TextBlock
                 Style="{StaticResource MaterialDesignBody2TextBlock}"
+                TextWrapping="Wrap"
                 Text="{Binding DateTimeString}">
             </TextBlock>
             <TextBlock
                 Opacity="0.5"
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                TextWrapping="Wrap"
+                Visibility="{Binding PrimaryCalendar, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
                 Text="{Binding CalendarName}">
             </TextBlock>
         </StackPanel>

@@ -14,6 +14,8 @@
   <ItemGroup>
     <PackageReference Include="AttachedCommandBehavior" Version="2.0.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.47.0.2005" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.47.0.2005" />
+    <PackageReference Include="Google.Apis.Tasks.v1" Version="1.47.0.2003" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf.NetCore" Version="1.0.11" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.6" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.2.0" />
@@ -30,7 +32,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Components\GoogleGmailComponent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Components\GoogleTasksComponent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Components\GoogleCalendarComponent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Components\GoogleGmailThreadControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Components\GoogleTasksTaskControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Components\SpotifyComponent.xaml.cs">
@@ -39,7 +53,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Components\GoogleGmailComponent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Components\GoogleTasksComponent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Components\GoogleCalendarComponent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Components\GoogleGmailThreadControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Components\GoogleTasksTaskControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Components\SpotifyComponent.xaml">

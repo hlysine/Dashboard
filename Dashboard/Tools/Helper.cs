@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Dashboard.Tools
 {
@@ -42,6 +43,36 @@ namespace Dashboard.Tools
         public static bool IsNullOrWhiteSpace(this string str)
         {
             return string.IsNullOrWhiteSpace(str);
+        }
+
+        public static DateTime ParseDateTime(this string str)
+        {
+            if (DateTime.TryParse(str,out DateTime res1))
+            {
+                return res1;
+            }
+            var match = Regex.Match(str, @".*(?= \+0000| GMT| UTC| \(UTC\))");
+            if (match.Success)
+            {
+                if (DateTime.TryParseExact(match.Value, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res2))
+                {
+                    return res2;
+                }
+            }
+            var match2 = Regex.Match(str, @".*(?= [A-Z]{3}| \([A-Z]{3}\))");
+            if (DateTime.TryParseExact(match2.Value, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res3))
+            {
+                return res3;
+            }
+            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res4))
+            {
+                return res4;
+            }
+            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res5))
+            {
+                return res5;
+            }
+            throw new ArgumentException("Failed to parse the provided string");
         }
 
         public static DateTime GetDateTime(this EventDateTime eventDateTime)

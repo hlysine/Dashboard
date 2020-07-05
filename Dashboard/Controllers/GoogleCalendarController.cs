@@ -4,7 +4,6 @@ using Dashboard.ServiceProviders;
 using Dashboard.Tools;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
-using SpotifyAPI.Web;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -53,7 +52,7 @@ namespace Dashboard.Controllers
             List<GoogleCalendarEvent> tempEvents = new List<GoogleCalendarEvent>();
             foreach (var calendar in events.Keys)
             {
-                events[calendar].ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
+                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
             }
             tempEvents.OrderBy(x => x.Start).ForEach(x => Events.Add(x));
         }

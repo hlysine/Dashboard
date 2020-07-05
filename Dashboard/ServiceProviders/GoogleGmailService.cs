@@ -1,7 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Tools;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Gmail.v1;
+using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
@@ -9,10 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Dashboard.ServiceProviders
 {
-    public class GoogleCalendarService : AuthCodeServiceProvider
+    public class GoogleGmailService : AuthCodeServiceProvider
     {
         [RequireService]
         private GoogleService Google { get; set; }
@@ -43,12 +44,12 @@ namespace Dashboard.ServiceProviders
         public new string RefreshToken { get; set; }
 
 
-        public override bool IsAuthorized => calendar != null;
+        public override bool IsAuthorized => gmail != null;
 
         [Obsolete("RequiredScopes is saved in GoogleService", true)]
         protected new List<string> requiredScopes;
 
-        private CalendarService calendar;
+        private GmailService gmail;
 
         /// <summary>
         /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
@@ -59,7 +60,7 @@ namespace Dashboard.ServiceProviders
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            calendar = new CalendarService(new BaseClientService.Initializer()
+            gmail = new GmailService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),
@@ -75,60 +76,22 @@ namespace Dashboard.ServiceProviders
             await Google.Unauthorize();
         }
 
-        public async Task<CalendarList> GetAllCalendars()
+        public async Task<ListThreadsResponse> GetThreads()
         {
-            CalendarListResource.ListRequest request = calendar.CalendarList.List();
+            UsersResource.ThreadsResource.ListRequest request = gmail.Users.Threads.List("me");
 
             return await request.ExecuteAsync();
         }
 
         /// <summary>
-        /// Get all events in a calendar.
+        /// Get details of a thread
         /// </summary>
-        /// <param name="calendarId">ID of the calendar. Use <code>primary</code> for the primary calendar.</param>
-        /// <param name="timeMin">The time of the earliest event to be returned. Defaults to <see cref="DateTime.Now"/>.</param>
-        /// <param name="maxResults">Number of events to return.</param>
+        /// <param name="threadId">ID of the thread.</param>
         /// <returns></returns>
-        public async Task<Events> GetEvents(string calendarId, DateTime timeMin = default, int maxResults = 100)
+        public async Task<Google.Apis.Gmail.v1.Data.Thread> GetThread(string threadId)
         {
-            // Define parameters of request.
-            EventsResource.ListRequest request = calendar.Events.List(calendarId);
-            request.TimeMin = timeMin == default ? DateTime.Now : timeMin;
-            request.ShowDeleted = false;
-            request.SingleEvents = true;
-            request.MaxResults = maxResults;
-            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-
-            // List events.
-            return await request.ExecuteAsync();
-        }
-
-        /// <summary>
-        /// Get all events in all calendars.
-        /// </summary>
-        /// <param name="timeMin">The time of the earliest event to be returned. Defaults to <see cref="DateTime.Now"/>.</param>
-        /// <param name="maxResults">Number of events to return for each calendar.</param>
-        public async Task<Dictionary<CalendarListEntry, Events>> GetAllEvents(DateTime timeMin = default, int maxResults = 100)
-        {
-            var calendars = await GetAllCalendars();
-
-            var ret = new Dictionary<CalendarListEntry, Events>();
-            foreach (var calendar in calendars.Items)
-            {
-                var events = await GetEvents(calendar.Id, timeMin, maxResults);
-                ret.Add(calendar, events);
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Get colors used in calendars and events
-        /// </summary>
-        /// <returns></returns>
-        public async Task<Colors> GetColors()
-        {
-            ColorsResource.GetRequest request = calendar.Colors.Get();
+            UsersResource.ThreadsResource.GetRequest request = gmail.Users.Threads.Get("me", threadId);
+            request.Format = UsersResource.ThreadsResource.GetRequest.FormatEnum.Metadata;
 
             return await request.ExecuteAsync();
         }

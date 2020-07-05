@@ -79,6 +79,8 @@ namespace Dashboard.Models
 
         public string CalendarName { get => calendar.SummaryOverride ?? calendar.Summary; }
 
+        public bool PrimaryCalendar { get => calendar.Primary.GetValueOrDefault(); }
+
         public Color EventColor
         {
             get

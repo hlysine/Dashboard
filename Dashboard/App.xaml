@@ -62,6 +62,21 @@
             
             <converters:BoolToVisibilityConverter
                 x:Key="BoolToVisibilityConverter" />
+            
+            <converters:BoolToBulletIconConverter
+                x:Key="BoolToBulletIconConverter" />
+
+            <converters:BoolToStarredIconConverter
+                x:Key="BoolToStarredIconConverter" />
+
+            <converters:BoolToTextDecorationsConverter
+                x:Key="BoolToTextDecorationsConverter" />
+
+            <converters:BoolToFontWeightConverter
+                x:Key="BoolToFontWeightConverter" />
+
+            <converters:BoolToOpacityConverter
+                x:Key="BoolToOpacityConverter" />
 
             <Style
                 x:Key="FadeOutMaterialDesignFlatButton"

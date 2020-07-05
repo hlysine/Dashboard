@@ -23,53 +23,59 @@
     AllowsTransparency="True"
     WindowStyle="None"
     WindowState="Maximized"
-    Foreground="{DynamicResource MaterialDesignDarkForeground}">
+    Background="Transparent">
     <cmd:CommandBehaviorCollection.Behaviors>
         <cmd:BehaviorBinding
             Action="{Binding Initialize}"
             Event="Initialized" />
     </cmd:CommandBehaviorCollection.Behaviors>
-    <Window.Background>
-        <SolidColorBrush
-            Color="{DynamicResource Primary800}"
-            Opacity="0.4" />
-    </Window.Background>
-    <Grid
-        Name="root">
-        <tb:TaskbarIcon
-            x:Name="notifyIcon"
-            Visibility="Visible"
-            ToolTipText="Dashboard"
-            IconSource="pack://application:,,,/Dashboard;component/Assets/icon.ico"
-            MenuActivation="LeftOrRightClick"
-            PopupActivation="DoubleClick">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem
-                        Header="Show" />
-                    <Separator />
-                    <MenuItem
-                        Header="Settings" />
-                    <MenuItem
-                        Header="Exit" />
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-            <tb:TaskbarIcon.TrayPopup>
-                <TextBlock
-                    Style="{DynamicResource MaterialDesignBody1TextBlock}">
-                        Dashboard
-                </TextBlock>
-            </tb:TaskbarIcon.TrayPopup>
-            <tb:TaskbarIcon.TrayToolTip>
-                <ToolTip>
+    <md:ColorZone
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Mode="PrimaryDark">
+        <md:ColorZone.Background>
+            <SolidColorBrush
+                Color="{DynamicResource Primary800}"
+                Opacity="0.4" />
+        </md:ColorZone.Background>
+        <Grid
+            Name="root">
+            <tb:TaskbarIcon
+                x:Name="notifyIcon"
+                Visibility="Visible"
+                ToolTipText="Dashboard"
+                IconSource="pack://application:,,,/Dashboard;component/Assets/icon.ico"
+                MenuActivation="LeftOrRightClick"
+                PopupActivation="DoubleClick">
+                <tb:TaskbarIcon.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem
+                            Header="Show" />
+                        <Separator />
+                        <MenuItem
+                            Header="Settings" />
+                        <MenuItem
+                            Header="Exit" />
+                    </ContextMenu>
+                </tb:TaskbarIcon.ContextMenu>
+                <tb:TaskbarIcon.TrayPopup>
                     <TextBlock
                         Style="{DynamicResource MaterialDesignBody1TextBlock}">
                         Dashboard
                     </TextBlock>
-                </ToolTip>
-            </tb:TaskbarIcon.TrayToolTip>
+                </tb:TaskbarIcon.TrayPopup>
+                <tb:TaskbarIcon.TrayToolTip>
+                    <ToolTip>
+                        <TextBlock
+                            Style="{DynamicResource MaterialDesignBody1TextBlock}">
+                        Dashboard
+                        </TextBlock>
+                    </ToolTip>
+                </tb:TaskbarIcon.TrayToolTip>
 
-        </tb:TaskbarIcon>
+            </tb:TaskbarIcon>
 
-    </Grid>
+        </Grid>
+
+    </md:ColorZone>
 </Window>

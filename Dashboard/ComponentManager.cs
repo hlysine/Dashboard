@@ -46,9 +46,13 @@ namespace Dashboard
                 ClockComponent clock = new ClockComponent(this);
                 SpotifyComponent spotify = new SpotifyComponent(this);
                 GoogleCalendarComponent calendar = new GoogleCalendarComponent(this);
+                GoogleTasksComponent tasks = new GoogleTasksComponent(this);
+                GoogleGmailComponent gmail = new GoogleGmailComponent(this);
                 Components.Add(clock);
                 Components.Add(spotify);
                 Components.Add(calendar);
+                Components.Add(tasks);
+                Components.Add(gmail);
 
                 Controllers.ForEach(x => x.OnInitializationComplete());
 
@@ -89,7 +93,7 @@ namespace Dashboard
             {
                 service = (ServiceProvider)Activator.CreateInstance(type);
                 // fill in required services
-                var properties = service.GetType().GetProperties().Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
+                var properties = service.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
                 properties.ForEach(x => x.SetValue(service, GetService(x.PropertyType)));
                 Services.Add(service);
                 service.ConfigUpdated += Service_ConfigUpdated;
@@ -119,7 +123,7 @@ namespace Dashboard
             {
                 controller = new T();
                 // fill in required servicess
-                var properties = controller.GetType().GetProperties().Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
+                var properties = controller.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
                 properties.ForEach(x => x.SetValue(controller, GetService(x.PropertyType)));
                 controller.OnInitialize();
                 Controllers.Add(controller);
@@ -147,7 +151,7 @@ namespace Dashboard
             //Subscribe to the events manually
             foreach (ServiceProvider service in Services)
             {
-                var properties = service.GetType().GetProperties().Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
+                var properties = service.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(x => x.IsDefined(typeof(RequireServiceAttribute), true));
                 properties.ForEach(x => x.SetValue(service, GetService(x.PropertyType)));
                 service.ConfigUpdated += Service_ConfigUpdated;
             }

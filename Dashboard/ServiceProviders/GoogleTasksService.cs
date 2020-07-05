@@ -1,18 +1,18 @@
 ﻿using Dashboard.Config;
 using Dashboard.Tools;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
+using Google.Apis.Tasks.v1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Dashboard.ServiceProviders
 {
-    public class GoogleCalendarService : AuthCodeServiceProvider
+    public class GoogleTasksService : AuthCodeServiceProvider
     {
         [RequireService]
         private GoogleService Google { get; set; }
@@ -43,12 +43,12 @@ namespace Dashboard.ServiceProviders
         public new string RefreshToken { get; set; }
 
 
-        public override bool IsAuthorized => calendar != null;
+        public override bool IsAuthorized => tasks != null;
 
         [Obsolete("RequiredScopes is saved in GoogleService", true)]
         protected new List<string> requiredScopes;
 
-        private CalendarService calendar;
+        private TasksService tasks;
 
         /// <summary>
         /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
@@ -59,7 +59,7 @@ namespace Dashboard.ServiceProviders
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            calendar = new CalendarService(new BaseClientService.Initializer()
+            tasks = new TasksService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),
@@ -75,62 +75,47 @@ namespace Dashboard.ServiceProviders
             await Google.Unauthorize();
         }
 
-        public async Task<CalendarList> GetAllCalendars()
+        public async Task<Google.Apis.Tasks.v1.Data.TaskLists> GetAllTasklists()
         {
-            CalendarListResource.ListRequest request = calendar.CalendarList.List();
+            TasklistsResource.ListRequest request = tasks.Tasklists.List();
 
             return await request.ExecuteAsync();
         }
 
         /// <summary>
-        /// Get all events in a calendar.
+        /// Get all tasks in a tasklist.
         /// </summary>
-        /// <param name="calendarId">ID of the calendar. Use <code>primary</code> for the primary calendar.</param>
-        /// <param name="timeMin">The time of the earliest event to be returned. Defaults to <see cref="DateTime.Now"/>.</param>
-        /// <param name="maxResults">Number of events to return.</param>
+        /// <param name="calendarId">ID of the tasklist.</param>
+        /// <param name="maxResults">Number of tasks to return.</param>
         /// <returns></returns>
-        public async Task<Events> GetEvents(string calendarId, DateTime timeMin = default, int maxResults = 100)
+        public async Task<Google.Apis.Tasks.v1.Data.Tasks> GetTasks(string tasklistId, int maxResults = 100)
         {
             // Define parameters of request.
-            EventsResource.ListRequest request = calendar.Events.List(calendarId);
-            request.TimeMin = timeMin == default ? DateTime.Now : timeMin;
-            request.ShowDeleted = false;
-            request.SingleEvents = true;
+            TasksResource.ListRequest request = tasks.Tasks.List(tasklistId);
+            request.ShowCompleted = true;
+            request.ShowHidden = true;
             request.MaxResults = maxResults;
-            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
-            // List events.
+            // List tasks.
             return await request.ExecuteAsync();
         }
 
         /// <summary>
-        /// Get all events in all calendars.
+        /// Get all tasks in all tasklists.
         /// </summary>
-        /// <param name="timeMin">The time of the earliest event to be returned. Defaults to <see cref="DateTime.Now"/>.</param>
-        /// <param name="maxResults">Number of events to return for each calendar.</param>
-        public async Task<Dictionary<CalendarListEntry, Events>> GetAllEvents(DateTime timeMin = default, int maxResults = 100)
+        /// <param name="maxResults">Number of tasks to return for each tasklist.</param>
+        public async Task<Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>> GetAllTasks( int maxResults = 100)
         {
-            var calendars = await GetAllCalendars();
+            var tasklists = await GetAllTasklists();
 
-            var ret = new Dictionary<CalendarListEntry, Events>();
-            foreach (var calendar in calendars.Items)
+            var ret = new Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>();
+            foreach (var tasklist in tasklists.Items)
             {
-                var events = await GetEvents(calendar.Id, timeMin, maxResults);
-                ret.Add(calendar, events);
+                var tasks = await GetTasks(tasklist.Id, maxResults);
+                ret.Add(tasklist, tasks);
             }
 
             return ret;
-        }
-
-        /// <summary>
-        /// Get colors used in calendars and events
-        /// </summary>
-        /// <returns></returns>
-        public async Task<Colors> GetColors()
-        {
-            ColorsResource.GetRequest request = calendar.Colors.Get();
-
-            return await request.ExecuteAsync();
         }
     }
 }
