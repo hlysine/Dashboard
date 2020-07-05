@@ -86,6 +86,9 @@ namespace Dashboard
                 if (initialized) return;
                 initialized = true;
 
+                // TODO: only register if user set autostart config
+                AutoRun.Register();
+
                 keyHook.RegisterHotKey(Utilities.ModifierKeys.Alt, System.Windows.Forms.Keys.D);
                 keyHook.KeyPressed += KeyHook_KeyPressed;
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace Dashboard.Utilities
         public static string GetAppExePath()
         {
             //return System.Reflection.Assembly.GetExecutingAssembly().Location;
-            return System.Windows.Forms.Application.ExecutablePath;
+            return Process.GetCurrentProcess().MainModule.FileName;
         }
 
         public static string GetProductName()

@@ -27,7 +27,8 @@
     Visibility="{Binding WindowShown, Converter={StaticResource BoolToVisibilityConverterH}}"
     ShowInTaskbar="False"
     Topmost="True"
-    Loaded="Window_Loaded">
+    Loaded="Window_Loaded"
+    Style="{StaticResource VisibleAnimation}">
     <cmd:CommandBehaviorCollection.Behaviors>
         <cmd:BehaviorBinding
             Action="{Binding Initialize}"

@@ -58,8 +58,7 @@
                         Color="{StaticResource Accent400Foreground}" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-            
-            
+
             <converters:BoolToVisibilityConverter
                 x:Key="BoolToVisibilityConverter" />
 
@@ -80,6 +79,34 @@
 
             <converters:BoolToOpacityConverter
                 x:Key="BoolToOpacityConverter" />
+
+            <Style
+                TargetType="FrameworkElement"
+                x:Key="VisibleAnimation">
+                <Setter
+                    Property="Visibility"
+                    Value="Collapsed" />
+                <Setter
+                    Property="Opacity"
+                    Value="0" />
+                <Style.Triggers>
+                    <Trigger
+                        Property="Visibility"
+                        Value="Visible">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.0"
+                                        To="1.0"
+                                        Duration="0:0:0.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
 
             <Style
                 x:Key="FadeOutMaterialDesignFlatButton"
