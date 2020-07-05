@@ -1,4 +1,5 @@
 ﻿using Dashboard.Components;
+using Dashboard.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static Dashboard.Tools.Helper;
+using static Dashboard.Utilities.Helper;
 
 namespace Dashboard
 {
@@ -37,6 +38,11 @@ namespace Dashboard
             {
                 e.NewItems.ForEach(x => root.Children.Add((UIElement)x));
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ToolWindowHelper.SetToolWindow(this);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Dashboard.Components
         public GoogleTasksComponent(ComponentManager manager = null) : base(manager)
         {
             InitializeComponent();
+            Load();
         }
     }
 

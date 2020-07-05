@@ -1,5 +1,5 @@
 ﻿using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Gmail.v1.Data;
 using System;
 using System.Collections.Generic;
@@ -43,11 +43,7 @@ namespace Dashboard.Models
 
         public string From
         {
-            get
-            {
-                Debug.WriteLine(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "");
-                return Regex.Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "", @"^""?(.*?)""?(?: <[^<>]*>)?$").Groups[1].Value;
-            }
+            get => Regex.Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "", @"^""?(.*?)""?(?: <[^<>]*>)?$").Groups[1].Value;
         }
 
         public bool Important { get => (getMessages()?.Last().LabelIds.Contains("IMPORTANT")).GetValueOrDefault(); }
@@ -75,11 +71,13 @@ namespace Dashboard.Models
                 }
                 else if (date.Year == DateTime.Now.Year)
                 {
-                    return date.ToString("MMM dd h:mm tt");
+                    //return date.ToString("MMM dd h:mm tt");
+                    return date.ToString("MMM dd");
                 }
                 else
                 {
-                    return date.ToString("MMM dd, yyyy h:mm tt");
+                    //return date.ToString("MMM dd, yyyy h:mm tt");
+                    return date.ToString("MMM dd, yyyy");
                 }
             }
         }

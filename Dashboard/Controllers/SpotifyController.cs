@@ -1,6 +1,6 @@
 ﻿using Dashboard.Config;
 using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using SpotifyAPI.Web;
 using System;
 using System.Collections.Generic;
@@ -72,6 +72,8 @@ namespace Dashboard.Controllers
             set => SetAndNotify(ref isPlaying, value);
         }
 
+        public override TimeSpan ForegroundRefreshRate => TimeSpan.FromSeconds(10);
+
         private RelayCommand playPauseCommand;
 
         public ICommand PlayPauseCommand
@@ -122,6 +124,7 @@ namespace Dashboard.Controllers
                     await Spotify.Authorize();
                 Authorized = true;
                 UpdateCurrentlyPlaying();
+                Loaded = true;
             }
         }
 
@@ -137,6 +140,11 @@ namespace Dashboard.Controllers
             });
         }
 
+        public override void OnRefresh()
+        {
+            UpdateCurrentlyPlaying();
+        }
+
         private async void UpdateCurrentlyPlaying()
         {
             var currentlyPlaying = await Spotify.GetCurrentlyPlaying();
@@ -145,10 +153,6 @@ namespace Dashboard.Controllers
                 CurrentTrack = (FullTrack)currentlyPlaying.Item;
                 IsPlaying = currentlyPlaying.IsPlaying;
                 _ = Task.Delay(CurrentTrack.DurationMs - currentlyPlaying.ProgressMs.GetValueOrDefault() + 100).ContinueWith(_ => UpdateCurrentlyPlaying());
-            }
-            else
-            {
-                _ = Task.Delay(10000).ContinueWith(_ => UpdateCurrentlyPlaying());
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Dashboard.Config;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;

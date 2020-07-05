@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Dashboard.Tools
+namespace Dashboard.Utilities
 {
     public class LimitLines
     {

@@ -2,7 +2,7 @@
 using Dashboard.Config;
 using Dashboard.Controllers;
 using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System;
@@ -13,8 +13,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace Dashboard
@@ -22,7 +26,7 @@ namespace Dashboard
     /// <summary>
     /// The view model for the main window. Also manages all components, controllers and service providers.
     /// </summary>
-    public class ComponentManager
+    public class ComponentManager : NotifyPropertyChanged
     {
         public ObservableCollection<DashboardController> Controllers { get; set; } = new ObservableCollection<DashboardController>();
 
@@ -30,19 +34,61 @@ namespace Dashboard
 
         public ObservableCollection<ServiceProvider> Services { get; set; } = new ObservableCollection<ServiceProvider>();
 
+        private bool windowShown = false;
+
+        public bool WindowShown
+        {
+            get => windowShown;
+            set => SetAndNotify(ref windowShown, value);
+        }
+
         /// <summary>
         /// Action to be invoked when the main window is initialized.
         /// </summary>
         public Action<object> Initialize { get; private set; }
 
+        public Action<object> QuitApplication { get; private set; }
+
+        public Action<object> LostFocus { get; private set; }
+
+        private RelayCommand showWindowCommand;
+
+        public ICommand ShowWindowCommand
+        {
+            get
+            {
+                return showWindowCommand ?? (showWindowCommand = new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        WindowShown = true;
+                    },
+                    // can execute
+                    () => !WindowShown
+                ));
+            }
+        }
+
         private const string configPath = "config.xml";
 
         private XmlSerializer xmlSerializer;
+
+        private KeyboardHook keyHook = new KeyboardHook();
+
+        private bool initialized = false;
+
+        private List<(DashboardController, DispatcherTimer)> refreshTimers = new List<(DashboardController, DispatcherTimer)>();
 
         public ComponentManager()
         {
             Initialize = _ =>
             {
+                if (initialized) return;
+                initialized = true;
+
+                keyHook.RegisterHotKey(Utilities.ModifierKeys.Alt, System.Windows.Forms.Keys.D);
+                keyHook.KeyPressed += KeyHook_KeyPressed;
+
                 ClockComponent clock = new ClockComponent(this);
                 SpotifyComponent spotify = new SpotifyComponent(this);
                 GoogleCalendarComponent calendar = new GoogleCalendarComponent(this);
@@ -54,9 +100,29 @@ namespace Dashboard
                 Components.Add(tasks);
                 Components.Add(gmail);
 
+                foreach (var controller in Controllers)
+                {
+                    var timer = new DispatcherTimer() { Interval = controller.BackgroundRefreshRate, IsEnabled = false, Tag = controller };
+                    timer.Tick += Timer_Tick;
+                    refreshTimers.Add((controller, timer));
+
+                    // Start after a random delay to avoid lag spikes
+                    Task.Delay(Helper.Rnd.Next(10000)).ContinueWith(_ => timer.Start());
+                }
+
                 Controllers.ForEach(x => x.OnInitializationComplete());
 
                 SaveConfig();
+            };
+
+            QuitApplication = _ =>
+            {
+                Application.Current.Shutdown();
+            };
+
+            LostFocus = _ =>
+            {
+                SetWindowState(false);
             };
 
             //Prepare an XmlSerializer to be used when saving config
@@ -84,6 +150,26 @@ namespace Dashboard
 
             if (File.Exists(configPath.ToAbsolutePath()))
                 LoadConfig();
+        }
+
+        private void SetWindowState(bool shown)
+        {
+            WindowShown = shown;
+            foreach (var pair in refreshTimers)
+            {
+                pair.Item2.Interval = shown ? pair.Item1.ForegroundRefreshRate : pair.Item1.BackgroundRefreshRate;
+            }
+
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            ((DashboardController)((DispatcherTimer)sender).Tag).OnRefresh();
+        }
+
+        private void KeyHook_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            SetWindowState(!WindowShown);
         }
 
         public ServiceProvider GetService(Type type)

@@ -1,5 +1,5 @@
 ﻿using Dashboard.Config;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;

@@ -19,6 +19,7 @@ namespace Dashboard.Controllers
         public ClockController()
         {
             timer = new Timer(_ => NotifyChanged(nameof(Time)), null, 0, 100);
+            Loaded = true;
         }
     }
 }

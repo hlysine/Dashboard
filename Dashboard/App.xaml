@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Dashboard"
-    xmlns:converters="clr-namespace:Dashboard.Tools.Converters"
+    xmlns:converters="clr-namespace:Dashboard.Utilities.Converters"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -62,7 +62,10 @@
             
             <converters:BoolToVisibilityConverter
                 x:Key="BoolToVisibilityConverter" />
-            
+
+            <converters:BoolToVisibilityConverterH
+                x:Key="BoolToVisibilityConverterH" />
+
             <converters:BoolToBulletIconConverter
                 x:Key="BoolToBulletIconConverter" />
 

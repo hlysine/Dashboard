@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Interop;
-using static Dashboard.Tools.Native;
+using static Dashboard.Utilities.Native;
 
-namespace Dashboard.Tools
+namespace Dashboard.Utilities
 {
     public class WindowBlur
     {

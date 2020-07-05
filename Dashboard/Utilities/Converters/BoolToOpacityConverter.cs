@@ -5,20 +5,20 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Dashboard.Tools.Converters
+namespace Dashboard.Utilities.Converters
 {
-    public class BoolToFontWeightConverter : IValueConverter
+    public class BoolToOpacityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
             if ((value as bool?).GetValueOrDefault() != param)
             {
-                return FontWeights.Bold;
+                return 1;
             }
             else
             {
-                return FontWeights.Regular;
+                return 0.5;
             }
         }
 

@@ -8,10 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Dashboard.Tools
+namespace Dashboard.Utilities
 {
     public static class Helper
     {
+        public static readonly Random Rnd = new Random();
+
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
         {
             foreach (T item in enumeration)

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dashboard.Tools
+namespace Dashboard.Utilities
 {
     struct VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
     {

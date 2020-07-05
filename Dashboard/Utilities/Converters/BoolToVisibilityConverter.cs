@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Dashboard.Tools.Converters
+namespace Dashboard.Utilities.Converters
 {
     public class BoolToVisibilityConverter : IValueConverter
     {

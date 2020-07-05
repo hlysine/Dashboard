@@ -22,6 +22,7 @@ namespace Dashboard.Components
         public GoogleCalendarComponent(ComponentManager manager = null) : base(manager)
         {
             InitializeComponent();
+            Load();
         }
     }
 

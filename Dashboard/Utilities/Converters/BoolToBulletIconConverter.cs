@@ -6,20 +6,20 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Dashboard.Tools.Converters
+namespace Dashboard.Utilities.Converters
 {
-    public class BoolToStarredIconConverter : IValueConverter
+    public class BoolToBulletIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
             if ((value as bool?).GetValueOrDefault() != param)
             {
-                return PackIconKind.Star;
+                return PackIconKind.Tick;
             }
             else
             {
-                return PackIconKind.StarOutline;
+                return PackIconKind.SquareSmall;
             }
         }
 

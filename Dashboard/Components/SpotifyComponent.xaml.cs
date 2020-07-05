@@ -22,6 +22,7 @@ namespace Dashboard.Components
         public SpotifyComponent(ComponentManager manager = null) : base(manager)
         {
             InitializeComponent();
+            Load();
         }
     }
 

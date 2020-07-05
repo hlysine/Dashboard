@@ -1,7 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Models;
 using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using System;
@@ -20,8 +20,8 @@ namespace Dashboard.Controllers
         [RequireService]
         public GoogleGmailService Gmail { get; set; }
 
-        private ObservableCollection<GoogleGmailThread> threads = new ObservableCollection<GoogleGmailThread>();
-        public ObservableCollection<GoogleGmailThread> Threads
+        private List<GoogleGmailThread> threads = new List<GoogleGmailThread>();
+        public List<GoogleGmailThread> Threads
         {
             get => threads;
             set => SetAndNotify(ref threads, value);
@@ -39,6 +39,14 @@ namespace Dashboard.Controllers
         {
         }
 
+        private async Task LoadGmail()
+        {
+            var th = await Gmail.GetThreads();
+            Threads.Clear();
+            threads.AddRange(th.Threads.Select(x => new GoogleGmailThread(x, Gmail)));
+            NotifyChanged(nameof(Threads));
+        }
+
         public override async void OnInitializationComplete()
         {
             if (Gmail.CanAuthorize)
@@ -47,8 +55,8 @@ namespace Dashboard.Controllers
                     await Gmail.Authorize();
                 Authorized = true;
             }
-            var th = await Gmail.GetThreads();
-            th.Threads.ForEach(x => Threads.Add(new GoogleGmailThread(x, Gmail)));
+            await LoadGmail();
+            Loaded = true;
         }
 
         public override void OnInitialize()
@@ -56,6 +64,11 @@ namespace Dashboard.Controllers
             Gmail.RequireScopes(new[] {
                 GmailService.Scope.GmailReadonly
             });
+        }
+
+        public override async void OnRefresh()
+        {
+            await LoadGmail();
         }
     }
 }

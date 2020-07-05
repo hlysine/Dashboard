@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Input;
 
-namespace Dashboard.Tools
+namespace Dashboard.Utilities
 {
     public class RelayCommand<T> : ICommand
     {

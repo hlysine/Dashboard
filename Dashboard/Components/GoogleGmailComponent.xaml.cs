@@ -22,6 +22,7 @@ namespace Dashboard.Components
         public GoogleGmailComponent(ComponentManager manager = null) : base(manager)
         {
             InitializeComponent();
+            Load();
         }
     }
 

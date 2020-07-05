@@ -11,14 +11,36 @@ namespace Dashboard.Components
     {
         public TController Controller { get; private set; }
 
+        private object loadedContent;
 
-        public DashboardComponent(ComponentManager manager) : base()
+        public DashboardComponent(ComponentManager manager)
         {
             if (manager != null)
             {
                 Controller = manager.GetController<TController>();
                 DataContext = Controller;
             }
+        }
+
+        protected void Load()
+        {
+            if (!Controller.Loaded)
+            {
+                Controller.FinishedLoading += Controller_FinishedLoading;
+                loadedContent = Content;
+
+                ProgressBar loadingBar = new ProgressBar();
+                loadingBar.Style = (System.Windows.Style)FindResource("MaterialDesignCircularProgressBar");
+                loadingBar.Value = 0;
+                loadingBar.IsIndeterminate = true;
+
+                Content = loadingBar;
+            }
+        }
+
+        private void Controller_FinishedLoading(object sender, EventArgs e)
+        {
+            Content = loadedContent;
         }
     }
 }

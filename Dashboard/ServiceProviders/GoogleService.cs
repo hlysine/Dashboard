@@ -1,5 +1,5 @@
 ﻿using Dashboard.Config;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using Newtonsoft.Json;

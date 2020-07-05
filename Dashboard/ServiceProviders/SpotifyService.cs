@@ -1,5 +1,5 @@
 ﻿using Dashboard.Config;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using Swan.Parsers;

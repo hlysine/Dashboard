@@ -1,7 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Models;
 using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Tasks.v1;
 using SpotifyAPI.Web;
 using System;
@@ -41,15 +41,10 @@ namespace Dashboard.Controllers
         {
         }
 
-        public override async void OnInitializationComplete()
+        private async Task LoadTasks()
         {
-            if (Tasks.CanAuthorize)
-            {
-                if (!Tasks.IsAuthorized)
-                    await Tasks.Authorize();
-                Authorized = true;
-            }
             var tasks = await Tasks.GetAllTasks();
+            allTasks.Clear();
             foreach (var tasklist in tasks.Keys)
             {
                 var convertedTasks = new List<GoogleTasksTask>();
@@ -61,6 +56,19 @@ namespace Dashboard.Controllers
                 groups.Where(x => x.Key != null).ForEach(x => convertedTasks.InsertRange(convertedTasks.FindIndex(y => y.Id == x.Key) + 1, x.OrderBy(x => x.Position)));
             }
             CurrentTasklist = allTasks.Values.Last();
+            NotifyChanged(nameof(CurrentTasklist));
+        }
+
+        public override async void OnInitializationComplete()
+        {
+            if (Tasks.CanAuthorize)
+            {
+                if (!Tasks.IsAuthorized)
+                    await Tasks.Authorize();
+                Authorized = true;
+            }
+            await LoadTasks();
+            Loaded = true;
         }
 
         public override void OnInitialize()
@@ -68,6 +76,11 @@ namespace Dashboard.Controllers
             Tasks.RequireScopes(new[] {
                 TasksService.Scope.TasksReadonly
             });
+        }
+
+        public override async void OnRefresh()
+        {
+            await LoadTasks();
         }
     }
 }

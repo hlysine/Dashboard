@@ -1,5 +1,5 @@
 ﻿using Dashboard.Config;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

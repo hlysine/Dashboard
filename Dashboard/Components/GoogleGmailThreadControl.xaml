@@ -9,7 +9,7 @@
     xmlns:comp="clr-namespace:Dashboard.Components"
     xmlns:con="clr-namespace:Dashboard.Controllers"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
-    xmlns:tools="clr-namespace:Dashboard.Tools"
+    xmlns:tools="clr-namespace:Dashboard.Utilities"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
     TextOptions.TextFormattingMode="Ideal"

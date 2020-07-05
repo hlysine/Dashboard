@@ -1,7 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Models;
 using Dashboard.ServiceProviders;
-using Dashboard.Tools;
+using Dashboard.Utilities;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using System;
@@ -20,14 +20,15 @@ namespace Dashboard.Controllers
         [RequireService]
         public GoogleCalendarService Calendar { get; set; }
 
-        private ObservableCollection<GoogleCalendarEvent> events = new ObservableCollection<GoogleCalendarEvent>();
-        public ObservableCollection<GoogleCalendarEvent> Events
+        private List<GoogleCalendarEvent> events = new List<GoogleCalendarEvent>();
+        public List<GoogleCalendarEvent> Events
         {
             get => events;
             set => SetAndNotify(ref events, value);
         }
 
         private bool authorized = false;
+        Colors colors;
 
         public bool Authorized
         {
@@ -39,6 +40,19 @@ namespace Dashboard.Controllers
         {
         }
 
+        private async Task LoadCalendar()
+        {
+            var events = await Calendar.GetAllEvents();
+            Events.Clear();
+            List<GoogleCalendarEvent> tempEvents = new List<GoogleCalendarEvent>();
+            foreach (var calendar in events.Keys)
+            {
+                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
+            }
+            Events.AddRange(tempEvents.OrderBy(x => x.Start));
+            NotifyChanged(nameof(Events));
+        }
+
         public override async void OnInitializationComplete()
         {
             if (Calendar.CanAuthorize)
@@ -47,14 +61,9 @@ namespace Dashboard.Controllers
                     await Calendar.Authorize();
                 Authorized = true;
             }
-            Colors colors = await Calendar.GetColors();
-            var events = await Calendar.GetAllEvents();
-            List<GoogleCalendarEvent> tempEvents = new List<GoogleCalendarEvent>();
-            foreach (var calendar in events.Keys)
-            {
-                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
-            }
-            tempEvents.OrderBy(x => x.Start).ForEach(x => Events.Add(x));
+            colors = await Calendar.GetColors();
+            await LoadCalendar();
+            Loaded = true;
         }
 
         public override void OnInitialize()
@@ -62,6 +71,11 @@ namespace Dashboard.Controllers
             Calendar.RequireScopes(new[] {
                 CalendarService.Scope.CalendarReadonly
             });
+        }
+
+        public override async void OnRefresh()
+        {
+            await LoadCalendar();
         }
     }
 }

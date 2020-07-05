@@ -6,20 +6,20 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Dashboard.Tools.Converters
+namespace Dashboard.Utilities.Converters
 {
-    public class BoolToTextDecorationsConverter : IValueConverter
+    public class BoolToStarredIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
             if ((value as bool?).GetValueOrDefault() != param)
             {
-                return TextDecorations.Strikethrough;
+                return PackIconKind.Star;
             }
             else
             {
-                return null;
+                return PackIconKind.StarOutline;
             }
         }
 
