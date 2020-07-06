@@ -20,6 +20,13 @@ namespace Dashboard.Controllers
         [RequireService]
         public GoogleGmailService Gmail { get; set; }
 
+        private Profile profile;
+        public Profile Profile
+        {
+            get => profile;
+            set => SetAndNotify(ref profile, value);
+        }
+
         private List<GoogleGmailThread> threads = new List<GoogleGmailThread>();
         public List<GoogleGmailThread> Threads
         {
@@ -41,9 +48,10 @@ namespace Dashboard.Controllers
 
         private async Task LoadGmail()
         {
+            Profile = await Gmail.GetProfile();
             var th = await Gmail.GetThreads();
             Threads.Clear();
-            threads.AddRange(th.Threads.Select(x => new GoogleGmailThread(x, Gmail)));
+            threads.AddRange(th.Threads.Select(x => new GoogleGmailThread(x, Gmail, Profile)));
             NotifyChanged(nameof(Threads));
         }
 

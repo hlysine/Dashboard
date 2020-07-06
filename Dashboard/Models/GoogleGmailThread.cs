@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Dashboard.Models
@@ -17,6 +18,7 @@ namespace Dashboard.Models
     {
         private Thread thread;
         private GoogleGmailService gmail;
+        private Profile profile;
 
         // default is false, set 1 for true.
         private int fetchedThread = 0;
@@ -59,34 +61,10 @@ namespace Dashboard.Models
             }
         }
 
-        public string DateString
-        {
-            get
-            {
-                DateTime date = Date;
-                if (date == default) return "";
-                if (date.Date == DateTime.Today)
-                {
-                    return date.ToString("h:mm tt");
-                }
-                else if (date.Year == DateTime.Now.Year)
-                {
-                    //return date.ToString("MMM dd h:mm tt");
-                    return date.ToString("MMM dd");
-                }
-                else
-                {
-                    //return date.ToString("MMM dd, yyyy h:mm tt");
-                    return date.ToString("MMM dd, yyyy");
-                }
-            }
-        }
-
         private List<Message> getMessages()
         {
             if (thread.Messages == null)
             {
-                // TODO: fetch details
                 if (!FetchedThread)
                 {
                     FetchedThread = true;
@@ -103,7 +81,6 @@ namespace Dashboard.Models
                             nameof(Important),
                             nameof(Starred),
                             nameof(Date),
-                            nameof(DateString),
                         });
                     });
                 }
@@ -115,6 +92,27 @@ namespace Dashboard.Models
             }
         }
 
-        public GoogleGmailThread(Thread _thread, GoogleGmailService _gmail) => (thread, gmail) = (_thread, _gmail);
+        private RelayCommand openCommand;
+
+        public ICommand OpenCommand
+        {
+            get
+            {
+                return openCommand ?? (openCommand = new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        Helper.OpenUri(new Uri($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
+                    },
+                    // can execute
+                    () =>
+                    {
+                        return true;
+                    }
+                ));
+            }
+        }
+
+        public GoogleGmailThread(Thread _thread, GoogleGmailService _gmail, Profile _profile) => (thread, gmail, profile) = (_thread, _gmail, _profile);
     }
 }

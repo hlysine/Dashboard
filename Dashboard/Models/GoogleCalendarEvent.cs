@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Dashboard.Models
@@ -28,19 +29,13 @@ namespace Dashboard.Models
                 DateTime end = @event.End.GetDateTime();
                 if (@event.Start.DateTime == null)
                 { // All day event
-                    if (start.Year == DateTime.Now.Year)
-                        ret += start.ToString("MMM dd");
-                    else
-                        ret += start.ToString("MMM dd, yyyy");
+                    ret += start.ToReadableDateString();
                     if (!@event.EndTimeUnspecified.GetValueOrDefault())
                     {
                         if (end - start > TimeSpan.FromDays(1))
                         {
                             ret += " - ";
-                            if (end.Year == DateTime.Now.Year)
-                                ret += end.ToString("MMM dd");
-                            else
-                                ret += end.ToString("MMM dd, yyyy");
+                            ret += end.ToReadableDateString();
                         }
                     }
                 }
@@ -48,10 +43,7 @@ namespace Dashboard.Models
                 {
                     if (start != default)
                     {
-                        if (start.Year == DateTime.Now.Year)
-                            ret += start.ToString("MMM dd h:mm tt");
-                        else
-                            ret += start.ToString("MMM dd, yyyy h:mm tt");
+                        ret += start.ToReadableDateString() + " " + start.ToString("h:mm tt");
                         if (!@event.EndTimeUnspecified.GetValueOrDefault() && end != default)
                         {
                             ret += " - ";
@@ -61,10 +53,7 @@ namespace Dashboard.Models
                             }
                             else
                             {
-                                if (end.Year == DateTime.Now.Year)
-                                    ret += end.ToString("MMM dd h:mm tt");
-                                else
-                                    ret += end.ToString("MMM dd, yyyy h:mm tt");
+                                ret += end.ToReadableDateString() + " " + end.ToString("h:mm tt");
                             }
                         }
                     }
@@ -93,6 +82,27 @@ namespace Dashboard.Models
                 {
                     return (Color)ColorConverter.ConvertFromString(colors.Event__[@event.ColorId].Background);
                 }
+            }
+        }
+
+        private RelayCommand openCommand;
+
+        public ICommand OpenCommand
+        {
+            get
+            {
+                return openCommand ?? (openCommand = new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
+                    },
+                    // can execute
+                    () =>
+                    {
+                        return true;
+                    }
+                ));
             }
         }
 

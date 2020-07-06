@@ -76,6 +76,13 @@ namespace Dashboard.ServiceProviders
             await Google.Unauthorize();
         }
 
+        public async Task<Profile> GetProfile()
+        {
+            UsersResource.GetProfileRequest request = gmail.Users.GetProfile("me");
+
+            return await request.ExecuteAsync();
+        }
+
         public async Task<ListThreadsResponse> GetThreads()
         {
             UsersResource.ThreadsResource.ListRequest request = gmail.Users.Threads.List("me");

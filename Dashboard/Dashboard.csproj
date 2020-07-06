@@ -8,11 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\auth_assets\logo.svg" />
+    <None Remove="Assets\auth_assets\main.css" />
+    <None Remove="Assets\auth_assets\main.js" />
+    <None Remove="Assets\default_site\favicon.ico" />
+    <None Remove="Assets\default_site\index.html" />
     <None Remove="Assets\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AttachedCommandBehavior" Version="2.0.0" />
+    <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.47.0.2005" />
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.47.0.2005" />
     <PackageReference Include="Google.Apis.Tasks.v1" Version="1.47.0.2003" />
@@ -21,17 +27,25 @@
     <PackageReference Include="MaterialDesignExtensions" Version="3.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RestSharp" Version="106.11.4" />
     <PackageReference Include="SpotifyAPI.Web" Version="6.0.0-beta.7" />
-    <PackageReference Include="SpotifyAPI.Web.Auth" Version="6.0.0-beta.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\auth_assets\logo.svg" />
+    <EmbeddedResource Include="Assets\auth_assets\main.css" />
+    <EmbeddedResource Include="Assets\auth_assets\main.js" />
+    <EmbeddedResource Include="Assets\default_site\favicon.ico" />
+    <EmbeddedResource Include="Assets\default_site\index.html" />
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Components\LauncherComponent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Components\GoogleGmailComponent.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -44,7 +58,13 @@
     <Compile Update="Components\GoogleGmailThreadControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Components\OsuUserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Components\GoogleTasksTaskControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Components\OsuComponent.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Components\SpotifyComponent.xaml.cs">
@@ -53,6 +73,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Components\LauncherComponent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Components\GoogleGmailComponent.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -65,7 +88,13 @@
     <Page Update="Components\GoogleGmailThreadControl.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Components\OsuUserControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Components\GoogleTasksTaskControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Components\OsuComponent.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Components\SpotifyComponent.xaml">

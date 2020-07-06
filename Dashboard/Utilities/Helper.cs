@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -33,6 +34,24 @@ namespace Dashboard.Utilities
             return enumeration;
         }
 
+        public static void OpenUri(Uri uri)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var uriStr = uri.ToString().Replace("&", "^&");
+
+                Process.Start(new ProcessStartInfo($"cmd", $"/c start {uriStr}") { WindowStyle = ProcessWindowStyle.Hidden, UseShellExecute = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", uri.ToString());
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", uri.ToString());
+            }
+        }
+
         public static bool IsSubsetOf<T>(this IEnumerable<T> a, IEnumerable<T> b)
         {
             return !a.Except(b).Any();
@@ -48,9 +67,33 @@ namespace Dashboard.Utilities
             return string.IsNullOrWhiteSpace(str);
         }
 
+        public static string ToReadableDateString(this DateTime date)
+        {
+            if (date.Date == DateTime.Today)
+            {
+                return "Today";
+            }
+            else if (date.Date == DateTime.Today - TimeSpan.FromDays(1))
+            {
+                return "Yesterday";
+            }
+            else if (date.Date == DateTime.Today + TimeSpan.FromDays(1))
+            {
+                return "Tomorrow";
+            }
+            else if (date.Year == DateTime.Now.Year)
+            {
+                return date.ToString("MMM dd");
+            }
+            else
+            {
+                return date.ToString("MMM dd, yyyy");
+            }
+        }
+
         public static DateTime ParseDateTime(this string str)
         {
-            if (DateTime.TryParse(str,out DateTime res1))
+            if (DateTime.TryParse(str, out DateTime res1))
             {
                 return res1;
             }

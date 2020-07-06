@@ -80,6 +80,9 @@
             <converters:BoolToOpacityConverter
                 x:Key="BoolToOpacityConverter" />
 
+            <converters:DateTimeToStringConverter
+                x:Key="DateTimeToStringConverter" />
+
             <Style
                 TargetType="FrameworkElement"
                 x:Key="VisibleAnimation">

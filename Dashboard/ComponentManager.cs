@@ -97,11 +97,15 @@ namespace Dashboard
                 GoogleCalendarComponent calendar = new GoogleCalendarComponent(this);
                 GoogleTasksComponent tasks = new GoogleTasksComponent(this);
                 GoogleGmailComponent gmail = new GoogleGmailComponent(this);
+                OsuComponent osu = new OsuComponent(this);
+                LauncherComponent launcher = new LauncherComponent(this);
                 Components.Add(clock);
                 Components.Add(spotify);
                 Components.Add(calendar);
                 Components.Add(tasks);
                 Components.Add(gmail);
+                Components.Add(osu);
+                Components.Add(launcher);
 
                 foreach (var controller in Controllers)
                 {

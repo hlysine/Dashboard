@@ -17,47 +17,61 @@
     FontFamily="{DynamicResource MaterialDesignFont}"
     mc:Ignorable="d"
     d:DesignWidth="200">
-    <Grid
-        Name="root">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="Auto" />
-            <ColumnDefinition
-                Width="*" />
-        </Grid.ColumnDefinitions>
-        <Border
-            Width="5"
-            Margin="10 10 0 10"
-            VerticalAlignment="Stretch"
-            BorderBrush="Transparent">
-            <Border.Background>
-                <SolidColorBrush
-                    Color="{Binding EventColor}" />
-            </Border.Background>
-        </Border>
-        <StackPanel
-            Margin="10"
-            Orientation="Vertical"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Grid.Column="1">
-            <TextBlock
-                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                TextWrapping="Wrap"
-                Text="{Binding Name}">
-            </TextBlock>
-            <TextBlock
-                Style="{StaticResource MaterialDesignBody2TextBlock}"
-                TextWrapping="Wrap"
-                Text="{Binding DateTimeString}">
-            </TextBlock>
-            <TextBlock
-                Opacity="0.5"
-                Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                TextWrapping="Wrap"
-                Visibility="{Binding PrimaryCalendar, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
-                Text="{Binding CalendarName}">
-            </TextBlock>
-        </StackPanel>
-    </Grid>
+    <Button
+        Style="{StaticResource MaterialDesignFlatButton}"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Padding="0"
+        Height="Auto"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Command="{Binding OpenCommand}">
+        <md:ColorZone
+            Mode="PrimaryDark"
+            Background="Transparent">
+            <Grid
+                Name="root">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition
+                        Width="Auto" />
+                    <ColumnDefinition
+                        Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Width="5"
+                    Margin="10 10 0 10"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="Transparent">
+                    <Border.Background>
+                        <SolidColorBrush
+                            Color="{Binding EventColor}" />
+                    </Border.Background>
+                </Border>
+                <StackPanel
+                    Margin="10"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Grid.Column="1">
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        TextWrapping="Wrap"
+                        Text="{Binding Name}">
+                    </TextBlock>
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                        TextWrapping="Wrap"
+                        Text="{Binding DateTimeString}">
+                    </TextBlock>
+                    <TextBlock
+                        Opacity="0.5"
+                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding PrimaryCalendar, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
+                        Text="{Binding CalendarName}">
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </md:ColorZone>
+    </Button>
 </UserControl>

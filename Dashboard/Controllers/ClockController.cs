@@ -14,12 +14,16 @@ namespace Dashboard.Controllers
             get { return DateTime.Now; }
         }
 
-        private Timer timer;
+        public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMilliseconds(100);
 
         public ClockController()
         {
-            timer = new Timer(_ => NotifyChanged(nameof(Time)), null, 0, 100);
             Loaded = true;
+        }
+
+        public override void OnRefresh()
+        {
+            NotifyChanged(nameof(Time));
         }
     }
 }

@@ -17,27 +17,32 @@
     mc:Ignorable="d"
     d:DesignHeight="200"
     d:DesignWidth="500"
-    
-    
     HorizontalAlignment="Center"
     VerticalAlignment="Center"
     Width="500"
     Height="200">
     <!-- TODO: a proper way to position components-->
-    
-    
-    
+
     <Viewbox
         Stretch="Uniform">
         <Grid
             Width="500"
             Height="200">
-            <TextBlock
+            <StackPanel
+                Orientation="Vertical"
                 VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Style="{DynamicResource MaterialDesignHeadline1TextBlock}"
-                Text="{Binding Path=Time, StringFormat={}{0:HH:mm:ss}}">
-            </TextBlock>
+                HorizontalAlignment="Center">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{DynamicResource MaterialDesignHeadline1TextBlock}"
+                    Text="{Binding Path=Time, StringFormat={}{0:HH:mm:ss}}">
+                </TextBlock>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{DynamicResource MaterialDesignHeadline5TextBlock}"
+                    Text="{Binding Path=Time, StringFormat={}{0:ddd MMM dd\, yyyy}}">
+                </TextBlock>
+            </StackPanel>
         </Grid>
     </Viewbox>
 </comp:ClockComponentBase>

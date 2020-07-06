@@ -1,7 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Utilities;
+using Dashboard.Utilities.Auth.Models;
 using SpotifyAPI.Web;
-using SpotifyAPI.Web.Auth;
 using Swan.Parsers;
 using System;
 using System.Collections.Generic;
@@ -39,11 +39,11 @@ namespace Dashboard.ServiceProviders
                     return Task.CompletedTask;
                 };
 
-                var request = new LoginRequest(_server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
+                var request = new SpotifyAPI.Web.LoginRequest(_server.BaseUri, ClientId, SpotifyAPI.Web.LoginRequest.ResponseType.Code)
                 {
                     Scope = requiredScopes
                 };
-                BrowserUtil.Open(request.ToUri());
+                Helper.OpenUri(request.ToUri());
 
                 while (!taskCompletionSource.Task.IsCompleted)
                 {
