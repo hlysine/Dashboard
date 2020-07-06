@@ -78,7 +78,7 @@
                             Width="50"
                             Height="50"
                             Kind="Pause"
-                            Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <md:PackIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -105,23 +105,14 @@
                         Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                         Text="{Binding CurrentTrackArtists}">
                     </TextBlock>
-                    <StackPanel
-                        Margin="0 5 0 0"
-                        Orientation="Horizontal"
+                    <TextBlock
+                        Name="lblAlbumName"
+                        Opacity="0.7"
+                        Margin="5 5 0 0"
                         VerticalAlignment="Center"
-                        Opacity="0.7">
-                        <TextBlock
-                            Margin="5 0 0 0"
-                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                            Text="in">
-                        </TextBlock>
-                        <TextBlock
-                            Name="lblAlbumName"
-                            Margin="5 0 0 0"
-                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                            Text="{Binding CurrentTrackAlbum}">
-                        </TextBlock>
-                    </StackPanel>
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Text="{Binding CurrentTrackAlbum, StringFormat=in {0}}">
+                    </TextBlock>
                 </StackPanel>
             </Grid>
         </Grid>

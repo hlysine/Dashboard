@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Taken from https://github.com/JohnnyCrazy/SpotifyAPI-NET/blob/master/SpotifyAPI.Web/Models/Request/LoginRequest.cs
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;

@@ -33,7 +33,7 @@ namespace Dashboard.Models
 
         public int Rank
         {
-            get => getUser()?.statistics.rank.global ?? sUser.current_mode_rank;
+            get => getUser()?.statistics?.rank.global ?? sUser.current_mode_rank;
         }
 
         public bool Online
@@ -48,12 +48,12 @@ namespace Dashboard.Models
 
         public double? PP
         {
-            get => getUser()?.statistics.pp;
+            get => getUser()?.statistics?.pp;
         }
 
         public double? Accuracy
         {
-            get => getUser()?.statistics.hit_accuracy;
+            get => getUser()?.statistics?.hit_accuracy;
         }
 
         public string AvatarUrl
