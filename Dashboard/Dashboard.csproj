@@ -43,61 +43,61 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Components\LauncherComponent.xaml.cs">
+    <Compile Update="Views\LauncherView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\GoogleGmailComponent.xaml.cs">
+    <Compile Update="Views\GoogleGmailView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\GoogleTasksComponent.xaml.cs">
+    <Compile Update="Views\GoogleTasksView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\GoogleCalendarComponent.xaml.cs">
+    <Compile Update="Views\GoogleCalendarView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\GoogleGmailThreadControl.xaml.cs">
+    <Compile Update="Views\GoogleGmailThreadControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\OsuUserControl.xaml.cs">
+    <Compile Update="Views\OsuUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\GoogleTasksTaskControl.xaml.cs">
+    <Compile Update="Views\GoogleTasksTaskControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\OsuComponent.xaml.cs">
+    <Compile Update="Views\OsuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Components\SpotifyComponent.xaml.cs">
+    <Compile Update="Views\SpotifyView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Components\LauncherComponent.xaml">
+    <Page Update="Views\LauncherView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\GoogleGmailComponent.xaml">
+    <Page Update="Views\GoogleGmailView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\GoogleTasksComponent.xaml">
+    <Page Update="Views\GoogleTasksView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\GoogleCalendarComponent.xaml">
+    <Page Update="Views\GoogleCalendarView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\GoogleGmailThreadControl.xaml">
+    <Page Update="Views\GoogleGmailThreadControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\OsuUserControl.xaml">
+    <Page Update="Views\OsuUserControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\GoogleTasksTaskControl.xaml">
+    <Page Update="Views\GoogleTasksTaskControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\OsuComponent.xaml">
+    <Page Update="Views\OsuView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Components\SpotifyComponent.xaml">
+    <Page Update="Views\SpotifyView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

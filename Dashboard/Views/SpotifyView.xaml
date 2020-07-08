@@ -1,0 +1,120 @@
+﻿<view:SpotifyViewBase
+    x:Class="Dashboard.Views.SpotifyView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:local="clr-namespace:Dashboard"
+    xmlns:view="clr-namespace:Dashboard.Views"
+    xmlns:comp="clr-namespace:Dashboard.Components"
+    xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    Background="Transparent"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    mc:Ignorable="d"
+    d:DesignHeight="100"
+    d:DesignWidth="700"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Top"
+    Width="700"
+    Height="100">
+    <!-- TODO: a proper way to position Views-->
+
+    <Viewbox
+        Stretch="Uniform">
+        <Grid
+            Width="700"
+            Height="100">
+            <Grid
+                Margin="10"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Visibility="{Binding HasTrack, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition
+                        Width="Auto" />
+                    <ColumnDefinition
+                        Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image
+                    Name="imgAlbumCover"
+                    Width="80"
+                    Height="80"
+                    Margin="0 0 20 0"
+                    Source="{Binding CurrentTrackImageUrl}">
+                </Image>
+                <Button
+                    Style="{StaticResource FadeOutMaterialDesignFlatButton}"
+                    Width="80"
+                    Height="80"
+                    Margin="0 0 20 0"
+                    ToolTip="Play/Pause"
+                    Opacity="0"
+                    Padding="0"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch">
+                    <cmd:CommandBehaviorCollection.Behaviors>
+                        <cmd:BehaviorBinding
+                            Command="{Binding PlayPauseCommand}"
+                            Event="Click" />
+                    </cmd:CommandBehaviorCollection.Behaviors>
+                    <Grid
+                        Margin="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                        <Grid.Background>
+                            <SolidColorBrush
+                                Color="Black"
+                                Opacity="0.5" />
+                        </Grid.Background>
+                        <md:PackIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Width="50"
+                            Height="50"
+                            Kind="Pause"
+                            Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <md:PackIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Width="50"
+                            Height="50"
+                            Kind="Play"
+                            Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}" />
+                    </Grid>
+                </Button>
+
+                <StackPanel
+                    Grid.Column="1"
+                    Orientation="Vertical"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Name="lblTrackName"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                        Text="{Binding CurrentTrackName}">
+                    </TextBlock>
+                    <TextBlock
+                        Name="lblArtistName"
+                        Margin="0 5 0 0"
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Text="{Binding CurrentTrackArtists}">
+                    </TextBlock>
+                    <TextBlock
+                        Name="lblAlbumName"
+                        Opacity="0.7"
+                        Margin="5 5 0 0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Text="{Binding CurrentTrackAlbum, StringFormat=in {0}}">
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</view:SpotifyViewBase>

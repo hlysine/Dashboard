@@ -1,46 +1,121 @@
-﻿using Dashboard.Controllers;
+﻿using Dashboard.Config;
+using Dashboard.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Windows.Controls;
 
 namespace Dashboard.Components
 {
-    public abstract class DashboardComponent<TController> : UserControl where TController : DashboardController, new()
+    [ContainsConfig]
+    public abstract class DashboardComponent : NotifyPropertyChanged
     {
-        public TController Controller { get; private set; }
-
-        private object loadedContent;
-
-        public DashboardComponent(ComponentManager manager)
+        public virtual void Initialize()
         {
-            if (manager != null)
+            OnInitialize();
+        }
+
+        public virtual void InitializationComplete()
+        {
+            OnInitializationComplete();
+        }
+
+        /// <summary>
+        /// To be called when <see cref="DashboardManager"/> finished the initialization of this Component (filled in required services)
+        /// <para>A good place to call <see cref="Services.AuthCodeService.Authorize(System.Threading.CancellationToken)"/>.</para>
+        /// </summary>
+        protected virtual void OnInitialize()
+        {
+
+        }
+
+        /// <summary>
+        /// To be called when <see cref="DashboardManager"/> instantiated all components.
+        /// <para>A good place to call <see cref="Services.AuthCodeService.RequireScopes(string[])"/>.</para>
+        /// </summary>
+        protected virtual void OnInitializationComplete()
+        {
+
+        }
+
+        public virtual DashboardComponent Parent { get; set; }
+
+        private bool foreground;
+
+        public bool ThisForeground
+        {
+            get => foreground;
+            set
             {
-                Controller = manager.GetController<TController>();
-                DataContext = Controller;
+                SetAndNotify(ref foreground, value);
+                ForegroundChanged();
             }
         }
 
-        protected void Load()
+        public bool Foreground
         {
-            if (!Controller.Loaded)
+            get
             {
-                Controller.FinishedLoading += Controller_FinishedLoading;
-                loadedContent = Content;
-
-                ProgressBar loadingBar = new ProgressBar();
-                loadingBar.Style = (System.Windows.Style)FindResource("MaterialDesignCircularProgressBar");
-                loadingBar.Value = 0;
-                loadingBar.IsIndeterminate = true;
-
-                Content = loadingBar;
+                var fg = ThisForeground;
+                var comp = this;
+                while (comp.Parent != null)
+                {
+                    fg &= comp.Parent.ThisForeground;
+                    comp = comp.Parent;
+                }
+                return fg;
             }
         }
 
-        private void Controller_FinishedLoading(object sender, EventArgs e)
+        public virtual void ForegroundChanged()
         {
-            Content = loadedContent;
+            OnForegroundChanged();
         }
+
+        protected virtual void OnForegroundChanged()
+        {
+
+        }
+
+        public virtual void GetServices(DashboardManager manager)
+        {
+            var properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
+                .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
+            properties.ForEach(x => x.prop.SetValue(this, manager.GetService(x.prop.PropertyType, (string)GetType().GetProperty(x.Item2.ServiceIdProperty).GetValue(this))));
+        }
+
+        private bool loaded = false;
+
+        /// <summary>
+        /// Whether the Component has finished the initial load (including authentication and initial data load).
+        /// <para>Will invoke <see cref="FinishedLoading"/> when this is set from false to true.</para>
+        /// </summary>
+        public bool Loaded
+        {
+            get => loaded;
+            protected set
+            {
+                if (value && !loaded)
+                {
+                    loaded = value;
+                    FinishedLoading?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    loaded = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// When the Component finished the initial load (including authentication and initial data load).
+        /// </summary>
+        public event EventHandler FinishedLoading;
     }
 }

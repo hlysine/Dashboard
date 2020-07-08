@@ -34,6 +34,19 @@ namespace Dashboard.Utilities
             return enumeration;
         }
 
+        public static string RandomString(int length)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[length];
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[Rnd.Next(chars.Length)];
+            }
+
+            return new string(stringChars);
+        }
+
         public static void OpenUri(Uri uri)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
