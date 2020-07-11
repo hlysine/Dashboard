@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:Dashboard"
     xmlns:view="clr-namespace:Dashboard.Views"
     xmlns:comp="clr-namespace:Dashboard.Components"
+    xmlns:utils="clr-namespace:Dashboard.Utilities"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
@@ -17,21 +18,21 @@
     FontFamily="{DynamicResource MaterialDesignFont}"
     mc:Ignorable="d"
     d:DesignHeight="100"
-    d:DesignWidth="700"
+    d:DesignWidth="500"
     HorizontalAlignment="Left"
     VerticalAlignment="Top"
-    Width="700"
+    Width="500"
     Height="100">
     <!-- TODO: a proper way to position Views-->
 
     <Viewbox
         Stretch="Uniform">
         <Grid
-            Width="700"
+            Width="500"
             Height="100">
             <Grid
                 Margin="10"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Visibility="{Binding HasTrack, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
@@ -89,31 +90,121 @@
                     </Grid>
                 </Button>
 
-                <StackPanel
-                    Grid.Column="1"
-                    Orientation="Vertical"
-                    VerticalAlignment="Center">
-                    <TextBlock
-                        Name="lblTrackName"
+                <Grid
+                    Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="*" />
+                        <ColumnDefinition
+                            Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Orientation="Vertical"
+                        VerticalAlignment="Center">
+                        <StackPanel
+                            HorizontalAlignment="Stretch"
+                            Orientation="Horizontal"
+                            Background="Transparent"
+                            ClipToBounds="True">
+                            <TextBlock
+                                Name="lblTrackName"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                utils:Marquee.IsEnabled="True"
+                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                Text="{Binding CurrentTrackName}">
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel
+                            HorizontalAlignment="Stretch"
+                            Orientation="Horizontal"
+                            Background="Transparent"
+                            ClipToBounds="True"
+                            Margin="0 5 0 0">
+                            <TextBlock
+                                Name="lblArtistName"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                utils:Marquee.IsEnabled="True"
+                                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                Text="{Binding CurrentTrackArtists}">
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel
+                            HorizontalAlignment="Stretch"
+                            Orientation="Horizontal"
+                            Background="Transparent"
+                            ClipToBounds="True"
+                            Margin="5 5 0 0">
+                            <TextBlock
+                                Name="lblAlbumName"
+                                Opacity="0.7"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                utils:Marquee.IsEnabled="True"
+                                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                Text="{Binding CurrentTrackAlbum, StringFormat=in {0}}">
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="1"
+                        Orientation="Vertical"
                         VerticalAlignment="Center"
-                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                        Text="{Binding CurrentTrackName}">
-                    </TextBlock>
-                    <TextBlock
-                        Name="lblArtistName"
-                        Margin="0 5 0 0"
-                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                        Text="{Binding CurrentTrackArtists}">
-                    </TextBlock>
-                    <TextBlock
-                        Name="lblAlbumName"
-                        Opacity="0.7"
-                        Margin="5 5 0 0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                        Text="{Binding CurrentTrackAlbum, StringFormat=in {0}}">
-                    </TextBlock>
-                </StackPanel>
+                        Margin="5 0 0 0">
+
+                        <TextBlock
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                            Opacity="0.7">
+                            <TextBlock.Text>
+                                <MultiBinding
+                                    StringFormat="{}{0} / {1}">
+                                    <Binding
+                                        Path="PlaybackProgress"
+                                        Converter="{StaticResource TimeSpanToStringConverter}" />
+                                    <Binding
+                                        Path="CurrentTrackDuration"
+                                        Converter="{StaticResource TimeSpanToStringConverter}" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <StackPanel
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                            <Button
+                                Grid.Column="1"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                ToolTip="Play song radio"
+                                Width="32"
+                                Height="32"
+                                Command="{Binding RadioCommand}">
+                                <md:PackIcon
+                                    Kind="Wireless" />
+                            </Button>
+
+                            <ToggleButton
+                                Grid.Column="2"
+                                Style="{StaticResource MaterialDesignActionToggleButton}"
+                                ToolTip="Save to / remove from Loved Songs"
+                                Background="Transparent"
+                                Foreground="{DynamicResource SecondaryAccentBrush}"
+                                IsChecked="{Binding SavedTrack, Mode=TwoWay}">
+                                <ToggleButton.Content>
+                                    <md:PackIcon
+                                        Kind="HeartOutline" />
+                                </ToggleButton.Content>
+                                <md:ToggleButtonAssist.OnContent>
+                                    <md:PackIcon
+                                        Kind="Heart" />
+                                </md:ToggleButtonAssist.OnContent>
+                            </ToggleButton>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Viewbox>

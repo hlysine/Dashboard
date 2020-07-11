@@ -57,6 +57,7 @@ namespace Dashboard.Components
                 if (!Gmail.IsAuthorized)
                     await Gmail.Authorize();
                 await LoadGmail();
+                StartAutoRefresh();
             }
             Loaded = true;
         }

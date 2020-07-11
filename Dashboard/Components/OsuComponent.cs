@@ -50,6 +50,7 @@ namespace Dashboard.Components
                 if (!Osu.IsAuthorized)
                     await Osu.Authorize();
                 await LoadFriends();
+                StartAutoRefresh();
             }
             Loaded = true;
         }

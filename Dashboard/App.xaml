@@ -84,6 +84,12 @@
             <converters:DateTimeToStringConverter
                 x:Key="DateTimeToStringConverter" />
 
+            <converters:TimeSpanToStringConverter
+                x:Key="TimeSpanToStringConverter" />
+
+            <converters:NegativeValueConverter
+                x:Key="NegativeValueConverter" />
+
             <Style
                 TargetType="FrameworkElement"
                 x:Key="VisibleAnimation">

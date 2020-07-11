@@ -4,11 +4,13 @@ using Dashboard.Utilities;
 using SpotifyAPI.Web;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Dashboard.Components
 {
@@ -32,8 +34,14 @@ namespace Dashboard.Components
                 nameof(CurrentTrackAlbum),
                 nameof(CurrentTrackName),
                 nameof(CurrentTrackImageUrl),
-                nameof(HasTrack)
+                nameof(HasTrack),
+                nameof(CurrentTrackDuration)
             });
+        }
+
+        public TimeSpan CurrentTrackDuration
+        {
+            get => TimeSpan.FromMilliseconds((CurrentTrack?.DurationMs).GetValueOrDefault());
         }
 
         public string CurrentTrackArtists
@@ -69,6 +77,39 @@ namespace Dashboard.Components
             set => SetAndNotify(ref isPlaying, value);
         }
 
+        private bool savedTrack = false;
+
+        public bool SavedTrack
+        {
+            get => savedTrack;
+            set
+            {
+                if (savedTrack != value)
+                {
+                    SetAndNotify(ref savedTrack, value);
+                    updateSavedTrack();
+                }
+                else
+                {
+                    SetAndNotify(ref savedTrack, value);
+                }
+            }
+        }
+
+        private DateTime startTime;
+        private DateTime pauseTime;
+
+        public TimeSpan PlaybackProgress
+        {
+            get
+            {
+                if (IsPlaying)
+                    pauseTime = DateTime.Now;
+                var progress = pauseTime - startTime;
+                return (CurrentTrackDuration > progress) ? progress : CurrentTrackDuration;
+            }
+        }
+
         private RelayCommand playPauseCommand;
 
         public ICommand PlayPauseCommand
@@ -89,25 +130,79 @@ namespace Dashboard.Components
                             {
                                 IsPlaying = await Spotify.ResumePlayback();
                             }
+                            pauseTime = DateTime.Now;
                         }
-                        catch (Exception _)
+                        catch (APIException)
                         {
                             // User clicked too frequently, or no active device
                         }
                         // In case something goes wrong, schedule a check
-                        _ = Task.Delay(500).ContinueWith(_ => UpdateCurrentlyPlaying());
+                        _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
                     },
                     // can execute
                     () =>
                     {
-                        // TODO: can't play when there's no active device?
                         return HasTrack;
                     }
                 ));
             }
         }
 
-        public override TimeSpan ForegroundRefreshRate => TimeSpan.FromSeconds(10);
+        private RelayCommand radioCommand;
+
+        public ICommand RadioCommand
+        {
+            get
+            {
+                return radioCommand ?? (radioCommand = new RelayCommand(
+                    // execute
+                    async () =>
+                    {
+                        // build radio list
+                        var recommendations = await Spotify.GetRecommendations(new[] { CurrentTrack.Id }, 100);
+                        List<string> playlist = recommendations.Tracks.Select(x => x.Uri).ToList();
+                        playlist.RemoveAll(x => x == CurrentTrack.Uri);
+                        playlist.Insert(0, CurrentTrack.Uri);
+
+                        // set shuffle and repeat
+                        try
+                        {
+                            await Spotify.SetShuffle(false);
+                        }
+                        catch (APIException)
+                        {
+                            // May fail if user is playing a radio
+                        }
+                        try
+                        {
+                            await Spotify.SetRepeat(PlayerSetRepeatRequest.State.Off);
+                        }
+                        catch (APIException)
+                        {
+                        }
+
+                        // play the list
+                        try
+                        {
+                            await Spotify.StartPlayback(playlist);
+                        }
+                        catch (APIException)
+                        {
+                        }
+
+                        // shedule a check
+                        _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
+                    },
+                    // can execute
+                    () =>
+                    {
+                        return HasTrack;
+                    }
+                ));
+            }
+        }
+
+        public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMilliseconds(100);
 
         public SpotifyComponent()
         {
@@ -119,7 +214,7 @@ namespace Dashboard.Components
             {
                 if (!Spotify.IsAuthorized)
                     await Spotify.Authorize();
-                UpdateCurrentlyPlaying();
+                updateCurrentlyPlaying();
                 StartAutoRefresh();
             }
             Loaded = true;
@@ -129,6 +224,7 @@ namespace Dashboard.Components
         {
             Spotify.RequireScopes(new[] {
                 Scopes.UserLibraryRead,
+                Scopes.UserLibraryModify,
                 Scopes.UserReadCurrentlyPlaying,
                 Scopes.UserReadPlaybackPosition,
                 Scopes.UserReadPlaybackState,
@@ -141,27 +237,53 @@ namespace Dashboard.Components
         {
             base.OnForegroundChanged();
             if (Foreground)
-                UpdateCurrentlyPlaying();
+                updateCurrentlyPlaying();
         }
+
+        private int tick = 0;
 
         protected override void OnRefresh()
         {
-            UpdateCurrentlyPlaying();
+            NotifyChanged(nameof(PlaybackProgress));
+            tick++;
+            if (tick >= 100)
+            {
+                updateCurrentlyPlaying();
+                tick = 0;
+            }
         }
 
-        private async void UpdateCurrentlyPlaying()
+        private async void updateCurrentlyPlaying()
         {
             var currentlyPlaying = await Spotify.GetCurrentlyPlaying();
             if (currentlyPlaying?.Item?.Type == ItemType.Track)
             {
                 CurrentTrack = (FullTrack)currentlyPlaying.Item;
                 IsPlaying = currentlyPlaying.IsPlaying;
+                pauseTime = DateTime.Now;
+                startTime = pauseTime - TimeSpan.FromMilliseconds(currentlyPlaying.ProgressMs.GetValueOrDefault());
+                savedTrack = (await Spotify.IsInLibrary(new[] { currentTrack.Id })).FirstOrDefault();
+                NotifyChanged(nameof(SavedTrack));
                 if (scheduledCheck != currentTrack)
                 {
-                    _ = Task.Delay(CurrentTrack.DurationMs - currentlyPlaying.ProgressMs.GetValueOrDefault() + 100).ContinueWith(_ => UpdateCurrentlyPlaying());
+                    _ = Task.Delay(CurrentTrack.DurationMs - currentlyPlaying.ProgressMs.GetValueOrDefault() + 100).ContinueWith(_ => updateCurrentlyPlaying());
                     scheduledCheck = currentTrack;
                 }
             }
+        }
+
+        private async void updateSavedTrack()
+        {
+            if (SavedTrack)
+            {
+                await Spotify.AddToLibrary(new[] { CurrentTrack.Id });
+            }
+            else
+            {
+                await Spotify.RemoveFromLibrary(new[] { CurrentTrack.Id });
+            }
+            // In case something goes wrong, schedule a check
+            _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
         }
     }
 }

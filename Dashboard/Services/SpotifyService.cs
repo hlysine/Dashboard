@@ -86,7 +86,6 @@ namespace Dashboard.Services
 
         public override async Task Unauthorize(CancellationToken cancel = default)
         {
-            //TODO: delete saved RefreshToken
             RefreshToken = null;
             AccessToken = null;
             AuthorizedScopes.Clear();
@@ -98,6 +97,11 @@ namespace Dashboard.Services
             return await spotify.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest());
         }
 
+        public async Task<bool> StartPlayback(IEnumerable<string> uris)
+        {
+            return await spotify.Player.ResumePlayback(new PlayerResumePlaybackRequest() { Uris = uris.ToList() });
+        }
+
         public async Task<bool> ResumePlayback()
         {
             return await spotify.Player.ResumePlayback();
@@ -106,6 +110,39 @@ namespace Dashboard.Services
         public async Task<bool> PausePlayback()
         {
             return await spotify.Player.PausePlayback();
+        }
+
+        public async Task<bool> AddToLibrary(string[] trackId)
+        {
+            return await spotify.Library.SaveTracks(new LibrarySaveTracksRequest(trackId));
+        }
+
+        public async Task<bool> RemoveFromLibrary(string[] trackId)
+        {
+            return await spotify.Library.RemoveTracks(new LibraryRemoveTracksRequest(trackId));
+        }
+
+        public async Task<List<bool>> IsInLibrary(string[] trackId)
+        {
+            return await spotify.Library.CheckTracks(new LibraryCheckTracksRequest(trackId));
+        }
+
+        public async Task<RecommendationsResponse> GetRecommendations(string[] seedTrackIds, int limit = 20)
+        {
+            var request = new RecommendationsRequest();
+            seedTrackIds.ForEach(x => request.SeedTracks.Add(x));
+            request.Limit = limit;
+            return await spotify.Browse.GetRecommendations(request);
+        }
+
+        public async Task<bool> SetRepeat(PlayerSetRepeatRequest.State state)
+        {
+            return await spotify.Player.SetRepeat(new PlayerSetRepeatRequest(state));
+        }
+
+        public async Task<bool> SetShuffle(bool state)
+        {
+            return await spotify.Player.SetShuffle(new PlayerShuffleRequest(state));
         }
     }
 }

@@ -15,8 +15,6 @@ namespace Dashboard.Components
 
         public Action<object> WindowInitialize { get; private set; }
 
-        public Action<object> QuitApplication { get; private set; }
-
         public Action<object> LostFocus { get; private set; }
 
         [PersistentConfig]
@@ -40,17 +38,35 @@ namespace Dashboard.Components
             }
         }
 
+        private RelayCommand quitAppCommand;
+
+        public ICommand QuitAppCommand
+        {
+            get
+            {
+                return quitAppCommand ?? (quitAppCommand = new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        Application.Current.Shutdown();
+                    },
+                    // can execute
+                    () => true
+                ));
+            }
+        }
+
         private KeyboardHook keyHook = new KeyboardHook();
 
         public WindowContainer()
         {
-            
+            ThisForeground = false;
+
             WindowInitialize = _ =>
             {
                 if (initialized) return;
                 initialized = true;
 
-                // TODO: only register if user set autostart config
                 if (Autostart)
                     AutoRun.Register();
                 else
@@ -73,11 +89,6 @@ namespace Dashboard.Components
                 //Components.Add(gmail);
                 //Components.Add(osu);
                 //Components.Add(launcher);
-            };
-
-            QuitApplication = _ =>
-            {
-                Application.Current.Shutdown();
             };
 
             LostFocus = _ =>

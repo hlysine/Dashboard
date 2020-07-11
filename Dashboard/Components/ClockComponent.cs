@@ -21,6 +21,11 @@ namespace Dashboard.Components
             Loaded = true;
         }
 
+        protected override void OnInitializationComplete()
+        {
+            StartAutoRefresh();
+        }
+
         protected override void OnForegroundChanged()
         {
             base.OnForegroundChanged();

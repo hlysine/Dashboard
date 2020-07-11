@@ -57,6 +57,7 @@ namespace Dashboard.Components
                     await Calendar.Authorize();
                 colors = await Calendar.GetColors();
                 await LoadCalendar();
+                StartAutoRefresh();
             }
             Loaded = true;
         }

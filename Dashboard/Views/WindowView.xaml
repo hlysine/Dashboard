@@ -65,16 +65,11 @@
                         <MenuItem
                             Header="Settings" />
                         <MenuItem
-                            Header="Exit">
-                            <cmd:CommandBehaviorCollection.Behaviors>
-                                <cmd:BehaviorBinding
-                                    Action="{Binding QuitApplication}"
-                                    Event="Click" />
-                            </cmd:CommandBehaviorCollection.Behaviors>
-                        </MenuItem>
+                            Header="Exit"
+                            Command="{Binding QuitAppCommand}"/>
                     </ContextMenu>
                 </tb:TaskbarIcon.ContextMenu>
-                <tb:TaskbarIcon.TrayPopup>
+                <!--<tb:TaskbarIcon.TrayPopup>
                     <TextBlock
                         Style="{DynamicResource MaterialDesignBody1TextBlock}">
                         Dashboard
@@ -87,7 +82,7 @@
                         Dashboard
                         </TextBlock>
                     </ToolTip>
-                </tb:TaskbarIcon.TrayToolTip>
+                </tb:TaskbarIcon.TrayToolTip>-->
 
             </tb:TaskbarIcon>
 

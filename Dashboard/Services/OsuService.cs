@@ -99,7 +99,6 @@ namespace Dashboard.Services
 
         public override async Task Unauthorize(CancellationToken cancel = default)
         {
-            //TODO: delete saved RefreshToken
             RefreshToken = null;
             AccessToken = null;
             AuthorizedScopes.Clear();

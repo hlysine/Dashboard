@@ -61,6 +61,7 @@ namespace Dashboard.Components
                 if (!Tasks.IsAuthorized)
                     await Tasks.Authorize();
                 await LoadTasks();
+                StartAutoRefresh();
             }
             Loaded = true;
         }

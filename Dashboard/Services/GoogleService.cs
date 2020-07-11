@@ -1,6 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Utilities;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Dashboard.Services
 {
@@ -20,9 +22,10 @@ namespace Dashboard.Services
         [Obsolete("This property is not used", true)]
         public new string RefreshToken { get; set; }
 
-        public override bool IsAuthorized => credential != null;
+        [PersistentConfig]
+        public List<CredentialKeyValuePair<string, object>> Credentials { get; set; } = new List<CredentialKeyValuePair<string, object>>();
 
-        private readonly string credPath = "google-tokens".ToAbsolutePath();
+        public override bool IsAuthorized => credential != null;
 
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
@@ -44,10 +47,6 @@ namespace Dashboard.Services
                     await Unauthorize();
                 }
 
-                // TODO: use custom DataStore
-
-                // The file token.json stores the user's access and refresh tokens, and is created
-                // automatically when the authorization flow completes for the first time.
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     new ClientSecrets
                     {
@@ -55,9 +54,9 @@ namespace Dashboard.Services
                         ClientSecret = ClientSecret
                     },
                     requiredScopes,
-                    "user",
+                    Id,
                     cancel,
-                    new FileDataStore(credPath, true));
+                    new ConfigDataStore(this));
                 AuthorizedScopes = requiredScopes;
                 RaiseConfigUpdated(EventArgs.Empty);
             }
@@ -69,9 +68,7 @@ namespace Dashboard.Services
 
         public override async Task Unauthorize(CancellationToken cancel = default)
         {
-            //TODO: delete saved token.json
-            if (Directory.Exists(credPath))
-                Directory.Delete(credPath, true);
+            Credentials.Clear();
             AuthorizedScopes.Clear();
             RaiseConfigUpdated(EventArgs.Empty);
         }
@@ -79,6 +76,50 @@ namespace Dashboard.Services
         public UserCredential GetCredential()
         {
             return credential;
+        }
+    }
+
+    [XmlInclude(typeof(TokenResponse))]
+    public class CredentialKeyValuePair<TKey, TValue>
+    {
+        public TKey Key { get; set; }
+        public TValue Value { get; set; }
+
+        public CredentialKeyValuePair(TKey _key, TValue _value) => (Key, Value) = (_key, _value);
+        public CredentialKeyValuePair()
+        {
+
+        }
+    }
+
+    public class ConfigDataStore : IDataStore
+    {
+        private GoogleService service;
+
+        public ConfigDataStore(GoogleService _service) => service = _service;
+
+        public async Task ClearAsync()
+        {
+            service.Credentials.Clear();
+        }
+
+        public async Task DeleteAsync<T>(string key)
+        {
+            service.Credentials.RemoveAll(x => x.Key == key);
+        }
+
+        public async Task<T> GetAsync<T>(string key)
+        {
+            return (T)service.Credentials.FirstOrDefault(x => x.Key == key)?.Value;
+        }
+
+        public async Task StoreAsync<T>(string key, T value)
+        {
+            if (service.Credentials.Any(x => x.Key == key))
+            {
+                service.Credentials.RemoveAll(x => x.Key == key);
+            }
+            service.Credentials.Add(new CredentialKeyValuePair<string, object>(key, value));
         }
     }
 }

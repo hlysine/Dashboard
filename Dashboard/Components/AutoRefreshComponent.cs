@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
@@ -11,20 +12,26 @@ namespace Dashboard.Components
         public virtual TimeSpan ForegroundRefreshRate => TimeSpan.FromMinutes(2);
         public virtual TimeSpan BackgroundRefreshRate => TimeSpan.FromMinutes(30);
 
-        private DispatcherTimer refreshTimer;
+        private Timer refreshTimer;
 
         public AutoRefreshComponent()
         {
-            refreshTimer = new DispatcherTimer();
-            refreshTimer.Interval = GetRefreshRate();
-            refreshTimer.Tick += RefreshTimer_Tick;
-            refreshTimer.Stop();
+            refreshTimer = new Timer();
+            refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
+            refreshTimer.AutoReset = true;
+            refreshTimer.Elapsed += RefreshTimer_Elapsed;
         }
 
-        private void RefreshTimer_Tick(object sender, EventArgs e)
+        private void RefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            OnRefresh();
+            if (Loaded)
+                OnRefresh();
         }
+
+        //public override void Initialize()
+        //{
+        //    base.Initialize();
+        //}
 
         protected virtual TimeSpan GetRefreshRate()
         {
@@ -36,7 +43,7 @@ namespace Dashboard.Components
 
         protected override void OnForegroundChanged()
         {
-            refreshTimer.Interval = GetRefreshRate();
+            refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
         }
 
         protected void StartAutoRefresh()

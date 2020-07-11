@@ -27,7 +27,7 @@ namespace Dashboard.Components
 
         /// <summary>
         /// To be called when <see cref="DashboardManager"/> finished the initialization of this Component (filled in required services)
-        /// <para>A good place to call <see cref="Services.AuthCodeService.Authorize(System.Threading.CancellationToken)"/>.</para>
+        /// <para>A good place to call <see cref="Services.AuthCodeService.RequireScopes(string[])"/>.</para>
         /// </summary>
         protected virtual void OnInitialize()
         {
@@ -36,7 +36,7 @@ namespace Dashboard.Components
 
         /// <summary>
         /// To be called when <see cref="DashboardManager"/> instantiated all components.
-        /// <para>A good place to call <see cref="Services.AuthCodeService.RequireScopes(string[])"/>.</para>
+        /// <para>A good place to call <see cref="Services.AuthCodeService.Authorize(System.Threading.CancellationToken)"/>.</para>
         /// </summary>
         protected virtual void OnInitializationComplete()
         {
@@ -45,7 +45,7 @@ namespace Dashboard.Components
 
         public virtual DashboardComponent Parent { get; set; }
 
-        private bool foreground;
+        private bool foreground = true;
 
         public bool ThisForeground
         {
@@ -61,14 +61,15 @@ namespace Dashboard.Components
         {
             get
             {
-                var fg = ThisForeground;
-                var comp = this;
-                while (comp.Parent != null)
-                {
-                    fg &= comp.Parent.ThisForeground;
-                    comp = comp.Parent;
-                }
-                return fg;
+                return ThisForeground && (Parent?.Foreground ?? true);
+                //var fg = ThisForeground;
+                //var comp = this;
+                //while (comp.Parent != null)
+                //{
+                //    fg &= comp.Parent.ThisForeground;
+                //    comp = comp.Parent;
+                //}
+                //return fg;
             }
         }
 
