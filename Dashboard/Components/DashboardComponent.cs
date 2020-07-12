@@ -19,6 +19,12 @@ namespace Dashboard.Components
         [PersistentConfig]
         public ComponentPosition Position { get => position; set => SetAndNotify(ref position, value); }
 
+        private bool showTitle = true;
+        [PersistentConfig]
+        public bool ShowTitle { get => showTitle; set => SetAndNotify(ref showTitle, value); }
+
+        public abstract string Name { get; }
+
         public virtual void Initialize()
         {
             OnInitialize();

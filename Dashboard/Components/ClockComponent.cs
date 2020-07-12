@@ -9,6 +9,8 @@ namespace Dashboard.Components
 {
     public class ClockComponent : AutoRefreshComponent
     {
+        public override string Name => "Clock";
+
         public DateTime Time
         {
             get { return DateTime.Now; }

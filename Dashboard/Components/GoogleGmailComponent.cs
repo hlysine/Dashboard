@@ -17,6 +17,8 @@ namespace Dashboard.Components
 {
     public class GoogleGmailComponent : AutoRefreshComponent
     {
+        public override string Name => "Gmail";
+
         [RequireService(nameof(GoogleAccountId))]
         public GoogleGmailService Gmail { get; set; }
 

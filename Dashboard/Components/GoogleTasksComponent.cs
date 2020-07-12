@@ -17,6 +17,8 @@ namespace Dashboard.Components
 {
     public class GoogleTasksComponent : AutoRefreshComponent
     {
+        public override string Name => "Google Tasks";
+
         [RequireService(nameof(GoogleAccountId))]
         public GoogleTasksService Tasks { get; set; }
 

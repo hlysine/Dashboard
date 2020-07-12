@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
 using Dashboard.Components;
+using Dashboard.Utilities.Converters;
 
 namespace Dashboard.Views
 {
@@ -24,23 +28,74 @@ namespace Dashboard.Views
 
         protected void Load()
         {
+            loadedContent = Content;
             if (!Component.Loaded)
             {
                 Component.FinishedLoading += Component_FinishedLoading;
-                loadedContent = Content;
 
                 ProgressBar loadingBar = new ProgressBar();
-                loadingBar.Style = (System.Windows.Style)FindResource("MaterialDesignCircularProgressBar");
+                loadingBar.Style = (Style)FindResource("MaterialDesignCircularProgressBar");
                 loadingBar.Value = 0;
                 loadingBar.IsIndeterminate = true;
 
-                Content = loadingBar;
+                Content = wrapWithTitle(loadingBar);
+            }
+            else
+            {
+                Content = null;
+                Content = wrapWithTitle((UIElement)loadedContent);
             }
         }
 
         private void Component_FinishedLoading(object sender, EventArgs e)
         {
-            Content = loadedContent;
+            Content = wrapWithTitle((UIElement)loadedContent);
+        }
+
+        private UIElement wrapWithTitle(UIElement content)
+        {
+            Grid grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+
+            TextBlock text = new TextBlock();
+            text.Text = Component.Name;
+            text.Style = (Style)FindResource("MaterialDesignCaptionTextBlock");
+
+            Binding b = new Binding();
+            b.Source = DataContext;
+            b.Path = new PropertyPath("ShowTitle");
+            b.Converter = new BoolToVisibilityConverter();
+            b.Mode = BindingMode.OneWay;
+            text.SetBinding(TextBlock.VisibilityProperty, b);
+
+            Grid.SetRow(text, 0);
+
+            Border border = new Border();
+            border.Background = (Brush)FindResource("PrimaryHueDarkForegroundBrush");
+            border.SnapsToDevicePixels = true;
+            border.Height = 1;
+            border.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            Binding b2 = new Binding();
+            b2.Source = DataContext;
+            b2.Path = new PropertyPath("ShowTitle");
+            b2.Converter = new BoolToVisibilityConverter();
+            b2.Mode = BindingMode.OneWay;
+            border.SetBinding(Border.VisibilityProperty, b2);
+
+            Grid.SetRow(border, 1);
+
+            if (content != null)
+                Grid.SetRow(content, 2);
+
+            grid.Children.Add(text);
+            grid.Children.Add(border);
+            if (content != null)
+                grid.Children.Add(content);
+
+            return grid;
         }
     }
 }

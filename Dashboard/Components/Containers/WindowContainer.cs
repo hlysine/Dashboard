@@ -15,6 +15,8 @@ namespace Dashboard.Components
 {
     public class WindowContainer : DashboardContainer
     {
+        public override string Name => "Dashboard";
+
         private bool initialized = false;
 
         public Action<object> WindowInitialize { get; private set; }

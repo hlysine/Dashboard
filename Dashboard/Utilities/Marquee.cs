@@ -65,7 +65,7 @@ namespace Dashboard.Utilities
 
                 var marquee2 = new DoubleAnimation()
                 {
-                    From = element.ActualWidth,
+                    From = parent.ActualWidth,
                     To = 0,
                     Duration = TimeSpan.FromSeconds(3),
                     BeginTime = TimeSpan.FromSeconds(8),

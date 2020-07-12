@@ -15,6 +15,8 @@ namespace Dashboard.Components
 {
     public class OsuComponent : AutoRefreshComponent
     {
+        public override string Name => "osu!";
+
         [RequireService(nameof(OsuAccountId))]
         public OsuService Osu { get; set; }
 

@@ -7,8 +7,10 @@ using System.Text;
 
 namespace Dashboard.Components.Containers
 {
-    public class DashboardContainer : DashboardComponent
+    public abstract class DashboardContainer : DashboardComponent
     {
+        public override abstract string Name { get; }
+
         [PersistentConfig]
         public ObservableCollection<DashboardComponent> Children { get; set; } = new ObservableCollection<DashboardComponent>();
 
