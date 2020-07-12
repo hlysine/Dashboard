@@ -116,7 +116,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return playPauseCommand ?? (playPauseCommand = new RelayCommand(
+                return playPauseCommand ??= new RelayCommand(
                     // execute
                     async () =>
                     {
@@ -144,7 +144,7 @@ namespace Dashboard.Components
                     {
                         return HasTrack;
                     }
-                ));
+                );
             }
         }
 
@@ -154,7 +154,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return radioCommand ?? (radioCommand = new RelayCommand(
+                return radioCommand ??= new RelayCommand(
                     // execute
                     async () =>
                     {
@@ -198,7 +198,7 @@ namespace Dashboard.Components
                     {
                         return HasTrack;
                     }
-                ));
+                );
             }
         }
 

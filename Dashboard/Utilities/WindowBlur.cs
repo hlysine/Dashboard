@@ -30,16 +30,47 @@ namespace Dashboard.Utilities
             {
                 if (true.Equals(e.OldValue))
                 {
-                    GetWindowBlur(window)?.Detach();
                     window.ClearValue(WindowBlurProperty);
                 }
                 if (true.Equals(e.NewValue))
                 {
-                    var blur = new WindowBlur();
-                    blur.Attach(window);
+                    var blur = new WindowBlur(GetBlurType(d));
                     window.SetValue(WindowBlurProperty, blur);
                 }
             }
+        }
+
+        public static readonly DependencyProperty BlurTypeProperty = DependencyProperty.RegisterAttached(
+            "BlurType", typeof(BlurType), typeof(WindowBlur),
+            new PropertyMetadata(BlurType.Acrylic, OnBlurTypeChanged));
+
+        public static void SetBlurType(DependencyObject element, BlurType value)
+        {
+            element.SetValue(BlurTypeProperty, value);
+        }
+
+        public static BlurType GetBlurType(DependencyObject element)
+        {
+            return (BlurType)element.GetValue(BlurTypeProperty);
+        }
+
+        private static void OnBlurTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Window window)
+            {
+                if (GetIsEnabled(d))
+                {
+                    var blur = new WindowBlur((BlurType)e.NewValue);
+                    window.SetValue(WindowBlurProperty, blur);
+                }
+            }
+        }
+
+        public enum BlurType
+        {
+            NoBlur,
+            Blur,
+            Acrylic
         }
 
         public static readonly DependencyProperty WindowBlurProperty = DependencyProperty.RegisterAttached(
@@ -66,6 +97,9 @@ namespace Dashboard.Utilities
         }
 
         private Window _window;
+        private BlurType type;
+
+        public WindowBlur(BlurType _type) => type = _type;
 
         private void Attach(Window window)
         {
@@ -101,15 +135,15 @@ namespace Dashboard.Utilities
 
         private void AttachCore()
         {
-            EnableBlur(_window);
+            EnableBlur(_window, type);
         }
 
         private void DetachCore()
         {
-            _window.SourceInitialized += OnSourceInitialized;
+            _window.SourceInitialized -= OnSourceInitialized;
         }
 
-        private static void EnableBlur(Window window)
+        private static void EnableBlur(Window window, BlurType type)
         {
             var windowHelper = new WindowInteropHelper(window);
 
@@ -132,7 +166,12 @@ namespace Dashboard.Utilities
             //{
             //    accent.AccentState = AccentState.ACCENT_ENABLE_TRANSPARENTGRADIENT;
             //}
-            accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
+            if (type == BlurType.NoBlur)
+                accent.AccentState = AccentState.ACCENT_DISABLED;
+            else if (type == BlurType.Blur)
+                accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            else
+                accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
 
             accent.AccentFlags = 2;
             accent.GradientColor = 0x00ffffff;

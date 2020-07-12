@@ -19,10 +19,13 @@
     mc:Ignorable="d"
     d:DesignHeight="100"
     d:DesignWidth="500"
-    HorizontalAlignment="Left"
-    VerticalAlignment="Top"
-    Width="500"
-    Height="100">
+    
+    
+    Margin="{Binding Position.Margin}"
+    HorizontalAlignment="{Binding Position.HorizontalAlignment}"
+    VerticalAlignment="{Binding Position.VerticalAlignment}"
+    Width="{Binding Position.Width}"
+    Height="{Binding Position.Height}">
     <!-- TODO: a proper way to position Views-->
 
     <Viewbox

@@ -27,22 +27,22 @@
                     </ResourceDictionary.MergedDictionaries>
                     <SolidColorBrush
                         x:Key="PrimaryHueLightBrush"
-                        Color="{StaticResource Primary100}" />
+                        Color="{DynamicResource Primary100}" />
                     <SolidColorBrush
                         x:Key="PrimaryHueLightForegroundBrush"
-                        Color="{StaticResource Primary100Foreground}" />
+                        Color="{DynamicResource Primary100Foreground}" />
                     <SolidColorBrush
                         x:Key="PrimaryHueMidBrush"
-                        Color="{StaticResource Primary500}" />
+                        Color="{DynamicResource Primary500}" />
                     <SolidColorBrush
                         x:Key="PrimaryHueMidForegroundBrush"
-                        Color="{StaticResource Primary500Foreground}" />
+                        Color="{DynamicResource Primary500Foreground}" />
                     <SolidColorBrush
                         x:Key="PrimaryHueDarkBrush"
-                        Color="{StaticResource Primary600}" />
+                        Color="{DynamicResource Primary600}" />
                     <SolidColorBrush
                         x:Key="PrimaryHueDarkForegroundBrush"
-                        Color="{StaticResource Primary600Foreground}" />
+                        Color="{DynamicResource Primary600Foreground}" />
                 </ResourceDictionary>
 
                 <!-- accent color -->
@@ -53,10 +53,10 @@
                     </ResourceDictionary.MergedDictionaries>
                     <SolidColorBrush
                         x:Key="SecondaryAccentBrush"
-                        Color="{StaticResource Accent400}" />
+                        Color="{DynamicResource Accent400}" />
                     <SolidColorBrush
                         x:Key="SecondaryAccentForegroundBrush"
-                        Color="{StaticResource Accent400Foreground}" />
+                        Color="{DynamicResource Accent400Foreground}" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 

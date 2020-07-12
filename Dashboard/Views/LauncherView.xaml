@@ -17,13 +17,11 @@
     mc:Ignorable="d"
     d:DesignHeight="100"
     d:DesignWidth="500"
-
-
-    HorizontalAlignment="Center"
-    VerticalAlignment="Bottom"
-    Width="500"
-    Height="100"
-    Margin="0 0 0 200">
+    Margin="{Binding Position.Margin}"
+    HorizontalAlignment="{Binding Position.HorizontalAlignment}"
+    VerticalAlignment="{Binding Position.VerticalAlignment}"
+    Width="{Binding Position.Width}"
+    Height="{Binding Position.Height}">
     <!-- TODO: a proper way to position Views-->
 
     <Grid

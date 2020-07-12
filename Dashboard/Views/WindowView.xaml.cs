@@ -1,11 +1,15 @@
 ﻿using Dashboard.Components;
+using Dashboard.Config;
 using Dashboard.Utilities;
 using Dashboard.Views;
+using MaterialDesignColors;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,9 +45,43 @@ namespace Dashboard
             InitializeComponent();
 
             Children_CollectionChanged(Component.Children, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            ChangeColorScheme(Component.ColorScheme);
 
 
             Component.Children.CollectionChanged += Children_CollectionChanged;
+            window.PropertyChanged += Window_PropertyChanged;
+        }
+
+        private void Window_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Observe changes in ColorScheme since it can only be applied from code behind
+            if (e.PropertyName == nameof(WindowContainer.ColorScheme))
+            {
+                ChangeColorScheme(Component.ColorScheme);
+            }
+        }
+
+        private void ChangeColorScheme(ColorScheme scheme)
+        {
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(scheme.Theme == Config.Theme.Dark ? MaterialDesignThemes.Wpf.Theme.Dark : MaterialDesignThemes.Wpf.Theme.Light);
+            var swatches = new SwatchesProvider().Swatches;
+            if (swatches.Where(x => x.ExemplarHue != null).Select(x => x.Name).Contains(scheme.PrimaryHue))
+                theme.SetPrimaryColor(swatches.First(x => x.Name == scheme.PrimaryHue).ExemplarHue.Color);
+            if (swatches.Where(x => x.AccentExemplarHue != null).Select(x => x.Name).Contains(scheme.AccentHue))
+                theme.SetSecondaryColor(swatches.First(x => x.Name == scheme.AccentHue).AccentExemplarHue.Color);
+            paletteHelper.SetTheme(theme);
+
+            ResourceDictionary oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
+                .Where(resourceDictionary => resourceDictionary != null && resourceDictionary.Source != null)
+                .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
+
+            string newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
+            ResourceDictionary newThemeResourceDictionary = new ResourceDictionary() { Source = new Uri(newThemeSource) };
+
+            Application.Current.Resources.MergedDictionaries.Remove(oldThemeResourceDictionary);
+            Application.Current.Resources.MergedDictionaries.Add(newThemeResourceDictionary);
         }
 
         private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

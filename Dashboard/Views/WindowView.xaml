@@ -20,6 +20,7 @@
     TextOptions.TextRenderingMode="Auto"
     FontFamily="{DynamicResource MaterialDesignFont}"
     tools:WindowBlur.IsEnabled="True"
+    tools:WindowBlur.BlurType="{Binding BlurType}"
     AllowsTransparency="True"
     WindowStyle="None"
     WindowState="Maximized"
@@ -37,39 +38,44 @@
             Action="{Binding LostFocus}"
             Event="Deactivated" />
     </cmd:CommandBehaviorCollection.Behaviors>
-    <md:ColorZone
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Mode="PrimaryDark">
-        <md:ColorZone.Background>
-            <SolidColorBrush
-                Color="{DynamicResource Primary800}"
-                Opacity="0.4" />
-        </md:ColorZone.Background>
-        <Grid
-            Name="root">
-            <tb:TaskbarIcon
-                x:Name="notifyIcon"
-                Visibility="Visible"
-                ToolTipText="Dashboard"
-                IconSource="pack://application:,,,/Dashboard;component/Assets/icon.ico"
-                MenuActivation="LeftOrRightClick"
-                PopupActivation="DoubleClick">
-                <tb:TaskbarIcon.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem
-                            Header="Show"
-                            Command="{Binding ShowWindowCommand}">
-                        </MenuItem>
-                        <Separator />
-                        <MenuItem
-                            Header="Settings" />
-                        <MenuItem
-                            Header="Exit"
-                            Command="{Binding QuitAppCommand}"/>
-                    </ContextMenu>
-                </tb:TaskbarIcon.ContextMenu>
-                <!--<tb:TaskbarIcon.TrayPopup>
+    <Grid>
+        <md:ColorZone
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Mode="PrimaryDark"
+            Opacity="{Binding BackgroundOpacity}"
+            Background="{DynamicResource PrimaryHueDarkBrush}">
+        </md:ColorZone>
+        <md:ColorZone
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Mode="PrimaryDark"
+            Background="Transparent">
+            <Grid
+                Name="root">
+                <tb:TaskbarIcon
+                    x:Name="notifyIcon"
+                    Visibility="Visible"
+                    ToolTipText="Dashboard"
+                    IconSource="pack://application:,,,/Dashboard;component/Assets/icon.ico"
+                    MenuActivation="LeftOrRightClick"
+                    PopupActivation="DoubleClick">
+                    <tb:TaskbarIcon.ContextMenu>
+                        <ContextMenu
+                            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+                            <MenuItem
+                                Header="Show"
+                                Command="{Binding ShowWindowCommand}">
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem
+                                Header="Settings" />
+                            <MenuItem
+                                Header="Exit"
+                                Command="{Binding QuitAppCommand}" />
+                        </ContextMenu>
+                    </tb:TaskbarIcon.ContextMenu>
+                    <!--<tb:TaskbarIcon.TrayPopup>
                     <TextBlock
                         Style="{DynamicResource MaterialDesignBody1TextBlock}">
                         Dashboard
@@ -84,9 +90,10 @@
                     </ToolTip>
                 </tb:TaskbarIcon.TrayToolTip>-->
 
-            </tb:TaskbarIcon>
+                </tb:TaskbarIcon>
 
-        </Grid>
+            </Grid>
 
-    </md:ColorZone>
+        </md:ColorZone>
+    </Grid>
 </Window>

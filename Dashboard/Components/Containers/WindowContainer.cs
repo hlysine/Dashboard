@@ -1,9 +1,13 @@
 ﻿using Dashboard.Components.Containers;
 using Dashboard.Config;
 using Dashboard.Utilities;
+using MaterialDesignColors;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -20,13 +24,28 @@ namespace Dashboard.Components
         [PersistentConfig]
         public bool Autostart { get; set; } = true;
 
+        [PersistentConfig]
+        public HotKey HotKey { get; set; } = new HotKey();
+
+        private WindowBlur.BlurType blurType = WindowBlur.BlurType.Acrylic;
+        [PersistentConfig]
+        public WindowBlur.BlurType BlurType { get => blurType; set => SetAndNotify(ref blurType, value); }
+
+        private ColorScheme colorScheme = new ColorScheme();
+        [PersistentConfig]
+        public ColorScheme ColorScheme { get => colorScheme; set => SetAndNotify(ref colorScheme, value); }
+
+        private double backgroundOpacity = 0.4d;
+        [PersistentConfig]
+        public double BackgroundOpacity { get => backgroundOpacity; set => SetAndNotify(ref backgroundOpacity, value); }
+
         private RelayCommand showWindowCommand;
 
         public ICommand ShowWindowCommand
         {
             get
             {
-                return showWindowCommand ?? (showWindowCommand = new RelayCommand(
+                return showWindowCommand ??= new RelayCommand(
                     // execute
                     () =>
                     {
@@ -34,7 +53,7 @@ namespace Dashboard.Components
                     },
                     // can execute
                     () => !ThisForeground
-                ));
+                );
             }
         }
 
@@ -44,7 +63,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return quitAppCommand ?? (quitAppCommand = new RelayCommand(
+                return quitAppCommand ??= new RelayCommand(
                     // execute
                     () =>
                     {
@@ -52,7 +71,7 @@ namespace Dashboard.Components
                     },
                     // can execute
                     () => true
-                ));
+                );
             }
         }
 
@@ -72,8 +91,9 @@ namespace Dashboard.Components
                 else
                     AutoRun.Unregister();
 
-                keyHook.RegisterHotKey(Utilities.ModifierKeys.Alt, System.Windows.Forms.Keys.D);
+                keyHook.RegisterHotKey(HotKey.ModifierKeys, HotKey.Key);
                 keyHook.KeyPressed += KeyHook_KeyPressed;
+
 
                 //ClockComponent clock = new ClockComponent();
                 //SpotifyComponent spotify = new SpotifyComponent(this);
