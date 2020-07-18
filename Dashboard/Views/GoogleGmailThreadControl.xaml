@@ -74,7 +74,7 @@
                         VerticalAlignment="Center"
                         Margin="5 0 0 0"
                         Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                        Text="{Binding Date, Converter={StaticResource DateTimeToStringConverter}}" />
+                        Text="{Binding Date, Converter={StaticResource DateTimeToReadableStringConverter}}" />
                 </Grid>
                 <Grid
                     Grid.Row="1">

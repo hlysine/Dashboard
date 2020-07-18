@@ -33,6 +33,12 @@ namespace Dashboard.Services
                 .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
                 .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
             properties.ForEach(x => x.prop.SetValue(this, manager.GetService(x.prop.PropertyType, (string)GetType().GetProperty(x.Item2.ServiceIdProperty).GetValue(this))));
+            OnInitialized();
+        }
+
+        protected virtual void OnInitialized()
+        {
+
         }
     }
 }

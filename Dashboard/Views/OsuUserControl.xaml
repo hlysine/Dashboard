@@ -77,7 +77,7 @@
                             VerticalAlignment="Center"
                             Margin="5 0 0 0"
                             Visibility="{Binding Online, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
-                            Text="{Binding LastOnline, Converter={StaticResource DateTimeToStringConverter}}">
+                            Text="{Binding LastOnline, Converter={StaticResource DateTimeToReadableStringConverter}}">
                         </TextBlock>
                     </Grid>
                     <TextBlock

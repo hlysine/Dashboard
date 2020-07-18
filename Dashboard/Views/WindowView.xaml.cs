@@ -93,6 +93,7 @@ namespace Dashboard
                     {
                         var comp = (DashboardComponent)x;
                         UIElement elem = GetNewViewFor(comp);
+                        if (elem == null) return;  //DEBUG
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
                     });
@@ -126,6 +127,7 @@ namespace Dashboard
                     Component.Children.ForEach(x =>
                     {
                         UIElement elem = GetNewViewFor(x);
+                        if (elem == null) return;  //DEBUG
                         viewBindings.Add(x, elem);
                         root.Children.Add(elem);
                     });
@@ -142,7 +144,11 @@ namespace Dashboard
                                 && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                                 && !assemblyType.IsAbstract
                              select assemblyType).ToArray();
-            return (UIElement)Activator.CreateInstance(classList.First(), component);
+            Type target = classList.FirstOrDefault();
+            if (target == null)
+                return null;
+            else
+                return (UIElement)Activator.CreateInstance(target, component);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

@@ -81,8 +81,8 @@
             <converters:BoolToOpacityConverter
                 x:Key="BoolToOpacityConverter" />
 
-            <converters:DateTimeToStringConverter
-                x:Key="DateTimeToStringConverter" />
+            <converters:DateTimeToReadableStringConverter
+                x:Key="DateTimeToReadableStringConverter" />
 
             <converters:TimeSpanToStringConverter
                 x:Key="TimeSpanToStringConverter" />
@@ -117,6 +117,23 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+
+            <DrawingImage
+                x:Key="EmptyImageDrawing">
+                <DrawingImage.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing>
+                            <GeometryDrawing.Brush>
+                                <SolidColorBrush Color="{DynamicResource Primary800Foreground}" />
+                            </GeometryDrawing.Brush>
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry
+                                    Rect="0,0,100,100" />
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingImage.Drawing>
+            </DrawingImage>
 
             <Style
                 x:Key="FadeOutMaterialDesignFlatButton"

@@ -19,16 +19,18 @@
   <ItemGroup>
     <PackageReference Include="AttachedCommandBehavior" Version="2.0.0" />
     <PackageReference Include="EmbedIO" Version="3.4.3" />
-    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.47.0.2005" />
-    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.47.0.2005" />
-    <PackageReference Include="Google.Apis.Tasks.v1" Version="1.47.0.2003" />
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.48.0.2012" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.48.0.2013" />
+    <PackageReference Include="Google.Apis.Tasks.v1" Version="1.48.0.2011" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf.NetCore" Version="1.0.11" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.6" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RestSharp" Version="106.11.4" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.11.4" />
     <PackageReference Include="SpotifyAPI.Web" Version="6.0.0-beta.7" />
+    <PackageReference Include="Svg2Xaml" Version="0.3.0.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\WeatherView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\WeatherIntervalControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\LauncherView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,6 +81,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\WeatherView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\WeatherIntervalControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\LauncherView.xaml">
       <SubType>Designer</SubType>
     </Page>

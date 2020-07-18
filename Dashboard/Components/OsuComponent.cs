@@ -41,7 +41,7 @@ namespace Dashboard.Components
         {
             var fds = await Osu.GetFriends();
             Friends.Clear();
-            Friends.AddRange(fds.OrderByDescending(x => x.last_visit).Select(x => new OsuUser(x, Osu)));
+            Friends.AddRange(fds.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
             NotifyChanged(nameof(Friends));
         }
 

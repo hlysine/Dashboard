@@ -7,7 +7,7 @@ using System.Windows.Data;
 
 namespace Dashboard.Utilities.Converters
 {
-    public class DateTimeToStringConverter : IValueConverter
+    public class DateTimeToReadableStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

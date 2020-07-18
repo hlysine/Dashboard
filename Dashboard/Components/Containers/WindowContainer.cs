@@ -1,5 +1,6 @@
 ﻿using Dashboard.Components.Containers;
 using Dashboard.Config;
+using Dashboard.Services;
 using Dashboard.Utilities;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
@@ -96,21 +97,6 @@ namespace Dashboard.Components
                 keyHook.RegisterHotKey(HotKey.ModifierKeys, HotKey.Key);
                 keyHook.KeyPressed += KeyHook_KeyPressed;
 
-
-                //ClockComponent clock = new ClockComponent();
-                //SpotifyComponent spotify = new SpotifyComponent(this);
-                //GoogleCalendarComponent calendar = new GoogleCalendarComponent(this);
-                //GoogleTasksComponent tasks = new GoogleTasksComponent(this);
-                //GoogleGmailComponent gmail = new GoogleGmailComponent(this);
-                //OsuComponent osu = new OsuComponent(this);
-                //LauncherComponent launcher = new LauncherComponent(this);
-                //Components.Add(clock);
-                //Components.Add(spotify);
-                //Components.Add(calendar);
-                //Components.Add(tasks);
-                //Components.Add(gmail);
-                //Components.Add(osu);
-                //Components.Add(launcher);
             };
 
             LostFocus = _ =>

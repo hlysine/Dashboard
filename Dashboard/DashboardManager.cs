@@ -93,6 +93,7 @@ namespace Dashboard
                 var gmail = new GoogleGmailComponent();
                 var osu = new OsuComponent();
                 var launcher = new LauncherComponent();
+                var weather = new WeatherComponent();
 
                 var spotifyService = new SpotifyService() { Id = Helper.RandomString(10) };
                 var googleService = new GoogleService() { Id = Helper.RandomString(10) };
@@ -101,6 +102,10 @@ namespace Dashboard
                 var gmailService = new GoogleGmailService() { Id = googleService.Id };
                 var osuService = new OsuService() { Id = Helper.RandomString(10) };
                 var systemService = new SystemService() { Id = Helper.RandomString(10) };
+                var locationService = new LocationService() { Id = Helper.RandomString(10) };
+                var weatherService = new OpenWeatherMapService() { Id = Helper.RandomString(10) };
+
+                weatherService.LocationServiceId = locationService.Id;
 
                 spotify.SpotifyAccountId = spotifyService.Id;
                 tasks.GoogleAccountId = tasksService.Id;
@@ -108,6 +113,7 @@ namespace Dashboard
                 gmail.GoogleAccountId = gmailService.Id;
                 osu.OsuAccountId = osuService.Id;
                 launcher.SystemServiceId = systemService.Id;
+                weather.OpenWeatherMapServiceId = weatherService.Id;
 
                 Services.Add(spotifyService);
                 Services.Add(googleService);
@@ -116,6 +122,8 @@ namespace Dashboard
                 Services.Add(gmailService);
                 Services.Add(osuService);
                 Services.Add(systemService);
+                Services.Add(locationService);
+                Services.Add(weatherService);
 
                 root.Children.Add(clock);
                 root.Children.Add(spotify);
@@ -124,6 +132,7 @@ namespace Dashboard
                 root.Children.Add(gmail);
                 root.Children.Add(osu);
                 root.Children.Add(launcher);
+                root.Children.Add(weather);
 
                 RootComponent = root;
             }
