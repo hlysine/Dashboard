@@ -60,7 +60,7 @@
             Grid.Row="2"
             HorizontalAlignment="Center"
             Height="30"
-            Width="30" />
+            Width="30"/>
         <TextBlock
             Grid.Row="4"
             HorizontalAlignment="Center"

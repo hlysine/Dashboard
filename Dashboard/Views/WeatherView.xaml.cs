@@ -95,15 +95,13 @@ namespace Dashboard.Views
         {
             getTemperaturePoints(out Point[] points, out Point[] points2);
 
-            Color color = ((SolidColorBrush)FindResource("PrimaryHueDarkForegroundBrush")).Color;
-            Brush brush = new SolidColorBrush(color);
-            Brush brush2 = new SolidColorBrush(color) { Opacity = 0.5 };
 
-
-            Path path = new Path() { Stroke = brush2, StrokeThickness = 3, Data = getPath(points2) };
+            Path path = new Path() { StrokeThickness = 3, Data = getPath(points2), Opacity = 0.5d };
+            path.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
             canvasTemperature.Children.Add(path);
 
-            Path path2 = new Path() { Stroke = brush, StrokeThickness = 3, Data = getPath(points) };
+            Path path2 = new Path() { StrokeThickness = 3, Data = getPath(points) };
+            path2.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
             canvasTemperature.Children.Add(path2);
 
 
@@ -112,10 +110,11 @@ namespace Dashboard.Views
                 TextBlock text = new TextBlock()
                 {
                     Text = Component.Forecast[i].MainInfo.Temperature.ToString("F0") + Component.Forecast[i].TemperatureUnit,
-                    Background = brush,
-                    Foreground = (Brush)FindResource("PrimaryHueDarkBrush"),
                     Padding = new Thickness(2)
                 };
+                text.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryHueDarkForegroundBrush");
+                text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkBrush");
+
                 text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 text.Arrange(new Rect(text.DesiredSize));
 

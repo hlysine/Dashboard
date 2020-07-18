@@ -117,15 +117,13 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-
+            
             <DrawingImage
                 x:Key="EmptyImageDrawing">
                 <DrawingImage.Drawing>
                     <DrawingGroup>
-                        <GeometryDrawing>
-                            <GeometryDrawing.Brush>
-                                <SolidColorBrush Color="{DynamicResource Primary800Foreground}" />
-                            </GeometryDrawing.Brush>
+                        <GeometryDrawing
+                            Brush="{DynamicResource PrimaryHueDarkForegroundBrush}">
                             <GeometryDrawing.Geometry>
                                 <RectangleGeometry
                                     Rect="0,0,100,100" />

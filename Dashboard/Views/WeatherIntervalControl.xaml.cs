@@ -36,7 +36,7 @@ namespace Dashboard.Views
                 using (MemoryStream stream = new MemoryStream(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl))))
                 {
                     imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
-                    imgWeather.Source = (DrawingImage)FindResource("EmptyImageDrawing");
+                    imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
                 }
             }
         }
