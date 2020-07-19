@@ -119,7 +119,8 @@ namespace Dashboard.Services
             var request = new RestRequest("api/v2/users/{id}", Method.GET);
             request.AddUrlSegment("id", userId);
 
-            return (await osu.ExecuteAsync<FullUser>(request)).Data;
+            var response = await osu.ExecuteAsync<FullUser>(request);
+            return response.Data;
         }
     }
 
@@ -136,7 +137,7 @@ namespace Dashboard.Services
         public string DefaultGroup { get; set; }
 
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("is_active")]
         public bool IsActive { get; set; }
@@ -169,7 +170,7 @@ namespace Dashboard.Services
         public Cover Cover { get; set; }
 
         [JsonProperty("current_mode_rank")]
-        public int CurrentModeRank { get; set; }
+        public long CurrentModeRank { get; set; }
 
         [JsonProperty("groups")]
         public List<object> Groups { get; set; }
@@ -183,10 +184,10 @@ namespace Dashboard.Services
     {
 
         [JsonProperty("total")]
-        public int Total { get; set; }
+        public long Total { get; set; }
 
         [JsonProperty("available")]
-        public int Available { get; set; }
+        public long Available { get; set; }
 
     }
 
@@ -222,7 +223,7 @@ namespace Dashboard.Services
         public string StartDate { get; set; }
 
         [JsonProperty("count")]
-        public int Count { get; set; }
+        public long Count { get; set; }
 
     }
 
@@ -241,10 +242,10 @@ namespace Dashboard.Services
     {
 
         [JsonProperty("current")]
-        public int Current { get; set; }
+        public long Current { get; set; }
 
         [JsonProperty("progress")]
-        public int Progress { get; set; }
+        public long Progress { get; set; }
 
     }
 
@@ -252,19 +253,19 @@ namespace Dashboard.Services
     {
 
         [JsonProperty("ss")]
-        public int Ss { get; set; }
+        public long Ss { get; set; }
 
         [JsonProperty("ssh")]
-        public int Ssh { get; set; }
+        public long Ssh { get; set; }
 
         [JsonProperty("s")]
-        public int S { get; set; }
+        public long S { get; set; }
 
         [JsonProperty("sh")]
-        public int Sh { get; set; }
+        public long Sh { get; set; }
 
         [JsonProperty("a")]
-        public int A { get; set; }
+        public long A { get; set; }
 
     }
 
@@ -272,10 +273,10 @@ namespace Dashboard.Services
     {
 
         [JsonProperty("global")]
-        public int Global { get; set; }
+        public long Global { get; set; }
 
         [JsonProperty("country")]
-        public int Country { get; set; }
+        public long Country { get; set; }
 
     }
 
@@ -289,31 +290,31 @@ namespace Dashboard.Services
         public double PP { get; set; }
 
         [JsonProperty("pp_rank")]
-        public int PpRank { get; set; }
+        public long PpRank { get; set; }
 
         [JsonProperty("ranked_score")]
-        public int RankedScore { get; set; }
+        public long RankedScore { get; set; }
 
         [JsonProperty("hit_accuracy")]
         public double HitAccuracy { get; set; }
 
         [JsonProperty("play_count")]
-        public int PlayCount { get; set; }
+        public long PlayCount { get; set; }
 
         [JsonProperty("play_time")]
-        public int PlayTime { get; set; }
+        public long PlayTime { get; set; }
 
         [JsonProperty("total_score")]
-        public int TotalScore { get; set; }
+        public long TotalScore { get; set; }
 
         [JsonProperty("total_hits")]
-        public int TotalHits { get; set; }
+        public long TotalHits { get; set; }
 
         [JsonProperty("maximum_combo")]
-        public int MaximumCombo { get; set; }
+        public long MaximumCombo { get; set; }
 
         [JsonProperty("replays_watched_by_others")]
-        public int ReplaysWatchedByOthers { get; set; }
+        public long ReplaysWatchedByOthers { get; set; }
 
         [JsonProperty("is_ranked")]
         public bool IsRanked { get; set; }
@@ -333,7 +334,7 @@ namespace Dashboard.Services
         public DateTime AchievedAt { get; set; }
 
         [JsonProperty("achievement_id")]
-        public int AchievementId { get; set; }
+        public long AchievementId { get; set; }
 
     }
 
@@ -361,7 +362,7 @@ namespace Dashboard.Services
         public string DefaultGroup { get; set; }
 
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("is_active")]
         public bool IsActive { get; set; }
@@ -412,10 +413,10 @@ namespace Dashboard.Services
         public object Location { get; set; }
 
         [JsonProperty("max_blocks")]
-        public int MaxBlocks { get; set; }
+        public long MaxBlocks { get; set; }
 
         [JsonProperty("max_friends")]
-        public int MaxFriends { get; set; }
+        public long MaxFriends { get; set; }
 
         [JsonProperty("occupation")]
         public object Occupation { get; set; }
@@ -427,7 +428,7 @@ namespace Dashboard.Services
         public object Playstyle { get; set; }
 
         [JsonProperty("post_count")]
-        public int PostCount { get; set; }
+        public long PostCount { get; set; }
 
         [JsonProperty("profile_order")]
         public List<string> ProfileOrder { get; set; }
@@ -460,19 +461,19 @@ namespace Dashboard.Services
         public List<object> Badges { get; set; }
 
         [JsonProperty("favourite_beatmapset_count")]
-        public int FavouriteBeatmapsetCount { get; set; }
+        public long FavouriteBeatmapsetCount { get; set; }
 
         [JsonProperty("follower_count")]
-        public int FollowerCount { get; set; }
+        public long FollowerCount { get; set; }
 
         [JsonProperty("graveyard_beatmapset_count")]
-        public int GraveyardBeatmapsetCount { get; set; }
+        public long GraveyardBeatmapsetCount { get; set; }
 
         [JsonProperty("groups")]
         public List<object> Groups { get; set; }
 
         [JsonProperty("loved_beatmapset_count")]
-        public int LovedBeatmapsetCount { get; set; }
+        public long LovedBeatmapsetCount { get; set; }
 
         [JsonProperty("monthly_playcounts")]
         public List<MonthlyPlaycount> MonthlyPlaycounts { get; set; }
@@ -484,22 +485,22 @@ namespace Dashboard.Services
         public List<object> PreviousUsernames { get; set; }
 
         [JsonProperty("ranked_and_approved_beatmapset_count")]
-        public int RankedAndApprovedBeatmapsetCount { get; set; }
+        public long RankedAndApprovedBeatmapsetCount { get; set; }
 
         [JsonProperty("replays_watched_counts")]
         public List<object> ReplaysWatchedCounts { get; set; }
 
         [JsonProperty("scores_first_count")]
-        public int ScoresFirstCount { get; set; }
+        public long ScoresFirstCount { get; set; }
 
         [JsonProperty("statistics")]
         public Statistics Statistics { get; set; }
 
         [JsonProperty("support_level")]
-        public int SupportLevel { get; set; }
+        public long SupportLevel { get; set; }
 
         [JsonProperty("unranked_beatmapset_count")]
-        public int UnrankedBeatmapsetCount { get; set; }
+        public long UnrankedBeatmapsetCount { get; set; }
 
         [JsonProperty("user_achievements")]
         public List<UserAchievement> UserAchievements { get; set; }

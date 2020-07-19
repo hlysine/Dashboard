@@ -9,7 +9,7 @@ namespace Dashboard.Components
 {
     public class ClockComponent : AutoRefreshComponent
     {
-        public override string Name => "Clock";
+        public override string DefaultName => "Clock";
 
         public DateTime Time
         {

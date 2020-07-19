@@ -18,7 +18,7 @@
     mc:Ignorable="d"
     d:DesignWidth="200">
     <Button
-        Style="{StaticResource MaterialDesignFlatButton}"
+        Style="{DynamicResource MaterialDesignFlatButton}"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
         Padding="0"
@@ -54,18 +54,18 @@
                     VerticalAlignment="Center"
                     Grid.Column="1">
                     <TextBlock
-                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
                         TextWrapping="Wrap"
                         Text="{Binding Name}">
                     </TextBlock>
                     <TextBlock
-                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                        Style="{DynamicResource MaterialDesignBody2TextBlock}"
                         TextWrapping="Wrap"
                         Text="{Binding DateTimeString}">
                     </TextBlock>
                     <TextBlock
                         Opacity="0.5"
-                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                        Style="{DynamicResource MaterialDesignCaptionTextBlock}"
                         TextWrapping="Wrap"
                         Visibility="{Binding PrimaryCalendar, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
                         Text="{Binding CalendarName}">

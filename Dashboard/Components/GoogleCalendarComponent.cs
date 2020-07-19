@@ -17,7 +17,7 @@ namespace Dashboard.Components
 {
     public class GoogleCalendarComponent : AutoRefreshComponent
     {
-        public override string Name => "Google Calendar";
+        public override string DefaultName => "Google Calendar";
 
         [RequireService(nameof(GoogleAccountId))]
         public GoogleCalendarService Calendar { get; set; }

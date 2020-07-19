@@ -32,7 +32,7 @@ namespace Dashboard.ViewModels
             get => sUser.Username;
         }
 
-        public int Rank
+        public long Rank
         {
             get => getUser()?.Statistics?.Rank.Global ?? sUser.CurrentModeRank;
         }

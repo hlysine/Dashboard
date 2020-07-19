@@ -9,7 +9,7 @@ namespace Dashboard.Components.Containers
 {
     public abstract class DashboardContainer : DashboardComponent
     {
-        public override abstract string Name { get; }
+        public override abstract string DefaultName { get; }
 
         [PersistentConfig]
         public ObservableCollection<DashboardComponent> Children { get; set; } = new ObservableCollection<DashboardComponent>();

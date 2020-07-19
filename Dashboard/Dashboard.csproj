@@ -45,6 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\TabbedContainerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\LayoutContainerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\WeatherView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -81,6 +87,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\TabbedContainerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\LayoutContainerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\WeatherView.xaml">
       <SubType>Designer</SubType>
     </Page>

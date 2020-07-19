@@ -10,7 +10,7 @@
     xmlns:tb="http://www.hardcodet.net/taskbar"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
     mc:Ignorable="d"
-    Title="Dashboard Overlay"
+    Title="{Binding Name}"
     Height="450"
     Width="800"
     TextElement.Foreground="{DynamicResource MaterialDesignDarkForeground}"
@@ -64,15 +64,17 @@
                         <ContextMenu
                             DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
                             <MenuItem
+                                Name="menuShow"
                                 Header="Show"
-                                Command="{Binding ShowWindowCommand}">
+                                Click="menuShow_Click">
                             </MenuItem>
                             <Separator />
                             <MenuItem
                                 Header="Settings" />
                             <MenuItem
+                                Name="menuExit"
                                 Header="Exit"
-                                Command="{Binding QuitAppCommand}" />
+                                Click="menuExit_Click"/>
                         </ContextMenu>
                     </tb:TaskbarIcon.ContextMenu>
                     <!--<tb:TaskbarIcon.TrayPopup>

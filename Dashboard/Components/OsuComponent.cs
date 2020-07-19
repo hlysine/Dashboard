@@ -15,7 +15,7 @@ namespace Dashboard.Components
 {
     public class OsuComponent : AutoRefreshComponent
     {
-        public override string Name => "osu!";
+        public override string DefaultName => "osu!";
 
         [RequireService(nameof(OsuAccountId))]
         public OsuService Osu { get; set; }
@@ -40,6 +40,11 @@ namespace Dashboard.Components
         private async Task LoadFriends()
         {
             var fds = await Osu.GetFriends();
+            if (fds == null)
+            {
+                await Task.Delay(500);
+                fds = await Osu.GetFriends();
+            }
             Friends.Clear();
             Friends.AddRange(fds.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
             NotifyChanged(nameof(Friends));

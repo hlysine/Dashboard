@@ -16,7 +16,7 @@ namespace Dashboard.Components
 {
     public class SpotifyComponent : AutoRefreshComponent
     {
-        public override string Name => "Spotify";
+        public override string DefaultName => "Spotify";
 
         [RequireService(nameof(SpotifyAccountId))]
         public SpotifyService Spotify { get; set; }

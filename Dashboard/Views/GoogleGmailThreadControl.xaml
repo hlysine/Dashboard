@@ -52,7 +52,7 @@
                         <md:PackIcon
                             VerticalAlignment="Center"
                             Kind="LabelVariant"
-                            Foreground="{DynamicResource PrimaryHueMidBrush}"
+                            Foreground="{DynamicResource SecondaryAccentBrush}"
                             Visibility="{Binding Important, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
                             VerticalAlignment="Center"

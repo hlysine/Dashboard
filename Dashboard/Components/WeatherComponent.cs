@@ -15,7 +15,7 @@ namespace Dashboard.Components
 {
     public class WeatherComponent : AutoRefreshComponent
     {
-        public override string Name => "Weather";
+        public override string DefaultName => "Weather";
 
         [RequireService(nameof(OpenWeatherMapServiceId))]
         public OpenWeatherMapService OpenWeatherMap { get; set; }

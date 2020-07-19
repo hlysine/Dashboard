@@ -12,7 +12,6 @@ namespace Dashboard.Views
 {
     public abstract class DashboardViewBase : UserControl
     {
-
     }
     public abstract class DashboardView<TComponent> : DashboardViewBase, IDashboardView<TComponent> where TComponent : DashboardComponent, new()
     {
@@ -61,7 +60,8 @@ namespace Dashboard.Views
 
             TextBlock text = new TextBlock();
             text.Text = Component.Name;
-            text.Style = (Style)FindResource("MaterialDesignCaptionTextBlock");
+            text.SetResourceReference(TextBlock.StyleProperty, "MaterialDesignCaptionTextBlock");
+            text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkForegroundBrush");
 
             Binding b = new Binding();
             b.Source = DataContext;

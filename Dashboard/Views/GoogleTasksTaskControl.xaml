@@ -17,39 +17,42 @@
     FontFamily="{DynamicResource MaterialDesignFont}"
     mc:Ignorable="d"
     d:DesignWidth="200">
-    <Grid
-        Name="root"
-        Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="Auto" />
-            <ColumnDefinition
-                Width="Auto" />
-            <ColumnDefinition
-                Width="*" />
-        </Grid.ColumnDefinitions>
-        <Border
-            Width="25"
-            Background="Transparent"
-            BorderBrush="Transparent"
-            BorderThickness="0"
-            Visibility="{Binding TopLevel, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
-        </Border>
-        <md:PackIcon
-            VerticalAlignment="Center"
-            Grid.Column="1"
-            Margin="5"
-            Kind="{Binding Completed, Converter={StaticResource BoolToBulletIconConverter}}" />
-        <TextBlock
-            VerticalAlignment="Center"
-            Grid.Column="2"
-            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-            Text="{Binding Title}"
-            TextWrapping="Wrap"
-            Opacity="{Binding Completed, Converter={StaticResource BoolToOpacityConverter}, ConverterParameter=True}"
-            TextDecorations="{Binding Completed, Converter={StaticResource BoolToTextDecorationsConverter}}">
-        </TextBlock>
-        <!--<Border
+    <md:ColorZone
+        Margin="5"
+        Mode="PrimaryDark"
+        Background="Transparent">
+        <Grid
+            Name="root">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="25"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                BorderThickness="0"
+                Visibility="{Binding TopLevel, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
+            </Border>
+            <md:PackIcon
+                VerticalAlignment="Center"
+                Grid.Column="1"
+                Margin="5"
+                Kind="{Binding Completed, Converter={StaticResource BoolToBulletIconConverter}}" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Grid.Column="2"
+                Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                Text="{Binding Title}"
+                TextWrapping="Wrap"
+                Opacity="{Binding Completed, Converter={StaticResource BoolToOpacityConverter}, ConverterParameter=True}"
+                TextDecorations="{Binding Completed, Converter={StaticResource BoolToTextDecorationsConverter}}">
+            </TextBlock>
+            <!--<Border
             Background="{DynamicResource MaterialDesignDarkForeground}"
             Height="1"
             Grid.Column="1"
@@ -58,5 +61,6 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Bottom"
             SnapsToDevicePixels="True" />-->
-    </Grid>
+        </Grid>
+    </md:ColorZone>
 </UserControl>

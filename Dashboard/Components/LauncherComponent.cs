@@ -10,7 +10,7 @@ namespace Dashboard.Components
 {
     public class LauncherComponent : DashboardComponent
     {
-        public override string Name => "Run";
+        public override string DefaultName => "Run";
 
         [RequireService(nameof(SystemServiceId))]
         private SystemService System { get; set; }

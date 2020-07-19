@@ -31,7 +31,7 @@ namespace Dashboard
     {
         private DashboardManager manager = new DashboardManager();
 
-        private Dictionary<DashboardComponent, UIElement> viewBindings = new Dictionary<DashboardComponent, UIElement>();
+        private Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new Dictionary<DashboardComponent, DashboardViewBase>();
 
         public WindowContainer Component { get; private set; }
 
@@ -92,7 +92,7 @@ namespace Dashboard
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        UIElement elem = GetNewViewFor(comp);
+                        DashboardViewBase elem = GetNewViewFor(comp);
                         if (elem == null) return;  //DEBUG
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
@@ -116,7 +116,7 @@ namespace Dashboard
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        UIElement elem = GetNewViewFor(comp);
+                        DashboardViewBase elem = GetNewViewFor(comp);
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
                     });
@@ -126,7 +126,7 @@ namespace Dashboard
                     root.Children.Clear();
                     Component.Children.ForEach(x =>
                     {
-                        UIElement elem = GetNewViewFor(x);
+                        DashboardViewBase elem = GetNewViewFor(x);
                         if (elem == null) return;  //DEBUG
                         viewBindings.Add(x, elem);
                         root.Children.Add(elem);
@@ -135,7 +135,7 @@ namespace Dashboard
             }
         }
 
-        private UIElement GetNewViewFor(DashboardComponent component)
+        private DashboardViewBase GetNewViewFor(DashboardComponent component)
         {
             // TODO: remove BaseType? chain
             var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -148,7 +148,7 @@ namespace Dashboard
             if (target == null)
                 return null;
             else
-                return (UIElement)Activator.CreateInstance(target, component);
+                return (DashboardViewBase)Activator.CreateInstance(target, component);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -170,6 +170,18 @@ namespace Dashboard
             Topmost = true;
             Topmost = false;
             Focus();
+        }
+
+        private void menuShow_Click(object sender, RoutedEventArgs e)
+        {
+            if (Component.ShowWindowCommand.CanExecute(null))
+                Component.ShowWindowCommand.Execute(null);
+        }
+
+        private void menuExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (Component.QuitAppCommand.CanExecute(null))
+                Component.QuitAppCommand.Execute(null);
         }
     }
 }

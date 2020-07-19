@@ -23,7 +23,13 @@ namespace Dashboard.Components
         [PersistentConfig]
         public bool ShowTitle { get => showTitle; set => SetAndNotify(ref showTitle, value); }
 
-        public abstract string Name { get; }
+        public abstract string DefaultName { get; }
+
+        private string customName = "";
+        [PersistentConfig]
+        public string CustomName { get => customName; set => SetAndNotify(ref customName, value, new[] { nameof(Name) }); }
+
+        public virtual string Name { get => CustomName.IsNullOrEmpty() ? DefaultName : CustomName; }
 
         public virtual void Initialize()
         {

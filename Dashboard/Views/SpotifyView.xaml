@@ -179,6 +179,7 @@
                                 Grid.Column="1"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 ToolTip="Play song radio"
+                                Foreground="{DynamicResource SecondaryAccentBrush}"
                                 Width="32"
                                 Height="32"
                                 Command="{Binding RadioCommand}">
