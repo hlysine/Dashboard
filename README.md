@@ -27,6 +27,8 @@ Dashboard is a desktop overlay consisting of various components, each connected 
   - View events from all calendars
 - Gmail
   - View all messages
+- Weather
+  - 5-day weather forecast at 3-hour intervals (Data source: [OpenWeatherMap](https://openweathermap.org/))
 - Osu
   - View friends list
   
