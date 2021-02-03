@@ -22,7 +22,7 @@ namespace Dashboard.Services
         [Obsolete("This property is not used", true)]
         public new string RefreshToken { get; set; }
 
-        [PersistentConfig]
+        [PersistentConfig(Generated = true)]
         public List<CredentialKeyValuePair<string, object>> Credentials { get; set; } = new List<CredentialKeyValuePair<string, object>>();
 
         public override bool IsAuthorized => credential != null;

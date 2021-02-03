@@ -1,4 +1,5 @@
 ﻿using Dashboard.Config;
+using Dashboard.Utilities;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
@@ -20,8 +21,7 @@ namespace Dashboard.Services
         [PersistentConfig]
         public string LocationServiceId { get; set; }
 
-        public override bool IsAuthorized => true;
-        public override bool CanAuthorize => true;
+        public override bool IsAuthorized => client != null;
 
         private IRestClient client;
 

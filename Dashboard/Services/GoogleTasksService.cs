@@ -17,13 +17,13 @@ namespace Dashboard.Services
         [RequireService(nameof(Id))]
         private GoogleService Google { get; set; }
 
-        // comes from GoogleService
+        // Comes from GoogleService
 
         public override string ClientId { get => Google?.ClientId; }
 
         public override string ClientSecret { get => Google?.ClientSecret; }
 
-        public override List<string> AuthorizedScopes { get => Google?.AuthorizedScopes ?? new List<string>(); /* To avoid null reference when deserializing XML */ }
+        public override List<string> AuthorizedScopes { get => Google?.AuthorizedScopes ?? new List<string>()  /* Prevents null ref when deserializing */; }
 
         /// <summary>
         /// Set the list of scopes required. To be called before <see cref="Authorize(CancellationToken)"/>.

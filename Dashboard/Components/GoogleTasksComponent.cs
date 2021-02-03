@@ -52,7 +52,7 @@ namespace Dashboard.Components
                 convertedTasks.AddRange(groups.Where(x => x.Key == null).SelectMany(x => x).OrderBy(x => x.Position));
                 groups.Where(x => x.Key != null).ForEach(x => convertedTasks.InsertRange(convertedTasks.FindIndex(y => y.Id == x.Key) + 1, x.OrderBy(x => x.Position)));
             }
-            CurrentTasklist = allTasks.Values.Last();
+            CurrentTasklist = allTasks.Values.First();
             NotifyChanged(nameof(CurrentTasklist));
         }
 

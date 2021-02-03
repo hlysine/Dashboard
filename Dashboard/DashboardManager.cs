@@ -2,23 +2,14 @@
 using Dashboard.Config;
 using Dashboard.Services;
 using Dashboard.Utilities;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json;
 using System;
-using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace Dashboard
@@ -59,19 +50,44 @@ namespace Dashboard
             var configXmlOverrides = new XmlAttributeOverrides();
             var attributes = new XmlAttributes();
             attributes.XmlIgnore = true;
-            var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+            var classList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
                              from assemblyType in domainAssembly.GetTypes()
-                             where assemblyType.IsDefined(typeof(ContainsConfigAttribute))
+                             where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
                              select assemblyType).ToArray();
             var props = new List<PropertyInfo>();
             foreach (Type configType in classList)
             {
                 foreach (var prop in configType.GetProperties())
                 {
-                    if (!prop.IsDefined(typeof(PersistentConfigAttribute), true) && !props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
+                    if (!props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
                     {
                         props.Add(prop);
-                        configXmlOverrides.Add(prop.DeclaringType, prop.Name, attributes);
+                        if (!prop.IsDefined(typeof(PersistentConfigAttribute), false))
+                        {
+                            configXmlOverrides.Add(prop.DeclaringType, prop.Name, attributes);
+                        }
+                        else
+                        {
+                            var attribute = (PersistentConfigAttribute)prop.GetCustomAttribute(typeof(PersistentConfigAttribute));
+                            var xmlElem = new XmlAttributes();
+                            if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
+                            {
+                                xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
+                                var arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
+                                                   from assemblyType in domainAssembly.GetTypes()
+                                                   where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
+                                                   select assemblyType).ToArray();
+                                foreach (var t in arrTypeList)
+                                {
+                                    xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
+                                }
+                            }
+                            else if (attribute.Generated)
+                            {
+                                xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
+                            }
+                            configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
+                        }
                     }
                 }
             }
@@ -138,6 +154,7 @@ namespace Dashboard
             }
 
             Services.ForEach(x => InitializeService(x));
+
             InitializeComponent(RootComponent);
 
             RootComponent.InitializationComplete();
@@ -202,12 +219,14 @@ namespace Dashboard
         public void LoadConfig()
         {
             if (File.Exists(configPath.ToAbsolutePath()))
+            {
                 using (var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open))
                 {
                     var tmpManager = (DashboardManager)xmlSerializer.Deserialize(fs);
                     RootComponent = tmpManager.RootComponent;
                     Services = tmpManager.Services;
                 }
+            }
         }
     }
 }

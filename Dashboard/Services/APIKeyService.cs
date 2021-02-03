@@ -2,6 +2,7 @@
 using Dashboard.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,5 +14,7 @@ namespace Dashboard.Services
     {
         [PersistentConfig]
         public virtual string ApiKey { get; set; } = "";
+
+        public override bool CanAuthorize => !ApiKey.IsNullOrEmpty();
     }
 }

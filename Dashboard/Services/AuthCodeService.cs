@@ -17,10 +17,10 @@ namespace Dashboard.Services
         public virtual string ClientSecret { get; set; } = "";
         // Access token isn't persistent. It should be refreshed upon restart.
         public virtual string AccessToken { get; set; } = "";
-        [PersistentConfig]
+        [PersistentConfig(Generated = true)]
         public virtual string RefreshToken { get; set; } = "";
 
-        [PersistentConfig]
+        [PersistentConfig(Generated = true)]
         public virtual List<string> AuthorizedScopes { get; set; } = new List<string>();
 
         public override bool IsAuthorized => !AccessToken.IsNullOrEmpty();
