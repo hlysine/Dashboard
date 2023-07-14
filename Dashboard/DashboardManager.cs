@@ -10,6 +10,8 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Dashboard
@@ -222,9 +224,23 @@ namespace Dashboard
             {
                 using (var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open))
                 {
-                    var tmpManager = (DashboardManager)xmlSerializer.Deserialize(fs);
-                    RootComponent = tmpManager.RootComponent;
-                    Services = tmpManager.Services;
+                    using (StreamReader reader = new StreamReader(fs))
+                    {
+                        string document = reader.ReadToEnd();
+                        var xDoc = XDocument.Parse(document);
+                        foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
+                        {
+                            node.Value = node.Value.Trim();
+                        }
+                        document = xDoc.ToString();
+
+                        using (StringReader xmlReader = new StringReader(document))
+                        {
+                            var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
+                            RootComponent = tmpManager.RootComponent;
+                            Services = tmpManager.Services;
+                        }
+                    }
                 }
             }
         }
