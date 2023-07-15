@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows;
 
 namespace Dashboard.Utilities
 {
@@ -13,12 +14,26 @@ namespace Dashboard.Utilities
 
         protected void NotifyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
+            }
         }
 
         protected void NotifyChanged(IEnumerable<string> propertyName)
         {
-            propertyName.ForEach(x => NotifyChanged(x));
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                propertyName.ForEach(NotifyChanged);
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
+            }
         }
 
         protected void SetAndNotify<T>(ref T variable, T value, string[] calculatedProperties = null, [CallerMemberName] string memberName = null)
