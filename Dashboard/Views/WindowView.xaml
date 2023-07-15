@@ -7,8 +7,10 @@
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:Dashboard"
     xmlns:tools="clr-namespace:Dashboard.Utilities"
-    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
+    xmlns:components="clr-namespace:Dashboard.Components"
+    d:DataContext="{d:DesignInstance Type=components:WindowContainer}"
     mc:Ignorable="d"
     Title="{Binding Name}"
     Height="450"
@@ -21,15 +23,22 @@
     FontFamily="{DynamicResource MaterialDesignFont}"
     tools:WindowBlur.IsEnabled="True"
     tools:WindowBlur.BlurType="{Binding BlurType}"
-    AllowsTransparency="True"
-    WindowStyle="None"
-    WindowState="Maximized"
+    AllowsTransparency="False"
+    WindowStyle="ToolWindow"
+    WindowState="Normal"
     Background="Transparent"
     Visibility="{Binding ThisForeground, Converter={StaticResource BoolToVisibilityConverterH}}"
-    ShowInTaskbar="False"
-    Topmost="True"
+    ShowInTaskbar="True"
+    Topmost="False"
     Loaded="Window_Loaded"
     Style="{StaticResource VisibleAnimation}">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="{Binding HotKey.Key}"
+            Modifiers="{Binding HotKey.ModifierKeys}"
+            Command="{Binding ToggleWindowCommand}"
+            HotkeyManager.RegisterGlobalHotkey="{Binding HotKey, Converter={StaticResource NullableToBoolConverter}}" />
+    </Window.InputBindings>
     <cmd:CommandBehaviorCollection.Behaviors>
         <cmd:BehaviorBinding
             Action="{Binding WindowInitialize}"
@@ -57,7 +66,7 @@
                     x:Name="notifyIcon"
                     Visibility="Visible"
                     ToolTipText="Dashboard"
-                    IconSource="pack://application:,,,/Dashboard;component/Assets/icon.ico"
+                    IconSource="{StaticResource DashboardIcon}"
                     MenuActivation="LeftOrRightClick"
                     PopupActivation="DoubleClick">
                     <tb:TaskbarIcon.ContextMenu>
@@ -66,7 +75,7 @@
                             <MenuItem
                                 Name="menuShow"
                                 Header="Show"
-                                Click="menuShow_Click">
+                                Command="{Binding ShowWindowCommand}">
                             </MenuItem>
                             <Separator />
                             <MenuItem
@@ -74,24 +83,23 @@
                             <MenuItem
                                 Name="menuExit"
                                 Header="Exit"
-                                Click="menuExit_Click"/>
+                                Command="{Binding QuitAppCommand}" />
                         </ContextMenu>
                     </tb:TaskbarIcon.ContextMenu>
                     <!--<tb:TaskbarIcon.TrayPopup>
-                    <TextBlock
+                        <TextBlock
                         Style="{DynamicResource MaterialDesignBody1TextBlock}">
                         Dashboard
-                    </TextBlock>
-                </tb:TaskbarIcon.TrayPopup>
-                <tb:TaskbarIcon.TrayToolTip>
-                    <ToolTip>
-                        <TextBlock
+                        </TextBlock>
+                    </tb:TaskbarIcon.TrayPopup>
+                    <tb:TaskbarIcon.TrayToolTip>
+                        <ToolTip>
+                            <TextBlock
                             Style="{DynamicResource MaterialDesignBody1TextBlock}">
                         Dashboard
-                        </TextBlock>
-                    </ToolTip>
-                </tb:TaskbarIcon.TrayToolTip>-->
-
+                            </TextBlock>
+                        </ToolTip>
+                    </tb:TaskbarIcon.TrayToolTip>-->
                 </tb:TaskbarIcon>
 
             </Grid>

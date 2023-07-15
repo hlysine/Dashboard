@@ -2,6 +2,7 @@
 using Dashboard.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,8 +11,8 @@ namespace Dashboard.ViewModels
 {
     public class OsuUser : NotifyPropertyChanged
     {
-        private SimpleUser sUser;
-        private FullUser fUser;
+        private CompactUser sUser;
+        private User fUser;
         private OsuService osu;
 
         // default is false, set 1 for true.
@@ -32,9 +33,9 @@ namespace Dashboard.ViewModels
             get => sUser.Username;
         }
 
-        public long Rank
+        public long? Rank
         {
-            get => getUser()?.Statistics?.Rank.Global ?? sUser.CurrentModeRank;
+            get => getUser()?.RankHistory?.Data.Last() ?? sUser.Statistics.GlobalRank;
         }
 
         public bool Online
@@ -42,9 +43,9 @@ namespace Dashboard.ViewModels
             get => getUser()?.IsOnline ?? sUser.IsOnline;
         }
 
-        public DateTime LastOnline
+        public DateTime? LastOnline
         {
-            get => getUser()?.LastVisit.ToLocalTime() ?? sUser.LastVisit.ToLocalTime();
+            get => getUser()?.LastVisit?.ToLocalTime() ?? sUser.LastVisit?.ToLocalTime();
         }
 
         public double? PP
@@ -67,7 +68,7 @@ namespace Dashboard.ViewModels
             }
         }
 
-        private FullUser getUser()
+        private User getUser()
         {
             if (fUser == null)
             {
@@ -102,7 +103,7 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                return openCommand ?? (openCommand = new RelayCommand(
+                return openCommand ??= new RelayCommand(
                     // execute
                     () =>
                     {
@@ -113,10 +114,10 @@ namespace Dashboard.ViewModels
                     {
                         return true;
                     }
-                ));
+                );
             }
         }
 
-        public OsuUser(SimpleUser _sUser, OsuService _osu) => (sUser, osu) = (_sUser, _osu);
+        public OsuUser(CompactUser _sUser, OsuService _osu) => (sUser, osu) = (_sUser, _osu);
     }
 }

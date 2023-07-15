@@ -31,21 +31,21 @@ namespace Dashboard.Services
 
         protected override void OnInitialized()
         {
-            client = new RestClient("https://api.openweathermap.org/").UseNewtonsoftJson();
+            client = new RestClient("https://api.openweathermap.org/", configureSerialization: s => s.UseNewtonsoftJson());
             client.AddDefaultQueryParameter("appid", ApiKey);
         }
 
         public async Task<ForecastResponse> GetDailyForecast(Units units)
         {
             LocationResponse location = await Location.GetLocation();
-            RestRequest request = new RestRequest("data/2.5/forecast", Method.GET);
+            var request = new RestRequest("data/2.5/forecast", Method.Get);
             request.AddParameter("lon", location.Longitude);
             request.AddParameter("lat", location.Latitude);
             if (units == Units.Metric)
                 request.AddParameter("units", "metric");
             else if (units == Units.Imperial)
                 request.AddParameter("units", "imperial");
-            IRestResponse<ForecastResponse> response = await client.ExecuteAsync<ForecastResponse>(request);
+            RestResponse<ForecastResponse> response = await client.ExecuteAsync<ForecastResponse>(request);
             return response.Data;
         }
     }

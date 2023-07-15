@@ -6,9 +6,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace Dashboard.Utilities
 {
@@ -136,7 +138,7 @@ namespace Dashboard.Utilities
 
         public static DateTime GetDateTime(this EventDateTime eventDateTime)
         {
-            if (eventDateTime.DateTime == null)
+            if (eventDateTime.DateTimeDateTimeOffset == null)
             {
                 return DateTime.ParseExact(eventDateTime.Date,
                                         "yyyy-MM-dd",
@@ -145,20 +147,20 @@ namespace Dashboard.Utilities
             }
             else
             {
-                return eventDateTime.DateTime.GetValueOrDefault();
+                return eventDateTime.DateTimeDateTimeOffset.GetValueOrDefault().DateTime;
             }
         }
 
         public static string GetProgramVersion()
         {
-            //return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            return System.Windows.Forms.Application.ProductVersion;
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            //return System.Windows.Forms.Application.ProductVersion;
         }
 
         public static string GetAppExeFolder()
         {
-            //return System.AppDomain.CurrentDomain.BaseDirectory;
-            return System.Windows.Forms.Application.StartupPath;
+            return System.AppDomain.CurrentDomain.BaseDirectory;
+            //return System.Windows.Forms.Application.StartupPath;
         }
 
         public static string GetAppExePath()
@@ -169,18 +171,24 @@ namespace Dashboard.Utilities
 
         public static string GetProductName()
         {
-            //return Application.Current.MainWindow.GetType().Assembly.GetName().Name;
-            return System.Windows.Forms.Application.ProductName;
+            return Application.Current.MainWindow.GetType().Assembly.GetName().Name;
+            //return System.Windows.Forms.Application.ProductName;
         }
 
         public static string GetCompanyName()
         {
-            return System.Windows.Forms.Application.CompanyName;
+            Assembly currentAssem = Application.Current.MainWindow.GetType().Assembly;
+            object[] attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+            if (attribs.Length > 0)
+            {
+                return ((AssemblyCompanyAttribute)attribs[0]).Company;
+            }
+            return "";
         }
 
         public static string ToAbsolutePath(this string relativePath)
         {
-            return Path.Combine(System.Windows.Forms.Application.StartupPath, relativePath);
+            return Path.Combine(GetAppExeFolder(), relativePath);
         }
     }
 }
