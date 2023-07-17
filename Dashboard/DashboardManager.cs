@@ -10,6 +10,8 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -38,6 +40,24 @@ namespace Dashboard
         {
             get => services;
             set => SetAndNotify(ref services, value);
+        }
+        
+        private RelayCommand quitAppCommand;
+
+        public ICommand QuitAppCommand
+        {
+            get
+            {
+                return quitAppCommand ??= new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        Application.Current.Shutdown();
+                    },
+                    // can execute
+                    () => true
+                );
+            }
         }
 
         private const string configPath = "config.xml";

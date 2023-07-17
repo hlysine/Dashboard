@@ -34,42 +34,6 @@ namespace Dashboard.Components.Containers
         [PersistentConfig]
         public double BackgroundOpacity { get => backgroundOpacity; set => SetAndNotify(ref backgroundOpacity, value); }
 
-        private RelayCommand showWindowCommand;
-
-        public ICommand ShowWindowCommand
-        {
-            get
-            {
-                return showWindowCommand ??= new RelayCommand(
-                    // execute
-                    () =>
-                    {
-                        ThisForeground = true;
-                    },
-                    // can execute
-                    () => !ThisForeground
-                );
-            }
-        }
-
-        private RelayCommand quitAppCommand;
-
-        public ICommand QuitAppCommand
-        {
-            get
-            {
-                return quitAppCommand ??= new RelayCommand(
-                    // execute
-                    () =>
-                    {
-                        Application.Current.Shutdown();
-                    },
-                    // can execute
-                    () => true
-                );
-            }
-        }
-
         private RelayCommand toggleWindowCommand;
 
         public ICommand ToggleWindowCommand

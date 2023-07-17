@@ -17,18 +17,15 @@ namespace Dashboard.Views.Components
     /// </summary>
     public partial class WindowView : Window, IDashboardView<WindowContainer>
     {
-        private DashboardManager manager = new DashboardManager();
-
-        private Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new Dictionary<DashboardComponent, DashboardViewBase>();
+        private readonly Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new();
 
         public WindowContainer Component { get; private set; }
 
-        public WindowView()
+        public WindowView(WindowContainer component)
         {
-            // TODO: check that Initialize() does return a WindowContainer
-            WindowContainer window = (WindowContainer)manager.Initialize();
-            Component = window;
-            DataContext = window;
+            // Extract to DashboardWindowBase
+            Component = component;
+            DataContext = component;
 
             InitializeComponent();
 
@@ -37,7 +34,7 @@ namespace Dashboard.Views.Components
 
 
             Component.Children.CollectionChanged += Children_CollectionChanged;
-            window.PropertyChanged += Window_PropertyChanged;
+            Component.PropertyChanged += Window_PropertyChanged;
         }
 
         private void Window_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -153,24 +150,11 @@ namespace Dashboard.Views.Components
                 WindowState = WindowState.Normal;
             }
 
-            // According to some sources these steps gurantee that an app will be brought to foreground.
+            // According to some sources these steps guarantee that an app will be brought to foreground.
             Activate();
             Topmost = true;
             Topmost = false;
             Focus();
-        }
-
-        // Command binding is not working in tray icon menu for some reason
-        private void menuShow_Click(object sender, RoutedEventArgs e)
-        {
-            if (Component.ShowWindowCommand.CanExecute(null))
-                Component.ShowWindowCommand.Execute(null);
-        }
-
-        private void menuExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (Component.QuitAppCommand.CanExecute(null))
-                Component.QuitAppCommand.Execute(null);
         }
     }
 }

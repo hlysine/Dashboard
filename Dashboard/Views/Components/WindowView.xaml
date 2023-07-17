@@ -60,40 +60,8 @@
             VerticalAlignment="Stretch"
             Mode="PrimaryDark"
             Background="Transparent">
-            <Grid
-                Name="root">
-                <tb:TaskbarIcon
-                    Visibility="Visible"
-                    ToolTipText="Dashboard"
-                    IconSource="/Assets/icon.ico"
-                    MenuActivation="LeftOrRightClick">
-                    <tb:TaskbarIcon.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem
-                                Header="Show"
-                                Name="menuShow"
-                                Click="menuShow_Click" />
-                            <MenuItem
-                                Header="Settings" />
-                            <Separator />
-                            <MenuItem
-                                Header="Exit"
-                                Name="menuExit"
-                                Click="menuExit_Click" />
-                        </ContextMenu>
-                    </tb:TaskbarIcon.ContextMenu>
-                    <tb:TaskbarIcon.TrayToolTip>
-                        <ToolTip Placement="Mouse">
-                            <TextBlock
-                                Style="{DynamicResource MaterialDesignBody2TextBlock}">
-                                Dashboard
-                            </TextBlock>
-                        </ToolTip>
-                    </tb:TaskbarIcon.TrayToolTip>
-                </tb:TaskbarIcon>
-
+            <Grid Name="root">
             </Grid>
-
         </md:ColorZone>
     </Grid>
 </Window>

@@ -2,7 +2,7 @@
 
 namespace Dashboard.Views.Components
 {
-    public interface IDashboardView<TComponent> where TComponent : DashboardComponent, new()
+    public interface IDashboardView<out TComponent> where TComponent : DashboardComponent, new()
     {
         public TComponent Component { get; }
     }
