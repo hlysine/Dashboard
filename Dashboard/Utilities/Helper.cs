@@ -24,6 +24,7 @@ namespace Dashboard.Utilities
             {
                 action(item);
             }
+
             return enumeration;
         }
 
@@ -33,6 +34,7 @@ namespace Dashboard.Utilities
             {
                 action(item);
             }
+
             return enumeration;
         }
 
@@ -112,6 +114,7 @@ namespace Dashboard.Utilities
             {
                 return res1;
             }
+
             var match = Regex.Match(str, @".*(?= \+0000| GMT| UTC| \(UTC\))");
             if (match.Success)
             {
@@ -120,34 +123,39 @@ namespace Dashboard.Utilities
                     return res2;
                 }
             }
+
             var match2 = Regex.Match(str, @".*(?= [A-Z]{3}| \([A-Z]{3}\))");
             if (DateTime.TryParseExact(match2.Value, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res3))
             {
                 return res3;
             }
+
             if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res4))
             {
                 return res4;
             }
+
             if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res5))
             {
                 return res5;
             }
+
             throw new ArgumentException("Failed to parse the provided string");
         }
 
         public static DateTime GetDateTime(this EventDateTime eventDateTime)
         {
-            if (eventDateTime.DateTimeDateTimeOffset == null)
+            if (eventDateTime.DateTimeRaw == null)
             {
                 return DateTime.ParseExact(eventDateTime.Date,
-                                        "yyyy-MM-dd",
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None);
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None);
             }
             else
             {
-                return eventDateTime.DateTimeDateTimeOffset.GetValueOrDefault().DateTime;
+                return DateTime.Parse(eventDateTime.DateTimeRaw);
+                // return eventDateTime.DateTimeDateTimeOffset.GetValueOrDefault().DateTime;
             }
         }
 
@@ -183,6 +191,7 @@ namespace Dashboard.Utilities
             {
                 return ((AssemblyCompanyAttribute)attribs[0]).Company;
             }
+
             return "";
         }
 
