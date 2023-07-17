@@ -7,7 +7,7 @@
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:Dashboard"
     xmlns:tools="clr-namespace:Dashboard.Utilities"
-    xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
     xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
     xmlns:components="clr-namespace:Dashboard.Components"
     d:DataContext="{d:DesignInstance Type=components:WindowContainer}"
@@ -63,43 +63,33 @@
             <Grid
                 Name="root">
                 <tb:TaskbarIcon
-                    x:Name="notifyIcon"
                     Visibility="Visible"
                     ToolTipText="Dashboard"
-                    IconSource="{StaticResource DashboardIcon}"
-                    MenuActivation="LeftOrRightClick"
-                    PopupActivation="DoubleClick">
+                    IconSource="/Assets/icon.ico"
+                    MenuActivation="LeftOrRightClick">
                     <tb:TaskbarIcon.ContextMenu>
-                        <ContextMenu
-                            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <ContextMenu>
                             <MenuItem
-                                Name="menuShow"
                                 Header="Show"
-                                Command="{Binding ShowWindowCommand}">
-                            </MenuItem>
-                            <Separator />
+                                Name="menuShow"
+                                Click="menuShow_Click" />
                             <MenuItem
                                 Header="Settings" />
+                            <Separator />
                             <MenuItem
-                                Name="menuExit"
                                 Header="Exit"
-                                Command="{Binding QuitAppCommand}" />
+                                Name="menuExit"
+                                Click="menuExit_Click" />
                         </ContextMenu>
                     </tb:TaskbarIcon.ContextMenu>
-                    <!--<tb:TaskbarIcon.TrayPopup>
-                        <TextBlock
-                        Style="{DynamicResource MaterialDesignBody1TextBlock}">
-                        Dashboard
-                        </TextBlock>
-                    </tb:TaskbarIcon.TrayPopup>
                     <tb:TaskbarIcon.TrayToolTip>
-                        <ToolTip>
+                        <ToolTip Placement="Mouse">
                             <TextBlock
-                            Style="{DynamicResource MaterialDesignBody1TextBlock}">
-                        Dashboard
+                                Style="{DynamicResource MaterialDesignBody2TextBlock}">
+                                Dashboard
                             </TextBlock>
                         </ToolTip>
-                    </tb:TaskbarIcon.TrayToolTip>-->
+                    </tb:TaskbarIcon.TrayToolTip>
                 </tb:TaskbarIcon>
 
             </Grid>

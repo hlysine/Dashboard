@@ -93,7 +93,7 @@ namespace Dashboard
                     {
                         var comp = (DashboardComponent)x;
                         DashboardViewBase elem = GetNewViewFor(comp);
-                        if (elem == null) return;  //DEBUG
+                        if (elem == null) return; //DEBUG
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
                     });
@@ -127,7 +127,7 @@ namespace Dashboard
                     Component.Children.ForEach(x =>
                     {
                         DashboardViewBase elem = GetNewViewFor(x);
-                        if (elem == null) return;  //DEBUG
+                        if (elem == null) return; //DEBUG
                         viewBindings.Add(x, elem);
                         root.Children.Add(elem);
                     });
@@ -139,11 +139,11 @@ namespace Dashboard
         {
             // TODO: remove BaseType? chain
             var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                             from assemblyType in domainAssembly.GetTypes()
-                             where assemblyType.IsSubclassOf(typeof(DashboardViewBase))
-                                && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
-                                && !assemblyType.IsAbstract
-                             select assemblyType).ToArray();
+                from assemblyType in domainAssembly.GetTypes()
+                where assemblyType.IsSubclassOf(typeof(DashboardViewBase))
+                      && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
+                      && !assemblyType.IsAbstract
+                select assemblyType).ToArray();
             Type target = classList.FirstOrDefault();
             if (target == null)
                 return null;
@@ -172,6 +172,7 @@ namespace Dashboard
             Focus();
         }
 
+        // Command binding is not working in tray icon menu for some reason
         private void menuShow_Click(object sender, RoutedEventArgs e)
         {
             if (Component.ShowWindowCommand.CanExecute(null))

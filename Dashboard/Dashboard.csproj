@@ -19,7 +19,7 @@
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.61.0.3109" />
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.61.0.3105" />
     <PackageReference Include="Google.Apis.Tasks.v1" Version="1.61.0.3015" />
-    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.108" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="MaterialDesignColors" Version="2.1.4" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />

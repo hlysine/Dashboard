@@ -161,38 +161,39 @@ namespace Dashboard.Utilities
 
         public static string GetProgramVersion()
         {
-            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            //return System.Windows.Forms.Application.ProductVersion;
+            // return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            return System.Windows.Forms.Application.ProductVersion;
         }
 
         public static string GetAppExeFolder()
         {
-            return System.AppDomain.CurrentDomain.BaseDirectory;
-            //return System.Windows.Forms.Application.StartupPath;
+            // return System.AppDomain.CurrentDomain.BaseDirectory;
+            return System.Windows.Forms.Application.StartupPath;
         }
 
         public static string GetAppExePath()
         {
-            //return System.Reflection.Assembly.GetExecutingAssembly().Location;
-            return Process.GetCurrentProcess().MainModule.FileName;
+            return System.Reflection.Assembly.GetExecutingAssembly().Location;
+            // return Process.GetCurrentProcess().MainModule.FileName;
         }
 
         public static string GetProductName()
         {
-            return Application.Current.MainWindow.GetType().Assembly.GetName().Name;
-            //return System.Windows.Forms.Application.ProductName;
+            // return Application.Current.MainWindow.GetType().Assembly.GetName().Name;
+            return System.Windows.Forms.Application.ProductName;
         }
 
         public static string GetCompanyName()
         {
-            Assembly currentAssem = Application.Current.MainWindow.GetType().Assembly;
-            object[] attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
-            if (attribs.Length > 0)
-            {
-                return ((AssemblyCompanyAttribute)attribs[0]).Company;
-            }
-
-            return "";
+            return System.Windows.Forms.Application.CompanyName;
+            // Assembly currentAssem = Application.Current.MainWindow.GetType().Assembly;
+            // object[] attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+            // if (attribs.Length > 0)
+            // {
+            //     return ((AssemblyCompanyAttribute)attribs[0]).Company;
+            // }
+            //
+            // return "";
         }
 
         public static string ToAbsolutePath(this string relativePath)
