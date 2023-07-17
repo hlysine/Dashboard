@@ -1,18 +1,15 @@
 // Taken from https://github.com/JohnnyCrazy/SpotifyAPI-NET/blob/master/SpotifyAPI.Web.Auth/EmbedIOAuthServer.cs
 
-using System.Reflection;
-using System.Threading;
-using System.Web;
-using System.Globalization;
-using System.Text;
 using System;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Dashboard.Utilities.Auth.Models;
 using EmbedIO;
 using EmbedIO.Actions;
-using Dashboard.Utilities.Auth.Models;
-using Dashboard.Utilities.Auth;
 
-namespace Dashboard.Utilities
+namespace Dashboard.Utilities.Auth
 {
     public class EmbedIOAuthServer
     {

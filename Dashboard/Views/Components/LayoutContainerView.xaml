@@ -1,0 +1,32 @@
+﻿<components:LayoutContainerViewBase
+    x:Class="Dashboard.Views.Components.LayoutContainerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:local="clr-namespace:Dashboard"
+    xmlns:view="clr-namespace:Dashboard.Views"
+    xmlns:comp="clr-namespace:Dashboard.Components"
+    xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
+    xmlns:components="clr-namespace:Dashboard.Views.Components"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    Background="Transparent"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    mc:Ignorable="d"
+    d:DesignHeight="385"
+    d:DesignWidth="300"
+    Margin="{Binding Position.Margin}"
+    HorizontalAlignment="{Binding Position.HorizontalAlignment}"
+    VerticalAlignment="{Binding Position.VerticalAlignment}"
+    Width="{Binding Position.Width}"
+    Height="{Binding Position.Height}">
+    <!-- TODO: a proper way to position Views-->
+    <Grid
+        Name="root">
+        
+    </Grid>
+</components:LayoutContainerViewBase>

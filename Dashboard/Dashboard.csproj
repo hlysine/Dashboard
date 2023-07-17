@@ -42,84 +42,131 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\TabbedContainerView.xaml.cs">
+    <Compile Update="Views\Components\ClockView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\LayoutContainerView.xaml.cs">
+    <Compile Update="Views\Components\GoogleCalendarEventControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\WeatherView.xaml.cs">
+    <Compile Update="Views\Components\GoogleCalendarView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\WeatherIntervalControl.xaml.cs">
+    <Compile Update="Views\Components\GoogleGmailThreadControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\LauncherView.xaml.cs">
+    <Compile Update="Views\Components\GoogleGmailView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GoogleGmailView.xaml.cs">
+    <Compile Update="Views\Components\GoogleTasksTaskControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GoogleTasksView.xaml.cs">
+    <Compile Update="Views\Components\GoogleTasksView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GoogleCalendarView.xaml.cs">
+    <Compile Update="Views\Components\LauncherView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GoogleGmailThreadControl.xaml.cs">
+    <Compile Update="Views\Components\LayoutContainerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\OsuUserControl.xaml.cs">
+    <Compile Update="Views\Components\OsuUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GoogleTasksTaskControl.xaml.cs">
+    <Compile Update="Views\Components\OsuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\OsuView.xaml.cs">
+    <Compile Update="Views\Components\SpotifyView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\SpotifyView.xaml.cs">
+    <Compile Update="Views\Components\TabbedContainerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Components\WeatherIntervalControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Components\WeatherView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\TabbedContainerView.xaml">
+    <Page Update="Views\Components\ClockView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LayoutContainerView.xaml">
+    <Page Update="Views\Components\GoogleCalendarEventControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\WeatherView.xaml">
+    <Page Update="Views\Components\GoogleCalendarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\WeatherIntervalControl.xaml">
+    <Page Update="Views\Components\GoogleGmailThreadControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LauncherView.xaml">
+    <Page Update="Views\Components\GoogleGmailView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GoogleGmailView.xaml">
+    <Page Update="Views\Components\GoogleTasksTaskControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GoogleTasksView.xaml">
+    <Page Update="Views\Components\GoogleTasksView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GoogleCalendarView.xaml">
+    <Page Update="Views\Components\LauncherView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GoogleGmailThreadControl.xaml">
+    <Page Update="Views\Components\LayoutContainerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\OsuUserControl.xaml">
+    <Page Update="Views\Components\OsuUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GoogleTasksTaskControl.xaml">
+    <Page Update="Views\Components\OsuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\OsuView.xaml">
+    <Page Update="Views\Components\SpotifyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SpotifyView.xaml">
+    <Page Update="Views\Components\TabbedContainerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\WeatherIntervalControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\WeatherView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\WindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Dashboard.Views.Components;
 
 namespace Dashboard
 {

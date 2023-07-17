@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Dashboard.Components.Containers;
+using Dashboard.Views.Components;
 
 namespace Dashboard
 {

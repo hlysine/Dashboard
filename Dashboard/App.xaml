@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:Dashboard"
     xmlns:converters="clr-namespace:Dashboard.Utilities.Converters"
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-    StartupUri="Views/WindowView.xaml"
+    StartupUri="Views/Components/WindowView.xaml"
     Startup="AppOnStartup">
     <Application.Resources>
         <ResourceDictionary>

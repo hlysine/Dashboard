@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dashboard.Utilities.Auth;
 using Newtonsoft.Json;
 using RestSharp.Serializers.NewtonsoftJson;
 

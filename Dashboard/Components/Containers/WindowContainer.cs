@@ -1,19 +1,10 @@
-﻿using Dashboard.Components.Containers;
-using Dashboard.Config;
-using Dashboard.Services;
-using Dashboard.Utilities;
-using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
-using NHotkey.Wpf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using Dashboard.Config;
+using Dashboard.Utilities;
 
-namespace Dashboard.Components
+namespace Dashboard.Components.Containers
 {
     public class WindowContainer : DashboardContainer
     {
