@@ -27,6 +27,7 @@ namespace Dashboard
     public class DashboardManager : NotifyPropertyChanged
     {
         private DashboardComponent rootComponent;
+
         [PersistentConfig]
         public DashboardComponent RootComponent
         {
@@ -35,13 +36,17 @@ namespace Dashboard
         }
 
         private ObservableCollection<Service> services = new ObservableCollection<Service>();
+
         [PersistentConfig]
         public ObservableCollection<Service> Services
         {
             get => services;
             set => SetAndNotify(ref services, value);
         }
-        
+
+        [PersistentConfig]
+        public bool Autostart { get; set; } = true;
+
         private RelayCommand quitAppCommand;
 
         public ICommand QuitAppCommand
@@ -75,9 +80,9 @@ namespace Dashboard
             var attributes = new XmlAttributes();
             attributes.XmlIgnore = true;
             var classList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
-                             from assemblyType in domainAssembly.GetTypes()
-                             where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
-                             select assemblyType).ToArray();
+                from assemblyType in domainAssembly.GetTypes()
+                where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
+                select assemblyType).ToArray();
             var props = new List<PropertyInfo>();
             foreach (Type configType in classList)
             {
@@ -98,9 +103,9 @@ namespace Dashboard
                             {
                                 xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
                                 var arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
-                                                   from assemblyType in domainAssembly.GetTypes()
-                                                   where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
-                                                   select assemblyType).ToArray();
+                                    from assemblyType in domainAssembly.GetTypes()
+                                    where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
+                                    select assemblyType).ToArray();
                                 foreach (var t in arrTypeList)
                                 {
                                     xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
@@ -110,6 +115,7 @@ namespace Dashboard
                             {
                                 xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
                             }
+
                             configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
                         }
                     }
@@ -207,6 +213,7 @@ namespace Dashboard
                 service.Id = serviceId;
                 Services.Add(service);
             }
+
             return service;
         }
 
@@ -254,6 +261,7 @@ namespace Dashboard
                         {
                             node.Value = node.Value.Trim();
                         }
+
                         document = xDoc.ToString();
 
                         using (StringReader xmlReader = new StringReader(document))
@@ -261,6 +269,7 @@ namespace Dashboard
                             var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
                             RootComponent = tmpManager.RootComponent;
                             Services = tmpManager.Services;
+                            Autostart = tmpManager.Autostart;
                         }
                     }
                 }

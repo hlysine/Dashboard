@@ -41,9 +41,6 @@
     </Window.InputBindings>
     <cmd:CommandBehaviorCollection.Behaviors>
         <cmd:BehaviorBinding
-            Action="{Binding WindowInitialize}"
-            Event="Initialized" />
-        <cmd:BehaviorBinding
             Action="{Binding LostFocus}"
             Event="Deactivated" />
     </cmd:CommandBehaviorCollection.Behaviors>

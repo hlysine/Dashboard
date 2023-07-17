@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Interop;
 using Dashboard.Components;
 using Dashboard.Components.Containers;
+using Dashboard.Utilities;
 using Dashboard.Views.Components;
 
 namespace Dashboard.Views;
@@ -21,6 +22,12 @@ public partial class RootView : Window
 
         // TODO: check that Initialize() does return a WindowContainer
         var window = (WindowContainer)manager.Initialize();
+        
+        if (manager.Autostart)
+            AutoRun.Register();
+        else
+            AutoRun.Unregister();
+            
         var view = GetNewViewFor(window);
         viewBindings.Add(window, view);
         // TODO: extract to helper method: load window without showing
