@@ -1,14 +1,12 @@
-﻿using Dashboard.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Input;
 
 namespace Dashboard.Config
 {
     public class HotKey
     {
-        public ModifierKeys ModifierKeys { get; set; } = ModifierKeys.Alt;
-        public Keys Key { get; set; } = Keys.D;
+        public Key Key { get; set; }
+        public ModifierKeys ModifierKeys { get; set; }
+
+        public static implicit operator KeyGesture(HotKey hotKey) => new(hotKey.Key, hotKey.ModifierKeys);
     }
 }

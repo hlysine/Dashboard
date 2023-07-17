@@ -23,11 +23,11 @@ namespace Dashboard.Services
         public new string RefreshToken { get; set; }
 
         [PersistentConfig(Generated = true)]
-        public List<CredentialKeyValuePair<string, object>> Credentials { get; set; } = new List<CredentialKeyValuePair<string, object>>();
+        public List<CredentialKeyValuePair<string, object>> Credentials { get; set; } = new();
 
         public override bool IsAuthorized => credential != null;
 
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim semaphore = new(1, 1);
 
         private UserCredential credential;
 
@@ -39,12 +39,12 @@ namespace Dashboard.Services
         public override async Task Authorize(CancellationToken cancel = default)
         {
             // Use a semaphore to avoid opening multiple consent screens when multiple Google services are authenticating
-            await semaphore.WaitAsync();
+            await semaphore.WaitAsync(cancel);
             try
             {
                 if (!requiredScopes.IsSubsetOf(AuthorizedScopes))
                 {
-                    await Unauthorize();
+                    await Unauthorize(cancel);
                 }
 
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -66,11 +66,12 @@ namespace Dashboard.Services
             }
         }
 
-        public override async Task Unauthorize(CancellationToken cancel = default)
+        public override Task Unauthorize(CancellationToken cancel = default)
         {
             Credentials.Clear();
             AuthorizedScopes.Clear();
             RaiseConfigUpdated(EventArgs.Empty);
+            return Task.CompletedTask;
         }
 
         public UserCredential GetCredential()
@@ -94,32 +95,35 @@ namespace Dashboard.Services
 
     public class ConfigDataStore : IDataStore
     {
-        private GoogleService service;
+        private readonly GoogleService service;
 
         public ConfigDataStore(GoogleService _service) => service = _service;
 
-        public async Task ClearAsync()
+        public Task ClearAsync()
         {
             service.Credentials.Clear();
+            return Task.CompletedTask;
         }
 
-        public async Task DeleteAsync<T>(string key)
+        public Task DeleteAsync<T>(string key)
         {
             service.Credentials.RemoveAll(x => x.Key == key);
+            return Task.CompletedTask;
         }
 
-        public async Task<T> GetAsync<T>(string key)
+        public Task<T> GetAsync<T>(string key)
         {
-            return (T)service.Credentials.FirstOrDefault(x => x.Key == key)?.Value;
+            return Task.FromResult((T)service.Credentials.FirstOrDefault(x => x.Key == key)?.Value);
         }
 
-        public async Task StoreAsync<T>(string key, T value)
+        public Task StoreAsync<T>(string key, T value)
         {
             if (service.Credentials.Any(x => x.Key == key))
             {
                 service.Credentials.RemoveAll(x => x.Key == key);
             }
             service.Credentials.Add(new CredentialKeyValuePair<string, object>(key, value));
+            return Task.CompletedTask;
         }
     }
 }

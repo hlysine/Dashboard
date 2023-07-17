@@ -4,6 +4,7 @@ using Dashboard.Services;
 using Dashboard.Utilities;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using NHotkey.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace Dashboard.Components
         public bool Autostart { get; set; } = true;
 
         [PersistentConfig]
-        public HotKey HotKey { get; set; } = new HotKey();
+        public HotKey HotKey { get; set; } = new() { Key = Key.D, ModifierKeys = ModifierKeys.Alt };
 
         private WindowBlur.BlurType blurType = WindowBlur.BlurType.Acrylic;
         [PersistentConfig]
@@ -78,7 +79,23 @@ namespace Dashboard.Components
             }
         }
 
-        private KeyboardHook keyHook = new KeyboardHook();
+        private RelayCommand toggleWindowCommand;
+
+        public ICommand ToggleWindowCommand
+        {
+            get
+            {
+                return toggleWindowCommand ??= new RelayCommand(
+                    // execute
+                    () =>
+                    {
+                        ThisForeground = !ThisForeground;
+                    },
+                    // can execute
+                    () => true
+                );
+            }
+        }
 
         public WindowContainer()
         {
@@ -93,21 +110,12 @@ namespace Dashboard.Components
                     AutoRun.Register();
                 else
                     AutoRun.Unregister();
-
-                keyHook.RegisterHotKey(HotKey.ModifierKeys, HotKey.Key);
-                keyHook.KeyPressed += KeyHook_KeyPressed;
-
             };
 
             LostFocus = _ =>
             {
                 ThisForeground = false;
             };
-        }
-
-        private void KeyHook_KeyPressed(object sender, KeyPressedEventArgs e)
-        {
-            ThisForeground = !ThisForeground;
         }
     }
 }

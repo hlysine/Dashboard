@@ -16,12 +16,13 @@ namespace Dashboard.Services
         public override bool CanAuthorize => true;
         public override bool IsAuthorized => true;
 
-        IRestClient client = new RestClient("http://ip-api.com/").UseNewtonsoftJson();
+        readonly IRestClient client = new RestClient("http://ip-api.com/", configureSerialization: s => s.UseNewtonsoftJson());
 
         public async Task<LocationResponse> GetLocation(string ipAddress = null)
         {
-            RestRequest request = new RestRequest("json/{ip}", Method.GET);
-            request.AddUrlSegment("ip", ipAddress ?? "");
+            var request = new RestRequest("json/{ip}", Method.Get);
+            if (ipAddress != null)
+                request.AddUrlSegment("ip", ipAddress);
             return (await client.ExecuteAsync<LocationResponse>(request)).Data;
         }
     }

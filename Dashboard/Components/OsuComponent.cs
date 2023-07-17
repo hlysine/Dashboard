@@ -45,8 +45,10 @@ namespace Dashboard.Components
                 await Task.Delay(500);
                 fds = await Osu.GetFriends();
             }
+
             Friends.Clear();
-            Friends.AddRange(fds.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
+            if (fds != null)
+                Friends.AddRange(fds.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
             NotifyChanged(nameof(Friends));
         }
 
@@ -59,12 +61,14 @@ namespace Dashboard.Components
                 await LoadFriends();
                 StartAutoRefresh();
             }
+
             Loaded = true;
         }
 
         protected override void OnInitialize()
         {
-            Osu.RequireScopes(new[] {
+            Osu.RequireScopes(new[]
+            {
                 "identify",
                 "friends.read",
                 "public"
