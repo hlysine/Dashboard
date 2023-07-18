@@ -45,7 +45,7 @@ namespace Dashboard.Utilities.Auth.Models
                 builder.Append($"&show_dialog={ShowDialog.Value}");
             }
 
-            return new(builder.ToString());
+            return new Uri(builder.ToString());
         }
 
         public enum ResponseType

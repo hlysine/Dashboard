@@ -3,15 +3,9 @@ using Dashboard.ViewModels;
 using Dashboard.Services;
 using Dashboard.Utilities;
 using Google.Apis.Tasks.v1;
-using SpotifyAPI.Web;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Dashboard.Components
 {
@@ -47,7 +41,7 @@ namespace Dashboard.Components
                 var convertedTasks = new List<GoogleTasksTask>();
                 var tmp = new List<GoogleTasksTask>();
                 allTasks.Add(tasklist, convertedTasks);
-                tasks[tasklist].Items?.ForEach(x => tmp.Add(new(x)));
+                tasks[tasklist].Items?.ForEach(x => tmp.Add(new GoogleTasksTask(x)));
                 var groups = tmp.GroupBy(x => x.ParentId);
                 convertedTasks.AddRange(groups.Where(x => x.Key == null).SelectMany(x => x).OrderBy(x => x.Position));
                 groups.Where(x => x.Key != null).ForEach(x => convertedTasks.InsertRange(convertedTasks.FindIndex(y => y.Id == x.Key) + 1, x.OrderBy(x => x.Position)));

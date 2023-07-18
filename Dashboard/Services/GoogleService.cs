@@ -5,9 +5,7 @@ using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -122,7 +120,7 @@ namespace Dashboard.Services
             {
                 service.Credentials.RemoveAll(x => x.Key == key);
             }
-            service.Credentials.Add(new(key, value));
+            service.Credentials.Add(new CredentialKeyValuePair<string, object>(key, value));
             return Task.CompletedTask;
         }
     }

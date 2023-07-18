@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dashboard.Utilities.Auth.Models
+﻿namespace Dashboard.Utilities.Auth.Models
 {
     public class OsuTokenResponse
     {

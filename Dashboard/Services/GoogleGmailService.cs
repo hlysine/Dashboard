@@ -5,11 +5,8 @@ using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Dashboard.Services
 {
@@ -60,7 +57,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            gmail = new(new()
+            gmail = new GmailService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),

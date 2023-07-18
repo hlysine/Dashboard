@@ -3,14 +3,9 @@ using Dashboard.Services;
 using Dashboard.Utilities;
 using SpotifyAPI.Web;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace Dashboard.Components
 {
@@ -118,7 +113,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return playPauseCommand ??= new(
+                return playPauseCommand ??= new RelayCommand(
                     // execute
                     async () =>
                     {
@@ -156,7 +151,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return radioCommand ??= new(
+                return radioCommand ??= new RelayCommand(
                     // execute
                     async () =>
                     {

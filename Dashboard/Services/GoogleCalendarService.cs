@@ -5,8 +5,6 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,7 +57,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            calendar = new(new()
+            calendar = new CalendarService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),

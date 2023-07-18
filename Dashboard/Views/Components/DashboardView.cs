@@ -52,9 +52,12 @@ namespace Dashboard.Views.Components
         private UIElement wrapWithTitle(UIElement content)
         {
             Grid grid = new();
-            grid.RowDefinitions.Add(new() { Height = new(0, GridUnitType.Auto) });
-            grid.RowDefinitions.Add(new() { Height = new(0, GridUnitType.Auto) });
-            grid.RowDefinitions.Add(new() { Height = new(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition
+                { Height = new GridLength(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition
+                { Height = new GridLength(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition
+                { Height = new GridLength(1, GridUnitType.Star) });
 
             TextBlock text = new();
             text.Text = Component.Name;
@@ -63,7 +66,7 @@ namespace Dashboard.Views.Components
 
             Binding b = new();
             b.Source = DataContext;
-            b.Path = new("ShowTitle");
+            b.Path = new PropertyPath("ShowTitle");
             b.Converter = new BoolToVisibilityConverter();
             b.Mode = BindingMode.OneWay;
             text.SetBinding(TextBlock.VisibilityProperty, b);
@@ -78,7 +81,7 @@ namespace Dashboard.Views.Components
 
             Binding b2 = new();
             b2.Source = DataContext;
-            b2.Path = new("ShowTitle");
+            b2.Path = new PropertyPath("ShowTitle");
             b2.Converter = new BoolToVisibilityConverter();
             b2.Mode = BindingMode.OneWay;
             border.SetBinding(Border.VisibilityProperty, b2);

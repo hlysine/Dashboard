@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Input;
 using Dashboard.Config;
 using Dashboard.Utilities;
@@ -36,7 +35,7 @@ namespace Dashboard.Components.Containers
         {
             get
             {
-                return toggleWindowCommand ??= new(
+                return toggleWindowCommand ??= new RelayCommand(
                     // execute
                     () =>
                     {

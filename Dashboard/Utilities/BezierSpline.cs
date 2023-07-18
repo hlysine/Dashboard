@@ -184,12 +184,12 @@ namespace Dashboard.Utilities
             for (var i = 0; i < n; ++i)
             {
                 // First control point
-                firstControlPoints[i] = new(x[i], y[i]);
+                firstControlPoints[i] = new Point(x[i], y[i]);
                 // Second control point
                 if (i < n - 1)
-                    secondControlPoints[i] = new(2 * knots[i + 1].X - x[i + 1], 2 * knots[i + 1].Y - y[i + 1]);
+                    secondControlPoints[i] = new Point(2 * knots[i + 1].X - x[i + 1], 2 * knots[i + 1].Y - y[i + 1]);
                 else
-                    secondControlPoints[i] = new((knots[n].X + x[n - 1]) / 2, (knots[n].Y + y[n - 1]) / 2);
+                    secondControlPoints[i] = new Point((knots[n].X + x[n - 1]) / 2, (knots[n].Y + y[n - 1]) / 2);
             }
         }
 

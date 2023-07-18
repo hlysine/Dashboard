@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dashboard.Config
+﻿namespace Dashboard.Config
 {
     public class ColorScheme
     {

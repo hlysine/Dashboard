@@ -1,9 +1,6 @@
 ﻿using Dashboard.Config;
 using Dashboard.Services;
 using Dashboard.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 
 namespace Dashboard.Components
@@ -38,7 +35,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return launchCommand ?? (launchCommand = new(
+                return launchCommand ?? (launchCommand = new RelayCommand(
                     // execute
                     () =>
                     {

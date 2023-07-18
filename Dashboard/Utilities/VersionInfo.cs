@@ -1,8 +1,6 @@
 ﻿// Taken from https://github.com/sourcechord/FluentWPF/blob/master/FluentWPF/Utility/VersionInfo.cs
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dashboard.Utilities
 {

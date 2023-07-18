@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using Dashboard.Components;
@@ -19,7 +20,7 @@ namespace Dashboard.Views.Components
 
         private void DashboardContainerView_Loaded(object sender, RoutedEventArgs e)
         {
-            Children_CollectionChanged(Component.Children, new(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             Component.Children.CollectionChanged += Children_CollectionChanged;
         }
 

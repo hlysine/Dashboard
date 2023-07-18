@@ -1,15 +1,10 @@
 ﻿using Dashboard.Config;
 using Dashboard.ViewModels;
 using Dashboard.Services;
-using Dashboard.Utilities;
-using SpotifyAPI.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Dashboard.Components
 {

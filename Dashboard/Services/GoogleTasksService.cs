@@ -4,11 +4,8 @@ using Google.Apis.Services;
 using Google.Apis.Tasks.v1;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Dashboard.Services
 {
@@ -59,7 +56,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            tasks = new(new()
+            tasks = new TasksService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),

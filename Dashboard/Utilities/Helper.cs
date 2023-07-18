@@ -6,11 +6,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace Dashboard.Utilities
 {
@@ -48,7 +45,7 @@ namespace Dashboard.Utilities
                 stringChars[i] = chars[Rnd.Next(chars.Length)];
             }
 
-            return new(stringChars);
+            return new string(stringChars);
         }
 
         public static void OpenUri(Uri uri)

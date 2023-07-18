@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Dashboard.Views.Components;
 
@@ -39,8 +34,8 @@ namespace Dashboard
         private void AppOnStartup(object sender, StartupEventArgs e)
         {
             bool isOwned;
-            this.mutex = new(true, UniqueMutexName, out isOwned);
-            this.eventWaitHandle = new(false, EventResetMode.AutoReset, UniqueEventName);
+            this.mutex = new Mutex(true, UniqueMutexName, out isOwned);
+            this.eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, UniqueEventName);
 
             // So, R# would not give a warning that this variable is not used.
             GC.KeepAlive(this.mutex);

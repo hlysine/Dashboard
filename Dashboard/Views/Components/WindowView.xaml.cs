@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -29,7 +30,7 @@ namespace Dashboard.Views.Components
 
             InitializeComponent();
 
-            Children_CollectionChanged(Component.Children, new(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             ChangeColorScheme(Component.ColorScheme);
 
 
@@ -63,7 +64,7 @@ namespace Dashboard.Views.Components
                 .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
 
             var newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
-            ResourceDictionary newThemeResourceDictionary = new() { Source = new(newThemeSource) };
+            ResourceDictionary newThemeResourceDictionary = new() { Source = new Uri(newThemeSource) };
 
             Application.Current.Resources.MergedDictionaries.Remove(oldThemeResourceDictionary);
             Application.Current.Resources.MergedDictionaries.Add(newThemeResourceDictionary);

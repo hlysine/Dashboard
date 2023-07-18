@@ -12,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Dashboard.Components.Containers;
@@ -53,7 +52,7 @@ namespace Dashboard
         {
             get
             {
-                return quitAppCommand ??= new(
+                return quitAppCommand ??= new RelayCommand(
                     // execute
                     () =>
                     {
@@ -101,19 +100,19 @@ namespace Dashboard
                             var xmlElem = new XmlAttributes();
                             if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
                             {
-                                xmlElem.XmlArray = new((attribute.Generated ? "_" : "") + prop.Name);
+                                xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
                                 var arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
                                     from assemblyType in domainAssembly.GetTypes()
                                     where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
                                     select assemblyType).ToArray();
                                 foreach (var t in arrTypeList)
                                 {
-                                    xmlElem.XmlArrayItems.Add(new(t));
+                                    xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
                                 }
                             }
                             else if (attribute.Generated)
                             {
-                                xmlElem.XmlElements.Add(new("_" + prop.Name));
+                                xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
                             }
 
                             configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
@@ -122,7 +121,7 @@ namespace Dashboard
                 }
             }
 
-            xmlSerializer = new(typeof(DashboardManager), configXmlOverrides, classList, new("DashboardConfig"), "");
+            xmlSerializer = new XmlSerializer(typeof(DashboardManager), configXmlOverrides, classList, new XmlRootAttribute("DashboardConfig"), "");
 
             if (File.Exists(configPath.ToAbsolutePath()))
                 LoadConfig();
@@ -141,17 +140,27 @@ namespace Dashboard
                 var launcher = new LauncherComponent();
                 var weather = new WeatherComponent();
 
-                var spotifyService = new SpotifyService() { Id = Helper.RandomString(10) };
-                var googleService = new GoogleService() { Id = Helper.RandomString(10) };
-                var calendarService = new GoogleCalendarService() { Id = googleService.Id };
-                var tasksService = new GoogleTasksService() { Id = googleService.Id };
-                var gmailService = new GoogleGmailService() { Id = googleService.Id };
-                var osuService = new OsuService() { Id = Helper.RandomString(10) };
-                var systemService = new SystemService() { Id = Helper.RandomString(10) };
-                var locationService = new LocationService() { Id = Helper.RandomString(10) };
-                var weatherService = new OpenWeatherMapService() { Id = Helper.RandomString(10) };
-
-                weatherService.LocationServiceId = locationService.Id;
+                var spotifyService = new SpotifyService
+                    { Id = Helper.RandomString(10) };
+                var googleService = new GoogleService
+                    { Id = Helper.RandomString(10) };
+                var calendarService = new GoogleCalendarService
+                    { Id = googleService.Id };
+                var tasksService = new GoogleTasksService
+                    { Id = googleService.Id };
+                var gmailService = new GoogleGmailService
+                    { Id = googleService.Id };
+                var osuService = new OsuService
+                    { Id = Helper.RandomString(10) };
+                var systemService = new SystemService
+                    { Id = Helper.RandomString(10) };
+                var locationService = new LocationService
+                    { Id = Helper.RandomString(10) };
+                var weatherService = new OpenWeatherMapService
+                {
+                    Id = Helper.RandomString(10),
+                    LocationServiceId = locationService.Id
+                };
 
                 spotify.SpotifyAccountId = spotifyService.Id;
                 tasks.GoogleAccountId = tasksService.Id;
@@ -183,7 +192,7 @@ namespace Dashboard
                 RootComponent = root;
             }
 
-            Services.ForEach(x => InitializeService(x));
+            Services.ForEach(InitializeService);
 
             InitializeComponent(RootComponent);
 
@@ -247,25 +256,25 @@ namespace Dashboard
 
         public void LoadConfig()
         {
-            if (File.Exists(configPath.ToAbsolutePath()))
+            if (!File.Exists(configPath.ToAbsolutePath()))
+                return;
+
+            using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
+            using StreamReader reader = new(fs);
+            var document = reader.ReadToEnd();
+            var xDoc = XDocument.Parse(document);
+            foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
             {
-                using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
-                using StreamReader reader = new(fs);
-                var document = reader.ReadToEnd();
-                var xDoc = XDocument.Parse(document);
-                foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
-                {
-                    node.Value = node.Value.Trim();
-                }
-
-                document = xDoc.ToString();
-
-                using StringReader xmlReader = new(document);
-                var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
-                RootComponent = tmpManager.RootComponent;
-                Services = tmpManager.Services;
-                Autostart = tmpManager.Autostart;
+                node.Value = node.Value.Trim();
             }
+
+            document = xDoc.ToString();
+
+            using StringReader xmlReader = new(document);
+            var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
+            RootComponent = tmpManager.RootComponent;
+            Services = tmpManager.Services;
+            Autostart = tmpManager.Autostart;
         }
     }
 }

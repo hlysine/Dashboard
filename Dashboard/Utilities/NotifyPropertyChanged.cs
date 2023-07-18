@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 
 namespace Dashboard.Utilities
@@ -16,7 +14,7 @@ namespace Dashboard.Utilities
         {
             if (Application.Current.Dispatcher.CheckAccess())
             {
-                PropertyChanged?.Invoke(this, new(propertyName));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             else
             {

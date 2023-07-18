@@ -1,11 +1,5 @@
 ﻿using Dashboard.Utilities;
 using Google.Apis.Tasks.v1.Data;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
 
 namespace Dashboard.ViewModels
 {

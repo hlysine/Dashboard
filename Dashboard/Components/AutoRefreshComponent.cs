@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Timers;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace Dashboard.Components
 {
@@ -16,7 +12,7 @@ namespace Dashboard.Components
 
         public AutoRefreshComponent()
         {
-            refreshTimer = new();
+            refreshTimer = new Timer();
             refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
             refreshTimer.AutoReset = true;
             refreshTimer.Elapsed += RefreshTimer_Elapsed;

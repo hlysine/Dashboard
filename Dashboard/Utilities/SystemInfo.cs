@@ -1,8 +1,6 @@
 ﻿// Taken from https://github.com/sourcechord/FluentWPF/blob/master/FluentWPF/Utility/SystemInfo.cs
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dashboard.Utilities
 {
@@ -25,11 +23,11 @@ namespace Dashboard.Utilities
 
             if (majorValue is int major && minorValue is int minor && canReadBuild)
             {
-                return new(major, minor, build);
+                return new VersionInfo(major, minor, build);
             }
             else
             {
-                return new(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
+                return new VersionInfo(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
             }
         }
 

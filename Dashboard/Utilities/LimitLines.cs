@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,7 +11,7 @@ namespace Dashboard.Utilities
                 "MaxLines",
                 typeof(int),
                 typeof(LimitLines),
-                new(default(int), OnMaxLinesPropertyChangedCallback));
+                new PropertyMetadata(default(int), OnMaxLinesPropertyChangedCallback));
 
         public static void SetMaxLines(DependencyObject element, int value)
         {
@@ -36,7 +34,7 @@ namespace Dashboard.Utilities
                 "MinLines",
                 typeof(int),
                 typeof(LimitLines),
-                new(default(int), OnMinLinesPropertyChangedCallback));
+                new PropertyMetadata(default(int), OnMinLinesPropertyChangedCallback));
 
         public static void SetMinLines(DependencyObject element, int value)
         {

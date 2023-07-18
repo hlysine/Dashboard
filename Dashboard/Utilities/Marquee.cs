@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -15,7 +12,7 @@ namespace Dashboard.Utilities
                 "IsEnabled",
                 typeof(bool),
                 typeof(Marquee),
-                new(default(bool), OnIsEnabledPropertyChangedCallback));
+                new PropertyMetadata(default(bool), OnIsEnabledPropertyChangedCallback));
 
         public static void SetIsEnabled(DependencyObject element, bool value)
         {
@@ -50,30 +47,32 @@ namespace Dashboard.Utilities
                 element.RenderTransform = transform;
 
 
-                var marquee1 = new DoubleAnimation()
+                var marquee1 = new DoubleAnimation
                 {
                     From = 0,
                     To = -element.ActualWidth,
                     Duration = TimeSpan.FromSeconds(5),
                     BeginTime = TimeSpan.FromSeconds(3),
-                    EasingFunction = new SineEase() { EasingMode = EasingMode.EaseIn }
+                    EasingFunction = new SineEase
+                        { EasingMode = EasingMode.EaseIn }
                 };
 
                 Storyboard.SetTarget(marquee1, element);
-                Storyboard.SetTargetProperty(marquee1, new("(UIElement.RenderTransform).(TranslateTransform.X)"));
+                Storyboard.SetTargetProperty(marquee1, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
 
 
-                var marquee2 = new DoubleAnimation()
+                var marquee2 = new DoubleAnimation
                 {
                     From = parent.ActualWidth,
                     To = 0,
                     Duration = TimeSpan.FromSeconds(3),
                     BeginTime = TimeSpan.FromSeconds(8),
-                    EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut }
+                    EasingFunction = new SineEase
+                        { EasingMode = EasingMode.EaseOut }
                 };
 
                 Storyboard.SetTarget(marquee2, element);
-                Storyboard.SetTargetProperty(marquee2, new("(UIElement.RenderTransform).(TranslateTransform.X)"));
+                Storyboard.SetTargetProperty(marquee2, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
 
                 var sb = new Storyboard();
                 sb.Children.Add(marquee1);

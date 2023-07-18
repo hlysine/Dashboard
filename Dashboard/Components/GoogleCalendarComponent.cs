@@ -4,14 +4,9 @@ using Dashboard.Services;
 using Dashboard.Utilities;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Dashboard.Components
 {
@@ -45,7 +40,7 @@ namespace Dashboard.Components
             List<GoogleCalendarEvent> tempEvents = new();
             foreach (var calendar in events.Keys)
             {
-                events[calendar].Items.ForEach(x => tempEvents.Add(new(calendar, x, colors)));
+                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
             }
             Events.AddRange(tempEvents.OrderBy(x => x.Start));
             NotifyChanged(nameof(Events));

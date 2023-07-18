@@ -1,9 +1,4 @@
-﻿using Dashboard.Config;
-using Dashboard.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System;
 
 namespace Dashboard.Components
 {

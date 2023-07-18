@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Dashboard.Utilities
 {
@@ -87,7 +85,7 @@ namespace Dashboard.Utilities
                 // use SetWindowLong
                 var tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
                 error = Marshal.GetLastWin32Error();
-                result = new(tempResult);
+                result = new IntPtr(tempResult);
             }
             else
             {

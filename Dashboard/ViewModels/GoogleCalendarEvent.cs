@@ -1,10 +1,7 @@
 ﻿using Dashboard.Utilities;
 using Google.Apis.Calendar.v3.Data;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -91,11 +88,11 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                return openCommand ?? (openCommand = new(
+                return openCommand ?? (openCommand = new RelayCommand(
                     // execute
                     () =>
                     {
-                        Helper.OpenUri(new($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
+                        Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
                     },
                     // can execute
                     () =>

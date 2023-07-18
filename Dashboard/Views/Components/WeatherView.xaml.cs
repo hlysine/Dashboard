@@ -6,7 +6,6 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Dashboard.Components;
 using Dashboard.Utilities;
-using Dashboard.ViewModels;
 
 namespace Dashboard.Views.Components
 {
@@ -61,10 +60,10 @@ namespace Dashboard.Views.Components
             for (var i = 0; i < Component.Forecast.Count; i++)
             {
                 var top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
-                points.Add(new(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
+                points.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
 
                 var top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
-                points2.Add(new(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
+                points2.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
             }
 
             temp = points.ToArray();
@@ -87,7 +86,7 @@ namespace Dashboard.Views.Components
                 lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
             }
             PathFigure f = new(points[0], lines, false);
-            return new(new PathFigure[] { f });
+            return new PathGeometry(new PathFigure[] { f });
         }
 
         private void drawGraph()
@@ -109,13 +108,13 @@ namespace Dashboard.Views.Components
                 TextBlock text = new()
                 {
                     Text = Component.Forecast[i].MainInfo.Temperature.ToString("F0") + Component.Forecast[i].TemperatureUnit,
-                    Padding = new(2)
+                    Padding = new Thickness(2)
                 };
                 text.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryHueDarkForegroundBrush");
                 text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkBrush");
 
-                text.Measure(new(double.PositiveInfinity, double.PositiveInfinity));
-                text.Arrange(new(text.DesiredSize));
+                text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                text.Arrange(new Rect(text.DesiredSize));
 
                 Canvas.SetLeft(text, points[i].X - text.ActualWidth / 2);
                 Canvas.SetTop(text, points[i].Y - text.ActualHeight / 2);
