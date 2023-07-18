@@ -1,4 +1,4 @@
-﻿
+
 [*]
 charset = utf-8
 end_of_line = crlf
@@ -36,6 +36,12 @@ dotnet_naming_rule.private_instance_fields_rule.import_to_resharper = as_predefi
 dotnet_naming_rule.private_instance_fields_rule.severity = warning
 dotnet_naming_rule.private_instance_fields_rule.style = lower_camel_case_style
 dotnet_naming_rule.private_instance_fields_rule.symbols = private_instance_fields_symbols
+dotnet_naming_rule.private_methods_rule.import_to_resharper = True
+dotnet_naming_rule.private_methods_rule.resharper_description = Private methods
+dotnet_naming_rule.private_methods_rule.resharper_guid = 37630ffc-cb07-4ec7-86de-20c7f700c967
+dotnet_naming_rule.private_methods_rule.severity = warning
+dotnet_naming_rule.private_methods_rule.style = lower_camel_case_style
+dotnet_naming_rule.private_methods_rule.symbols = private_methods_symbols
 dotnet_naming_rule.private_static_fields_rule.import_to_resharper = as_predefined
 dotnet_naming_rule.private_static_fields_rule.severity = warning
 dotnet_naming_rule.private_static_fields_rule.style = lower_camel_case_style
@@ -62,6 +68,10 @@ dotnet_naming_symbols.private_constants_symbols.applicable_kinds = field
 dotnet_naming_symbols.private_constants_symbols.required_modifiers = const
 dotnet_naming_symbols.private_instance_fields_symbols.applicable_accessibilities = private
 dotnet_naming_symbols.private_instance_fields_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_methods_symbols.applicable_accessibilities = local,private
+dotnet_naming_symbols.private_methods_symbols.applicable_kinds = method
+dotnet_naming_symbols.private_methods_symbols.resharper_applicable_kinds = method
+dotnet_naming_symbols.private_methods_symbols.resharper_required_modifiers = static, instance
 dotnet_naming_symbols.private_static_fields_symbols.applicable_accessibilities = private
 dotnet_naming_symbols.private_static_fields_symbols.applicable_kinds = field
 dotnet_naming_symbols.private_static_fields_symbols.required_modifiers = static
@@ -84,7 +94,6 @@ resharper_align_multiline_calls_chain = true
 resharper_autodetect_indent_settings = true
 resharper_blank_lines_after_control_transfer_statements = 1
 resharper_blank_lines_before_control_transfer_statements = 1
-resharper_csharp_insert_final_newline = true
 resharper_csharp_max_line_length = 29368
 resharper_csharp_naming_rule.enum_member = AaBb, AA_BB
 resharper_csharp_stick_comment = false
@@ -93,6 +102,7 @@ resharper_csharp_wrap_after_invocation_lpar = true
 resharper_csharp_wrap_before_declaration_rpar = true
 resharper_csharp_wrap_before_first_type_parameter_constraint = true
 resharper_csharp_wrap_before_invocation_rpar = true
+resharper_enforce_line_ending_style = true
 resharper_formatter_off_tag = @formatter:off
 resharper_formatter_on_tag = @formatter:on
 resharper_formatter_tags_enabled = true
