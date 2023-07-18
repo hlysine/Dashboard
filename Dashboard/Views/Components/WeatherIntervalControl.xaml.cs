@@ -24,11 +24,9 @@ namespace Dashboard.Views.Components
             if (DataContext is WeatherForecastItem data)
             {
                 WebClient wc = new WebClient();
-                using (MemoryStream stream = new MemoryStream(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl))))
-                {
-                    imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
-                    imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
-                }
+                using MemoryStream stream = new MemoryStream(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl)));
+                imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
+                imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
             }
         }
     }

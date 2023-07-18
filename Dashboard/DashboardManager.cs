@@ -229,10 +229,8 @@ namespace Dashboard
 
         public void SaveConfig()
         {
-            using (var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Create))
-            {
-                xmlSerializer.Serialize(fs, this);
-            }
+            using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Create);
+            xmlSerializer.Serialize(fs, this);
         }
 
         private void InitializeService(Service service)
@@ -251,28 +249,22 @@ namespace Dashboard
         {
             if (File.Exists(configPath.ToAbsolutePath()))
             {
-                using (var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open))
+                using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
+                using StreamReader reader = new StreamReader(fs);
+                string document = reader.ReadToEnd();
+                var xDoc = XDocument.Parse(document);
+                foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
                 {
-                    using (StreamReader reader = new StreamReader(fs))
-                    {
-                        string document = reader.ReadToEnd();
-                        var xDoc = XDocument.Parse(document);
-                        foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
-                        {
-                            node.Value = node.Value.Trim();
-                        }
-
-                        document = xDoc.ToString();
-
-                        using (StringReader xmlReader = new StringReader(document))
-                        {
-                            var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
-                            RootComponent = tmpManager.RootComponent;
-                            Services = tmpManager.Services;
-                            Autostart = tmpManager.Autostart;
-                        }
-                    }
+                    node.Value = node.Value.Trim();
                 }
+
+                document = xDoc.ToString();
+
+                using StringReader xmlReader = new StringReader(document);
+                var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
+                RootComponent = tmpManager.RootComponent;
+                Services = tmpManager.Services;
+                Autostart = tmpManager.Autostart;
             }
         }
     }
