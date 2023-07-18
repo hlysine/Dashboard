@@ -8,7 +8,7 @@ namespace Dashboard.Utilities
 {
     class SystemInfo
     {
-        public static Lazy<VersionInfo> Version { get; private set; } = new Lazy<VersionInfo>(() => GetVersionInfo());
+        public static Lazy<VersionInfo> Version { get; private set; } = new(() => GetVersionInfo());
 
         internal static VersionInfo GetVersionInfo()
         {
@@ -25,11 +25,11 @@ namespace Dashboard.Utilities
 
             if (majorValue is int major && minorValue is int minor && canReadBuild)
             {
-                return new VersionInfo(major, minor, build);
+                return new(major, minor, build);
             }
             else
             {
-                return new VersionInfo(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
+                return new(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
             }
         }
 

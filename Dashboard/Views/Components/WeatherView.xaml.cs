@@ -39,14 +39,14 @@ namespace Dashboard.Views.Components
         {
             const double vMargin = 10;
 
-            ScrollViewer scroll = VisualTreeHelpers.FindChild<ScrollViewer>(listWeather);
-            double width = scroll.ExtentWidth;
-            int count = listWeather.Items.Count;
-            double itemWidth = width / count;
+            var scroll = VisualTreeHelpers.FindChild<ScrollViewer>(listWeather);
+            var width = scroll.ExtentWidth;
+            var count = listWeather.Items.Count;
+            var itemWidth = width / count;
 
-            double min = double.PositiveInfinity;
-            double max = double.NegativeInfinity;
-            foreach (WeatherForecastItem item in Component.Forecast)
+            var min = double.PositiveInfinity;
+            var max = double.NegativeInfinity;
+            foreach (var item in Component.Forecast)
             {
                 min = Math.Min(item.MainInfo.Temperature, min);
                 max = Math.Max(item.MainInfo.Temperature, max);
@@ -55,16 +55,16 @@ namespace Dashboard.Views.Components
                 max = Math.Max(item.MainInfo.FeelsLike, max);
             }
 
-            List<Point> points = new List<Point>();
-            List<Point> points2 = new List<Point>();
+            List<Point> points = new();
+            List<Point> points2 = new();
 
-            for (int i = 0; i < Component.Forecast.Count; i++)
+            for (var i = 0; i < Component.Forecast.Count; i++)
             {
-                double top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
-                points.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
+                var top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
+                points.Add(new(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
 
-                double top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
-                points2.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
+                var top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
+                points2.Add(new(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
             }
 
             temp = points.ToArray();
@@ -81,41 +81,41 @@ namespace Dashboard.Views.Components
             Point[] cp1, cp2;
             BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
 
-            PathSegmentCollection lines = new PathSegmentCollection();
-            for (int i = 0; i < cp1.Length; ++i)
+            PathSegmentCollection lines = new();
+            for (var i = 0; i < cp1.Length; ++i)
             {
                 lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
             }
-            PathFigure f = new PathFigure(points[0], lines, false);
-            return new PathGeometry(new PathFigure[] { f });
+            PathFigure f = new(points[0], lines, false);
+            return new(new PathFigure[] { f });
         }
 
         private void drawGraph()
         {
-            getTemperaturePoints(out Point[] points, out Point[] points2);
+            getTemperaturePoints(out var points, out var points2);
 
 
-            Path path = new Path() { StrokeThickness = 3, Data = getPath(points2), Opacity = 0.5d };
+            Path path = new() { StrokeThickness = 3, Data = getPath(points2), Opacity = 0.5d };
             path.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
             canvasTemperature.Children.Add(path);
 
-            Path path2 = new Path() { StrokeThickness = 3, Data = getPath(points) };
+            Path path2 = new() { StrokeThickness = 3, Data = getPath(points) };
             path2.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
             canvasTemperature.Children.Add(path2);
 
 
-            for (int i = 0; i < points.Length; i++)
+            for (var i = 0; i < points.Length; i++)
             {
-                TextBlock text = new TextBlock()
+                TextBlock text = new()
                 {
                     Text = Component.Forecast[i].MainInfo.Temperature.ToString("F0") + Component.Forecast[i].TemperatureUnit,
-                    Padding = new Thickness(2)
+                    Padding = new(2)
                 };
                 text.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryHueDarkForegroundBrush");
                 text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkBrush");
 
-                text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                text.Arrange(new Rect(text.DesiredSize));
+                text.Measure(new(double.PositiveInfinity, double.PositiveInfinity));
+                text.Arrange(new(text.DesiredSize));
 
                 Canvas.SetLeft(text, points[i].X - text.ActualWidth / 2);
                 Canvas.SetTop(text, points[i].Y - text.ActualHeight / 2);

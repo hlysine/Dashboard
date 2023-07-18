@@ -32,7 +32,7 @@ namespace Dashboard.Components
             set => SetAndNotify(ref profile, value);
         }
 
-        private List<GoogleGmailThread> threads = new List<GoogleGmailThread>();
+        private List<GoogleGmailThread> threads = new();
         public List<GoogleGmailThread> Threads
         {
             get => threads;

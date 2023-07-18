@@ -11,9 +11,9 @@ namespace Dashboard.Utilities
     {
         public static void SetToolWindow(Window window)
         {
-            WindowInteropHelper wndHelper = new WindowInteropHelper(window);
+            WindowInteropHelper wndHelper = new(window);
 
-            int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+            var exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
 
             exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
             SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);

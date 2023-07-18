@@ -9,7 +9,7 @@ namespace Dashboard.Config
     {
         public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Center;
         public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Center;
-        public Thickness Margin { get; set; } = new Thickness(5d);
+        public Thickness Margin { get; set; } = new(5d);
         public double Width { get; set; } = 500d;
         public double Height { get; set; } = 300d;
 

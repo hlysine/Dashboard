@@ -20,7 +20,7 @@ namespace Dashboard.Components.Containers
         [PersistentConfig]
         public WindowBlur.BlurType BlurType { get => blurType; set => SetAndNotify(ref blurType, value); }
 
-        private ColorScheme colorScheme = new ColorScheme();
+        private ColorScheme colorScheme = new();
 
         [PersistentConfig]
         public ColorScheme ColorScheme { get => colorScheme; set => SetAndNotify(ref colorScheme, value); }
@@ -36,7 +36,7 @@ namespace Dashboard.Components.Containers
         {
             get
             {
-                return toggleWindowCommand ??= new RelayCommand(
+                return toggleWindowCommand ??= new(
                     // execute
                     () =>
                     {

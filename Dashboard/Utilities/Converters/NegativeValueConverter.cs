@@ -11,7 +11,7 @@ namespace Dashboard.Utilities.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double val = (value as double?).GetValueOrDefault();
+            var val = (value as double?).GetValueOrDefault();
             return -val;
         }
 

@@ -11,7 +11,7 @@ namespace Dashboard.Utilities.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DateTime val = (value as DateTime?).GetValueOrDefault();
+            var val = (value as DateTime?).GetValueOrDefault();
             if (val == default) return "";
             if (val.Date == DateTime.Today)
             {

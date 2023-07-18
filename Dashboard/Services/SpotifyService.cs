@@ -31,7 +31,7 @@ namespace Dashboard.Services
             {
                 var taskCompletionSource = new TaskCompletionSource<AuthorizationCodeResponse>();
 
-                EmbedIOAuthServer _server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
+                EmbedIOAuthServer _server = new(new("http://localhost:5000/callback"), 5000);
                 await _server.Start();
 
                 _server.AuthorizationCodeReceived += (_, response) =>
@@ -57,7 +57,7 @@ namespace Dashboard.Services
                 var response = taskCompletionSource.Task.Result;
                 tokenResponse = await new OAuthClient().RequestToken(
                   new AuthorizationCodeTokenRequest(
-                    ClientId, ClientSecret, response.Code, new Uri("http://localhost:5000/callback")
+                    ClientId, ClientSecret, response.Code, new("http://localhost:5000/callback")
                   )
                 );
                 RefreshToken = tokenResponse.RefreshToken;
@@ -65,7 +65,7 @@ namespace Dashboard.Services
             else
             {
                 var response = await new OAuthClient().RequestToken(new AuthorizationCodeRefreshRequest(ClientId, ClientSecret, RefreshToken));
-                tokenResponse = new AuthorizationCodeTokenResponse()
+                tokenResponse = new()
                 {
                     RefreshToken = RefreshToken,
                     AccessToken = response.AccessToken,
@@ -81,7 +81,7 @@ namespace Dashboard.Services
               .CreateDefault()
               .WithAuthenticator(new AuthorizationCodeAuthenticator(ClientId, ClientSecret, tokenResponse));
 
-            spotify = new SpotifyClient(tokenResponse.AccessToken);
+            spotify = new(tokenResponse.AccessToken);
             RaiseConfigUpdated(EventArgs.Empty);
         }
 
@@ -95,7 +95,7 @@ namespace Dashboard.Services
 
         public async Task<CurrentlyPlaying> GetCurrentlyPlaying()
         {
-            return await spotify.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest());
+            return await spotify.Player.GetCurrentlyPlaying(new());
         }
 
         public async Task<bool> StartPlayback(IEnumerable<string> uris)
@@ -115,17 +115,17 @@ namespace Dashboard.Services
 
         public async Task<bool> AddToLibrary(string[] trackId)
         {
-            return await spotify.Library.SaveTracks(new LibrarySaveTracksRequest(trackId));
+            return await spotify.Library.SaveTracks(new(trackId));
         }
 
         public async Task<bool> RemoveFromLibrary(string[] trackId)
         {
-            return await spotify.Library.RemoveTracks(new LibraryRemoveTracksRequest(trackId));
+            return await spotify.Library.RemoveTracks(new(trackId));
         }
 
         public async Task<List<bool>> IsInLibrary(string[] trackId)
         {
-            return await spotify.Library.CheckTracks(new LibraryCheckTracksRequest(trackId));
+            return await spotify.Library.CheckTracks(new(trackId));
         }
 
         public async Task<RecommendationsResponse> GetRecommendations(string[] seedTrackIds, int limit = 20)
@@ -138,12 +138,12 @@ namespace Dashboard.Services
 
         public async Task<bool> SetRepeat(PlayerSetRepeatRequest.State state)
         {
-            return await spotify.Player.SetRepeat(new PlayerSetRepeatRequest(state));
+            return await spotify.Player.SetRepeat(new(state));
         }
 
         public async Task<bool> SetShuffle(bool state)
         {
-            return await spotify.Player.SetShuffle(new PlayerShuffleRequest(state));
+            return await spotify.Player.SetShuffle(new(state));
         }
     }
 }

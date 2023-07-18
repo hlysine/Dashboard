@@ -21,13 +21,13 @@ namespace Dashboard.Services
         public virtual string RefreshToken { get; set; } = "";
 
         [PersistentConfig(Generated = true)]
-        public virtual List<string> AuthorizedScopes { get; set; } = new List<string>();
+        public virtual List<string> AuthorizedScopes { get; set; } = new();
 
         public override bool IsAuthorized => !AccessToken.IsNullOrEmpty();
 
         public override bool CanAuthorize => !ClientId.IsNullOrEmpty() && !ClientSecret.IsNullOrEmpty();
 
-        protected List<string> requiredScopes = new List<string>();
+        protected List<string> requiredScopes = new();
 
         /// <summary>
         /// Set the list of scopes required. To be called before <see cref="Authorize(CancellationToken)"/>.

@@ -59,7 +59,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            tasks = new TasksService(new BaseClientService.Initializer()
+            tasks = new(new()
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),
@@ -77,7 +77,7 @@ namespace Dashboard.Services
 
         public async Task<Google.Apis.Tasks.v1.Data.TaskLists> GetAllTasklists()
         {
-            TasklistsResource.ListRequest request = tasks.Tasklists.List();
+            var request = tasks.Tasklists.List();
 
             return await request.ExecuteAsync();
         }
@@ -91,7 +91,7 @@ namespace Dashboard.Services
         public async Task<Google.Apis.Tasks.v1.Data.Tasks> GetTasks(string tasklistId, int maxResults = 100)
         {
             // Define parameters of request.
-            TasksResource.ListRequest request = tasks.Tasks.List(tasklistId);
+            var request = tasks.Tasks.List(tasklistId);
             request.ShowCompleted = true;
             request.ShowHidden = true;
             request.MaxResults = maxResults;

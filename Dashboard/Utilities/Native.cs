@@ -77,17 +77,17 @@ namespace Dashboard.Utilities
 
         internal static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
         {
-            int error = 0;
-            IntPtr result = IntPtr.Zero;
+            var error = 0;
+            var result = IntPtr.Zero;
             // Win32 SetWindowLong doesn't clear error on success
             SetLastError(0);
 
             if (IntPtr.Size == 4)
             {
                 // use SetWindowLong
-                Int32 tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+                var tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
                 error = Marshal.GetLastWin32Error();
-                result = new IntPtr(tempResult);
+                result = new(tempResult);
             }
             else
             {

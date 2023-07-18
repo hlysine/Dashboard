@@ -11,7 +11,7 @@ namespace Dashboard.Utilities.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            TimeSpan val = (value as TimeSpan?).GetValueOrDefault();
+            var val = (value as TimeSpan?).GetValueOrDefault();
             if (val == default) return "";
             if (val.TotalHours >= 1)
             {

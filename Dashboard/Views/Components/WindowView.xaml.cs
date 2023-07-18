@@ -29,7 +29,7 @@ namespace Dashboard.Views.Components
 
             InitializeComponent();
 
-            Children_CollectionChanged(Component.Children, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            Children_CollectionChanged(Component.Children, new(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             ChangeColorScheme(Component.ColorScheme);
 
 
@@ -48,8 +48,8 @@ namespace Dashboard.Views.Components
 
         private void ChangeColorScheme(ColorScheme scheme)
         {
-            PaletteHelper paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
+            PaletteHelper paletteHelper = new();
+            var theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(scheme.Theme == Config.Theme.Dark ? MaterialDesignThemes.Wpf.Theme.Dark : MaterialDesignThemes.Wpf.Theme.Light);
             var swatches = new SwatchesProvider().Swatches;
             if (swatches.Where(x => x.ExemplarHue != null).Select(x => x.Name).Contains(scheme.PrimaryHue))
@@ -58,12 +58,12 @@ namespace Dashboard.Views.Components
                 theme.SetSecondaryColor(swatches.First(x => x.Name == scheme.AccentHue).AccentExemplarHue.Color);
             paletteHelper.SetTheme(theme);
 
-            ResourceDictionary oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
+            var oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
                 .Where(resourceDictionary => resourceDictionary != null && resourceDictionary.Source != null)
                 .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
 
-            string newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
-            ResourceDictionary newThemeResourceDictionary = new ResourceDictionary() { Source = new Uri(newThemeSource) };
+            var newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
+            ResourceDictionary newThemeResourceDictionary = new() { Source = new(newThemeSource) };
 
             Application.Current.Resources.MergedDictionaries.Remove(oldThemeResourceDictionary);
             Application.Current.Resources.MergedDictionaries.Add(newThemeResourceDictionary);
@@ -77,7 +77,7 @@ namespace Dashboard.Views.Components
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        DashboardViewBase elem = GetNewViewFor(comp);
+                        var elem = GetNewViewFor(comp);
                         if (elem == null) return; //DEBUG
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
@@ -101,7 +101,7 @@ namespace Dashboard.Views.Components
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        DashboardViewBase elem = GetNewViewFor(comp);
+                        var elem = GetNewViewFor(comp);
                         viewBindings.Add(comp, elem);
                         root.Children.Add(elem);
                     });
@@ -111,7 +111,7 @@ namespace Dashboard.Views.Components
                     root.Children.Clear();
                     Component.Children.ForEach(x =>
                     {
-                        DashboardViewBase elem = GetNewViewFor(x);
+                        var elem = GetNewViewFor(x);
                         if (elem == null) return; //DEBUG
                         viewBindings.Add(x, elem);
                         root.Children.Add(elem);
@@ -129,7 +129,7 @@ namespace Dashboard.Views.Components
                       && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                       && !assemblyType.IsAbstract
                 select assemblyType).ToArray();
-            Type target = classList.FirstOrDefault();
+            var target = classList.FirstOrDefault();
             if (target == null)
                 return null;
             else

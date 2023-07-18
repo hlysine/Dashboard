@@ -16,11 +16,11 @@ namespace Dashboard.Utilities
 {
     public static class Helper
     {
-        public static readonly Random Rnd = new Random();
+        public static readonly Random Rnd = new();
 
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
         {
-            foreach (T item in enumeration)
+            foreach (var item in enumeration)
             {
                 action(item);
             }
@@ -30,7 +30,7 @@ namespace Dashboard.Utilities
 
         public static IEnumerable ForEach(this IEnumerable enumeration, Action<object> action)
         {
-            foreach (object item in enumeration)
+            foreach (var item in enumeration)
             {
                 action(item);
             }
@@ -43,12 +43,12 @@ namespace Dashboard.Utilities
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[length];
 
-            for (int i = 0; i < stringChars.Length; i++)
+            for (var i = 0; i < stringChars.Length; i++)
             {
                 stringChars[i] = chars[Rnd.Next(chars.Length)];
             }
 
-            return new string(stringChars);
+            return new(stringChars);
         }
 
         public static void OpenUri(Uri uri)
@@ -110,7 +110,7 @@ namespace Dashboard.Utilities
 
         public static DateTime ParseDateTime(this string str)
         {
-            if (DateTime.TryParse(str, out DateTime res1))
+            if (DateTime.TryParse(str, out var res1))
             {
                 return res1;
             }
@@ -118,24 +118,24 @@ namespace Dashboard.Utilities
             var match = Regex.Match(str, @".*(?= \+0000| GMT| UTC| \(UTC\))");
             if (match.Success)
             {
-                if (DateTime.TryParseExact(match.Value, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res2))
+                if (DateTime.TryParseExact(match.Value, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out var res2))
                 {
                     return res2;
                 }
             }
 
             var match2 = Regex.Match(str, @".*(?= [A-Z]{3}| \([A-Z]{3}\))");
-            if (DateTime.TryParseExact(match2.Value, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res3))
+            if (DateTime.TryParseExact(match2.Value, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out var res3))
             {
                 return res3;
             }
 
-            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res4))
+            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out var res4))
             {
                 return res4;
             }
 
-            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res5))
+            if (DateTime.TryParseExact(str, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out var res5))
             {
                 return res5;
             }

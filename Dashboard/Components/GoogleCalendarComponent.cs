@@ -25,7 +25,7 @@ namespace Dashboard.Components
         [PersistentConfig]
         public string GoogleAccountId { get; set; }
 
-        private List<GoogleCalendarEvent> events = new List<GoogleCalendarEvent>();
+        private List<GoogleCalendarEvent> events = new();
         public List<GoogleCalendarEvent> Events
         {
             get => events;
@@ -42,10 +42,10 @@ namespace Dashboard.Components
         {
             var events = await Calendar.GetAllEvents();
             Events.Clear();
-            List<GoogleCalendarEvent> tempEvents = new List<GoogleCalendarEvent>();
+            List<GoogleCalendarEvent> tempEvents = new();
             foreach (var calendar in events.Keys)
             {
-                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
+                events[calendar].Items.ForEach(x => tempEvents.Add(new(calendar, x, colors)));
             }
             Events.AddRange(tempEvents.OrderBy(x => x.Start));
             NotifyChanged(nameof(Events));

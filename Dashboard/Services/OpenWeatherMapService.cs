@@ -37,7 +37,7 @@ namespace Dashboard.Services
 
         public async Task<ForecastResponse> GetDailyForecast(Units units)
         {
-            LocationResponse location = await Location.GetLocation();
+            var location = await Location.GetLocation();
             var request = new RestRequest("data/2.5/forecast", Method.Get);
             request.AddParameter("lon", location.Longitude);
             request.AddParameter("lat", location.Latitude);
@@ -45,7 +45,7 @@ namespace Dashboard.Services
                 request.AddParameter("units", "metric");
             else if (units == Units.Imperial)
                 request.AddParameter("units", "imperial");
-            RestResponse<ForecastResponse> response = await client.ExecuteAsync<ForecastResponse>(request);
+            var response = await client.ExecuteAsync<ForecastResponse>(request);
             return response.Data;
         }
     }

@@ -30,7 +30,7 @@ namespace Dashboard.Views.Components
             {
                 Component.FinishedLoading += Component_FinishedLoading;
 
-                ProgressBar loadingBar = new ProgressBar();
+                ProgressBar loadingBar = new();
                 loadingBar.Style = (Style)FindResource("MaterialDesignCircularProgressBar");
                 loadingBar.Value = 0;
                 loadingBar.IsIndeterminate = true;
@@ -51,34 +51,34 @@ namespace Dashboard.Views.Components
 
         private UIElement wrapWithTitle(UIElement content)
         {
-            Grid grid = new Grid();
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            Grid grid = new();
+            grid.RowDefinitions.Add(new() { Height = new(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new() { Height = new(0, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new() { Height = new(1, GridUnitType.Star) });
 
-            TextBlock text = new TextBlock();
+            TextBlock text = new();
             text.Text = Component.Name;
             text.SetResourceReference(TextBlock.StyleProperty, "MaterialDesignCaptionTextBlock");
             text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkForegroundBrush");
 
-            Binding b = new Binding();
+            Binding b = new();
             b.Source = DataContext;
-            b.Path = new PropertyPath("ShowTitle");
+            b.Path = new("ShowTitle");
             b.Converter = new BoolToVisibilityConverter();
             b.Mode = BindingMode.OneWay;
             text.SetBinding(TextBlock.VisibilityProperty, b);
 
             Grid.SetRow(text, 0);
 
-            Border border = new Border();
+            Border border = new();
             border.Background = (Brush)FindResource("PrimaryHueDarkForegroundBrush");
             border.SnapsToDevicePixels = true;
             border.Height = 1;
             border.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            Binding b2 = new Binding();
+            Binding b2 = new();
             b2.Source = DataContext;
-            b2.Path = new PropertyPath("ShowTitle");
+            b2.Path = new("ShowTitle");
             b2.Converter = new BoolToVisibilityConverter();
             b2.Mode = BindingMode.OneWay;
             border.SetBinding(Border.VisibilityProperty, b2);

@@ -12,7 +12,7 @@ namespace Dashboard.Views;
 
 public partial class RootView : Window
 {
-    private readonly DashboardManager manager = new DashboardManager();
+    private readonly DashboardManager manager = new();
     private readonly Dictionary<DashboardComponent, Window> viewBindings = new();
 
     public RootView()

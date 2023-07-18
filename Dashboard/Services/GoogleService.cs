@@ -122,7 +122,7 @@ namespace Dashboard.Services
             {
                 service.Credentials.RemoveAll(x => x.Key == key);
             }
-            service.Credentials.Add(new CredentialKeyValuePair<string, object>(key, value));
+            service.Credentials.Add(new(key, value));
             return Task.CompletedTask;
         }
     }

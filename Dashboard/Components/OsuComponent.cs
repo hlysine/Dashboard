@@ -25,7 +25,7 @@ namespace Dashboard.Components
 
         public override TimeSpan ForegroundRefreshRate => TimeSpan.FromSeconds(30);
 
-        private List<OsuUser> friends = new List<OsuUser>();
+        private List<OsuUser> friends = new();
 
         public List<OsuUser> Friends
         {

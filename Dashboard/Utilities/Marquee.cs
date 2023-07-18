@@ -15,7 +15,7 @@ namespace Dashboard.Utilities
                 "IsEnabled",
                 typeof(bool),
                 typeof(Marquee),
-                new PropertyMetadata(default(bool), OnIsEnabledPropertyChangedCallback));
+                new(default(bool), OnIsEnabledPropertyChangedCallback));
 
         public static void SetIsEnabled(DependencyObject element, bool value)
         {
@@ -29,7 +29,7 @@ namespace Dashboard.Utilities
 
         private static void OnIsEnabledPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = d as FrameworkElement;
+            var element = d as FrameworkElement;
             UpdateAnimation(element);
             if (GetIsEnabled(element))
                 element.SizeChanged += Element_SizeChanged;
@@ -37,13 +37,13 @@ namespace Dashboard.Utilities
 
         private static void Element_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            FrameworkElement element = sender as FrameworkElement;
+            var element = sender as FrameworkElement;
             UpdateAnimation(element);
         }
 
         private static void UpdateAnimation(FrameworkElement element)
         {
-            FrameworkElement parent = (FrameworkElement)element.Parent;
+            var parent = (FrameworkElement)element.Parent;
             if (GetIsEnabled(element) && parent.ActualWidth <= element.ActualWidth)
             {
                 var transform = new TranslateTransform(0, 0);
@@ -60,7 +60,7 @@ namespace Dashboard.Utilities
                 };
 
                 Storyboard.SetTarget(marquee1, element);
-                Storyboard.SetTargetProperty(marquee1, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+                Storyboard.SetTargetProperty(marquee1, new("(UIElement.RenderTransform).(TranslateTransform.X)"));
 
 
                 var marquee2 = new DoubleAnimation()
@@ -73,7 +73,7 @@ namespace Dashboard.Utilities
                 };
 
                 Storyboard.SetTarget(marquee2, element);
-                Storyboard.SetTargetProperty(marquee2, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+                Storyboard.SetTargetProperty(marquee2, new("(UIElement.RenderTransform).(TranslateTransform.X)"));
 
                 var sb = new Storyboard();
                 sb.Children.Add(marquee1);

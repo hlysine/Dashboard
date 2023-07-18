@@ -11,7 +11,7 @@ namespace Dashboard.Utilities.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
+            var param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
             if ((value as bool?).GetValueOrDefault() != param)
             {
                 return Visibility.Visible;

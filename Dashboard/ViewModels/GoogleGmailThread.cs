@@ -98,11 +98,11 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                return openCommand ?? (openCommand = new RelayCommand(
+                return openCommand ?? (openCommand = new(
                     // execute
                     () =>
                     {
-                        Helper.OpenUri(new Uri($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
+                        Helper.OpenUri(new($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
                     },
                     // can execute
                     () =>

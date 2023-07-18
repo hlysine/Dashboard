@@ -62,8 +62,8 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                string url = getUser()?.AvatarUrl ?? sUser.AvatarUrl;
-                if (Uri.TryCreate(new Uri("https://osu.ppy.sh/"), url, out Uri res)) return res.ToString();
+                var url = getUser()?.AvatarUrl ?? sUser.AvatarUrl;
+                if (Uri.TryCreate(new("https://osu.ppy.sh/"), url, out var res)) return res.ToString();
                 else return url;
             }
         }
@@ -103,11 +103,11 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                return openCommand ??= new RelayCommand(
+                return openCommand ??= new(
                     // execute
                     () =>
                     {
-                        Helper.OpenUri(new Uri($"https://osu.ppy.sh/users/{getUser()?.Id ?? sUser.Id}"));
+                        Helper.OpenUri(new($"https://osu.ppy.sh/users/{getUser()?.Id ?? sUser.Id}"));
                     },
                     // can execute
                     () =>

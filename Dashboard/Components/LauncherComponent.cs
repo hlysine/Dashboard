@@ -38,7 +38,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return launchCommand ?? (launchCommand = new RelayCommand(
+                return launchCommand ?? (launchCommand = new(
                     // execute
                     () =>
                     {

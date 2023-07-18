@@ -118,7 +118,7 @@ namespace Dashboard.Components
         {
             get
             {
-                return playPauseCommand ??= new RelayCommand(
+                return playPauseCommand ??= new(
                     // execute
                     async () =>
                     {
@@ -156,13 +156,13 @@ namespace Dashboard.Components
         {
             get
             {
-                return radioCommand ??= new RelayCommand(
+                return radioCommand ??= new(
                     // execute
                     async () =>
                     {
                         // build radio list
                         var recommendations = await Spotify.GetRecommendations(new[] { CurrentTrack.Id }, 100);
-                        List<string> playlist = recommendations.Tracks.Select(x => x.Uri).ToList();
+                        var playlist = recommendations.Tracks.Select(x => x.Uri).ToList();
                         playlist.RemoveAll(x => x == CurrentTrack.Uri);
                         playlist.Insert(0, CurrentTrack.Uri);
 

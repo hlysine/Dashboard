@@ -60,7 +60,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            gmail = new GmailService(new BaseClientService.Initializer()
+            gmail = new(new()
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),
@@ -78,14 +78,14 @@ namespace Dashboard.Services
 
         public async Task<Profile> GetProfile()
         {
-            UsersResource.GetProfileRequest request = gmail.Users.GetProfile("me");
+            var request = gmail.Users.GetProfile("me");
 
             return await request.ExecuteAsync();
         }
 
         public async Task<ListThreadsResponse> GetThreads()
         {
-            UsersResource.ThreadsResource.ListRequest request = gmail.Users.Threads.List("me");
+            var request = gmail.Users.Threads.List("me");
 
             return await request.ExecuteAsync();
         }
@@ -97,7 +97,7 @@ namespace Dashboard.Services
         /// <returns></returns>
         public async Task<Google.Apis.Gmail.v1.Data.Thread> GetThread(string threadId)
         {
-            UsersResource.ThreadsResource.GetRequest request = gmail.Users.Threads.Get("me", threadId);
+            var request = gmail.Users.Threads.Get("me", threadId);
             request.Format = UsersResource.ThreadsResource.GetRequest.FormatEnum.Metadata;
 
             return await request.ExecuteAsync();

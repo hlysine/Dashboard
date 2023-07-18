@@ -15,7 +15,7 @@ namespace Dashboard.Components
     [ContainsConfig]
     public abstract class DashboardComponent : NotifyPropertyChanged
     {
-        private ComponentPosition position = new ComponentPosition();
+        private ComponentPosition position = new();
         [PersistentConfig]
         public ComponentPosition Position { get => position; set => SetAndNotify(ref position, value); }
 

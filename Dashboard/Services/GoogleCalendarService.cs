@@ -59,7 +59,7 @@ namespace Dashboard.Services
         {
             if (!Google.IsAuthorized)
                 await Google.Authorize(cancel);
-            calendar = new CalendarService(new BaseClientService.Initializer()
+            calendar = new(new()
             {
                 HttpClientInitializer = Google.GetCredential(),
                 ApplicationName = Helper.GetProductName(),
@@ -77,7 +77,7 @@ namespace Dashboard.Services
 
         public async Task<CalendarList> GetAllCalendars()
         {
-            CalendarListResource.ListRequest request = calendar.CalendarList.List();
+            var request = calendar.CalendarList.List();
 
             return await request.ExecuteAsync();
         }
@@ -92,7 +92,7 @@ namespace Dashboard.Services
         public async Task<Events> GetEvents(string calendarId, DateTime timeMin = default, int maxResults = 100)
         {
             // Define parameters of request.
-            EventsResource.ListRequest request = calendar.Events.List(calendarId);
+            var request = calendar.Events.List(calendarId);
             request.TimeMin = timeMin == default ? DateTime.Now : timeMin;
             request.ShowDeleted = false;
             request.SingleEvents = true;
@@ -128,7 +128,7 @@ namespace Dashboard.Services
         /// <returns></returns>
         public async Task<Colors> GetColors()
         {
-            ColorsResource.GetRequest request = calendar.Colors.Get();
+            var request = calendar.Colors.Get();
 
             return await request.ExecuteAsync();
         }

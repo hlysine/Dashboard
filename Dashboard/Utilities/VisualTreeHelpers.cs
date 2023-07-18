@@ -82,12 +82,12 @@ namespace Dashboard.Utilities
 
             T foundChild = null;
 
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++)
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
                 // If the child is not of the request child type child
-                T childType = child as T;
+                var childType = child as T;
                 if (childType == null)
                 {
                     // recursively drill down the tree
@@ -137,12 +137,12 @@ namespace Dashboard.Utilities
 
             T foundChild = null;
 
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++)
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
                 // If the child is not of the request child type child
-                T childType = child as T;
+                var childType = child as T;
                 if (childType == null)
                 {
                     // recursively drill down the tree

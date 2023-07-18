@@ -29,7 +29,7 @@ namespace Dashboard.Components
         public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMinutes(30);
         public override TimeSpan BackgroundRefreshRate => TimeSpan.FromHours(1);
 
-        private List<WeatherForecastItem> forecast = new List<WeatherForecastItem>();
+        private List<WeatherForecastItem> forecast = new();
 
         public List<WeatherForecastItem> Forecast
         {

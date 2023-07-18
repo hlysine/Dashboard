@@ -42,7 +42,7 @@ namespace Dashboard.Utilities.Auth
                     var requestType = query.Get("request_type");
                     if (requestType == "token")
                     {
-                        ImplictGrantReceived?.Invoke(this, new ImplictGrantResponse(
+                        ImplictGrantReceived?.Invoke(this, new(
                             query["access_token"], query["token_type"], int.Parse(query["expires_in"])
                         )
                         {
@@ -51,7 +51,7 @@ namespace Dashboard.Utilities.Auth
                     }
                     if (requestType == "code")
                     {
-                        AuthorizationCodeReceived?.Invoke(this, new AuthorizationCodeResponse(query["code"])
+                        AuthorizationCodeReceived?.Invoke(this, new(query["code"])
                         {
                             State = query["state"]
                         });
@@ -68,7 +68,7 @@ namespace Dashboard.Utilities.Auth
 
         public Task Start()
         {
-            _cancelTokenSource = new CancellationTokenSource();
+            _cancelTokenSource = new();
             _webServer.Start(_cancelTokenSource.Token);
             return Task.CompletedTask;
         }

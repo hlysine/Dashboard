@@ -28,7 +28,7 @@ namespace Dashboard.Utilities.Auth.Models
 
         public Uri ToUri()
         {
-            StringBuilder builder = new StringBuilder(AuthUri.ToString());
+            StringBuilder builder = new(AuthUri.ToString());
             builder.Append($"?client_id={ClientId}");
             builder.Append($"&response_type={ResponseTypeParam.ToString().ToLower(CultureInfo.InvariantCulture)}");
             builder.Append($"&redirect_uri={HttpUtility.UrlEncode(RedirectUri.ToString())}");
@@ -45,7 +45,7 @@ namespace Dashboard.Utilities.Auth.Models
                 builder.Append($"&show_dialog={ShowDialog.Value}");
             }
 
-            return new Uri(builder.ToString());
+            return new(builder.ToString());
         }
 
         public enum ResponseType

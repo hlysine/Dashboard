@@ -12,7 +12,7 @@ namespace Dashboard.Utilities
     {
         public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
             "IsEnabled", typeof(bool), typeof(WindowBlur),
-            new PropertyMetadata(false, OnIsEnabledChanged));
+            new(false, OnIsEnabledChanged));
 
         public static void SetIsEnabled(DependencyObject element, bool value)
         {
@@ -42,7 +42,7 @@ namespace Dashboard.Utilities
 
         public static readonly DependencyProperty BlurTypeProperty = DependencyProperty.RegisterAttached(
             "BlurType", typeof(BlurType), typeof(WindowBlur),
-            new PropertyMetadata(BlurType.Acrylic, OnBlurTypeChanged));
+            new(BlurType.Acrylic, OnBlurTypeChanged));
 
         public static void SetBlurType(DependencyObject element, BlurType value)
         {
@@ -75,7 +75,7 @@ namespace Dashboard.Utilities
 
         public static readonly DependencyProperty WindowBlurProperty = DependencyProperty.RegisterAttached(
             "WindowBlur", typeof(WindowBlur), typeof(WindowBlur),
-            new PropertyMetadata(null, OnWindowBlurChanged));
+            new(null, OnWindowBlurChanged));
 
         public static void SetWindowBlur(DependencyObject element, WindowBlur value)
         {

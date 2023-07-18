@@ -35,7 +35,7 @@ namespace Dashboard
             set => SetAndNotify(ref rootComponent, value);
         }
 
-        private ObservableCollection<Service> services = new ObservableCollection<Service>();
+        private ObservableCollection<Service> services = new();
 
         [PersistentConfig]
         public ObservableCollection<Service> Services
@@ -53,7 +53,7 @@ namespace Dashboard
         {
             get
             {
-                return quitAppCommand ??= new RelayCommand(
+                return quitAppCommand ??= new(
                     // execute
                     () =>
                     {
@@ -84,7 +84,7 @@ namespace Dashboard
                 where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
                 select assemblyType).ToArray();
             var props = new List<PropertyInfo>();
-            foreach (Type configType in classList)
+            foreach (var configType in classList)
             {
                 foreach (var prop in configType.GetProperties())
                 {
@@ -101,19 +101,19 @@ namespace Dashboard
                             var xmlElem = new XmlAttributes();
                             if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
                             {
-                                xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
+                                xmlElem.XmlArray = new((attribute.Generated ? "_" : "") + prop.Name);
                                 var arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
                                     from assemblyType in domainAssembly.GetTypes()
                                     where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
                                     select assemblyType).ToArray();
                                 foreach (var t in arrTypeList)
                                 {
-                                    xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
+                                    xmlElem.XmlArrayItems.Add(new(t));
                                 }
                             }
                             else if (attribute.Generated)
                             {
-                                xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
+                                xmlElem.XmlElements.Add(new("_" + prop.Name));
                             }
 
                             configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
@@ -122,7 +122,7 @@ namespace Dashboard
                 }
             }
 
-            xmlSerializer = new XmlSerializer(typeof(DashboardManager), configXmlOverrides, classList, new XmlRootAttribute("DashboardConfig"), "");
+            xmlSerializer = new(typeof(DashboardManager), configXmlOverrides, classList, new("DashboardConfig"), "");
 
             if (File.Exists(configPath.ToAbsolutePath()))
                 LoadConfig();
@@ -250,8 +250,8 @@ namespace Dashboard
             if (File.Exists(configPath.ToAbsolutePath()))
             {
                 using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
-                using StreamReader reader = new StreamReader(fs);
-                string document = reader.ReadToEnd();
+                using StreamReader reader = new(fs);
+                var document = reader.ReadToEnd();
                 var xDoc = XDocument.Parse(document);
                 foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
                 {
@@ -260,7 +260,7 @@ namespace Dashboard
 
                 document = xDoc.ToString();
 
-                using StringReader xmlReader = new StringReader(document);
+                using StringReader xmlReader = new(document);
                 var tmpManager = (DashboardManager)xmlSerializer.Deserialize(xmlReader);
                 RootComponent = tmpManager.RootComponent;
                 Services = tmpManager.Services;

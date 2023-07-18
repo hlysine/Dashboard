@@ -30,7 +30,7 @@ namespace Dashboard.Components.Containers
 
         private void activeTabChanged()
         {
-            for (int i = 0; i < Children.Count; i++)
+            for (var i = 0; i < Children.Count; i++)
             {
                 Children[i].ThisForeground = i == ActiveTabIndex;
             }

@@ -20,7 +20,7 @@ namespace Dashboard.Views.Components
             var tab = new TabItem();
             tab.Tag = element;
             tab.Content = element;
-            Binding binding = new Binding("Name");
+            Binding binding = new("Name");
             binding.Source = element.DataContext;
             tab.SetBinding(TabItem.HeaderProperty, binding);
             root.Items.Add(tab);
@@ -33,7 +33,7 @@ namespace Dashboard.Views.Components
 
         protected override void RemoveView(DashboardViewBase element)
         {
-            for (int i = root.Items.Count - 1; i >= 0; i--)
+            for (var i = root.Items.Count - 1; i >= 0; i--)
             {
                 if (root.Items[i] is TabItem item)
                 {

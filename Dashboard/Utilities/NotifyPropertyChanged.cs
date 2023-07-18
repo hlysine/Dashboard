@@ -16,7 +16,7 @@ namespace Dashboard.Utilities
         {
             if (Application.Current.Dispatcher.CheckAccess())
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged?.Invoke(this, new(propertyName));
             }
             else
             {

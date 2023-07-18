@@ -31,7 +31,7 @@ namespace Dashboard.Services
             {
                 var taskCompletionSource = new TaskCompletionSource<AuthorizationCodeResponse>();
 
-                var _server = new EmbedIOAuthServer(new Uri("http://localhost:5001/callback"), 5001);
+                var _server = new EmbedIOAuthServer(new("http://localhost:5001/callback"), 5001);
                 await _server.Start();
 
                 _server.AuthorizationCodeReceived += (_, response) =>
@@ -40,7 +40,7 @@ namespace Dashboard.Services
                     return Task.CompletedTask;
                 };
 
-                var request = new LoginRequest(new Uri("https://osu.ppy.sh/oauth/authorize"), _server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
+                var request = new LoginRequest(new("https://osu.ppy.sh/oauth/authorize"), _server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
                 {
                     Scope = requiredScopes
                 };
@@ -74,7 +74,7 @@ namespace Dashboard.Services
 
             RefreshToken = tokenResponse.refresh_token;
             AccessToken = tokenResponse.access_token;
-            AuthorizedScopes = new List<string>(requiredScopes);
+            AuthorizedScopes = new(requiredScopes);
 
             osu.AddDefaultHeader("Authorization", "Bearer " + tokenResponse.access_token);
 

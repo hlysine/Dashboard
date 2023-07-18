@@ -24,9 +24,9 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                string ret = "";
-                DateTime start = @event.Start.GetDateTime();
-                DateTime end = @event.End.GetDateTime();
+                var ret = "";
+                var start = @event.Start.GetDateTime();
+                var end = @event.End.GetDateTime();
                 if (@event.Start.DateTime == null)
                 { // All day event
                     ret += start.ToReadableDateString();
@@ -91,11 +91,11 @@ namespace Dashboard.ViewModels
         {
             get
             {
-                return openCommand ?? (openCommand = new RelayCommand(
+                return openCommand ?? (openCommand = new(
                     // execute
                     () =>
                     {
-                        Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
+                        Helper.OpenUri(new($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
                     },
                     // can execute
                     () =>

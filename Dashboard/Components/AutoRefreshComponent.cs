@@ -16,7 +16,7 @@ namespace Dashboard.Components
 
         public AutoRefreshComponent()
         {
-            refreshTimer = new Timer();
+            refreshTimer = new();
             refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
             refreshTimer.AutoReset = true;
             refreshTimer.Elapsed += RefreshTimer_Elapsed;

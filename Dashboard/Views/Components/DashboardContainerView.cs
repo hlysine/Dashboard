@@ -10,7 +10,7 @@ namespace Dashboard.Views.Components
 {
     public abstract class DashboardContainerView<TComponent> : DashboardView<TComponent> where TComponent : DashboardContainer, new()
     {
-        private Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new Dictionary<DashboardComponent, DashboardViewBase>();
+        private Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new();
 
         protected DashboardContainerView(TComponent component) : base(component)
         {
@@ -19,7 +19,7 @@ namespace Dashboard.Views.Components
 
         private void DashboardContainerView_Loaded(object sender, RoutedEventArgs e)
         {
-            Children_CollectionChanged(Component.Children, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            Children_CollectionChanged(Component.Children, new(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             Component.Children.CollectionChanged += Children_CollectionChanged;
         }
 
@@ -42,7 +42,7 @@ namespace Dashboard.Views.Components
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        DashboardViewBase elem = GetNewViewFor(comp);
+                        var elem = GetNewViewFor(comp);
                         if (elem == null) return;  //DEBUG
                         viewBindings.Add(comp, elem);
                         AddView(elem);
@@ -66,7 +66,7 @@ namespace Dashboard.Views.Components
                     e.NewItems.ForEach(x =>
                     {
                         var comp = (DashboardComponent)x;
-                        DashboardViewBase elem = GetNewViewFor(comp);
+                        var elem = GetNewViewFor(comp);
                         viewBindings.Add(comp, elem);
                         AddView(elem);
                     });
@@ -76,7 +76,7 @@ namespace Dashboard.Views.Components
                     ClearView();
                     Component.Children.ForEach(x =>
                     {
-                        DashboardViewBase elem = GetNewViewFor(x);
+                        var elem = GetNewViewFor(x);
                         if (elem == null) return;  //DEBUG
                         viewBindings.Add(x, elem);
                         AddView(elem);
@@ -94,7 +94,7 @@ namespace Dashboard.Views.Components
                                 && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                                 && !assemblyType.IsAbstract
                              select assemblyType).ToArray();
-            Type target = classList.FirstOrDefault();
+            var target = classList.FirstOrDefault();
             if (target == null)
                 return null;
             else
