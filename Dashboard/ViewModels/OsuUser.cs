@@ -5,117 +5,116 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Dashboard.ViewModels
+namespace Dashboard.ViewModels;
+
+public class OsuUser : NotifyPropertyChanged
 {
-    public class OsuUser : NotifyPropertyChanged
+    private CompactUser sUser;
+    private User fUser;
+    private OsuService osu;
+
+    // default is false, set 1 for true.
+    private int fetchedUser = 0;
+
+    private bool FetchedUser
     {
-        private CompactUser sUser;
-        private User fUser;
-        private OsuService osu;
-
-        // default is false, set 1 for true.
-        private int fetchedUser = 0;
-
-        private bool FetchedUser
+        get { return System.Threading.Interlocked.CompareExchange(ref fetchedUser, 1, 1) == 1; }
+        set
         {
-            get { return System.Threading.Interlocked.CompareExchange(ref fetchedUser, 1, 1) == 1; }
-            set
-            {
-                if (value) System.Threading.Interlocked.CompareExchange(ref fetchedUser, 1, 0);
-                else System.Threading.Interlocked.CompareExchange(ref fetchedUser, 0, 1);
-            }
+            if (value) System.Threading.Interlocked.CompareExchange(ref fetchedUser, 1, 0);
+            else System.Threading.Interlocked.CompareExchange(ref fetchedUser, 0, 1);
         }
-
-        public string Username
-        {
-            get => sUser.Username;
-        }
-
-        public long? Rank
-        {
-            get => getUser()?.RankHistory?.Data.Last() ?? sUser.Statistics.GlobalRank;
-        }
-
-        public bool Online
-        {
-            get => getUser()?.IsOnline ?? sUser.IsOnline;
-        }
-
-        public DateTime? LastOnline
-        {
-            get => getUser()?.LastVisit?.ToLocalTime() ?? sUser.LastVisit?.ToLocalTime();
-        }
-
-        public double? PP
-        {
-            get => getUser()?.Statistics?.PP;
-        }
-
-        public double? Accuracy
-        {
-            get => getUser()?.Statistics?.HitAccuracy;
-        }
-
-        public string AvatarUrl
-        {
-            get
-            {
-                var url = getUser()?.AvatarUrl ?? sUser.AvatarUrl;
-                if (Uri.TryCreate(new Uri("https://osu.ppy.sh/"), url, out var res)) return res.ToString();
-                else return url;
-            }
-        }
-
-        private User getUser()
-        {
-            if (fUser == null)
-            {
-                if (!FetchedUser)
-                {
-                    FetchedUser = true;
-                    Task.Run(() =>
-                    {
-                        var th = osu.GetUser(sUser.Id.ToString()).Result;
-                        fUser = th;
-                        NotifyChanged(new[] {
-                            nameof(Rank),
-                            nameof(Online),
-                            nameof(LastOnline),
-                            nameof(PP),
-                            nameof(Accuracy),
-                            nameof(AvatarUrl),
-                        });
-                    });
-                }
-                return null;
-            }
-            else
-            {
-                return fUser;
-            }
-        }
-
-        private RelayCommand openCommand;
-
-        public ICommand OpenCommand
-        {
-            get
-            {
-                return openCommand ??= new RelayCommand(
-                    // execute
-                    () =>
-                    {
-                        Helper.OpenUri(new Uri($"https://osu.ppy.sh/users/{getUser()?.Id ?? sUser.Id}"));
-                    },
-                    // can execute
-                    () =>
-                    {
-                        return true;
-                    }
-                );
-            }
-        }
-
-        public OsuUser(CompactUser _sUser, OsuService _osu) => (sUser, osu) = (_sUser, _osu);
     }
+
+    public string Username
+    {
+        get => sUser.Username;
+    }
+
+    public long? Rank
+    {
+        get => getUser()?.RankHistory?.Data.Last() ?? sUser.Statistics.GlobalRank;
+    }
+
+    public bool Online
+    {
+        get => getUser()?.IsOnline ?? sUser.IsOnline;
+    }
+
+    public DateTime? LastOnline
+    {
+        get => getUser()?.LastVisit?.ToLocalTime() ?? sUser.LastVisit?.ToLocalTime();
+    }
+
+    public double? PP
+    {
+        get => getUser()?.Statistics?.PP;
+    }
+
+    public double? Accuracy
+    {
+        get => getUser()?.Statistics?.HitAccuracy;
+    }
+
+    public string AvatarUrl
+    {
+        get
+        {
+            var url = getUser()?.AvatarUrl ?? sUser.AvatarUrl;
+            if (Uri.TryCreate(new Uri("https://osu.ppy.sh/"), url, out var res)) return res.ToString();
+            else return url;
+        }
+    }
+
+    private User getUser()
+    {
+        if (fUser == null)
+        {
+            if (!FetchedUser)
+            {
+                FetchedUser = true;
+                Task.Run(() =>
+                {
+                    var th = osu.GetUser(sUser.Id.ToString()).Result;
+                    fUser = th;
+                    NotifyChanged(new[] {
+                        nameof(Rank),
+                        nameof(Online),
+                        nameof(LastOnline),
+                        nameof(PP),
+                        nameof(Accuracy),
+                        nameof(AvatarUrl),
+                    });
+                });
+            }
+            return null;
+        }
+        else
+        {
+            return fUser;
+        }
+    }
+
+    private RelayCommand openCommand;
+
+    public ICommand OpenCommand
+    {
+        get
+        {
+            return openCommand ??= new RelayCommand(
+                // execute
+                () =>
+                {
+                    Helper.OpenUri(new Uri($"https://osu.ppy.sh/users/{getUser()?.Id ?? sUser.Id}"));
+                },
+                // can execute
+                () =>
+                {
+                    return true;
+                }
+            );
+        }
+    }
+
+    public OsuUser(CompactUser _sUser, OsuService _osu) => (sUser, osu) = (_sUser, _osu);
 }

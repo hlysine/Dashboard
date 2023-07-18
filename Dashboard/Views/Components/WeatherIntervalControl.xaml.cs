@@ -7,27 +7,26 @@ using System.Windows.Media;
 using Dashboard.ViewModels;
 using Svg2Xaml;
 
-namespace Dashboard.Views.Components
-{
-    /// <summary>
-    /// Interaction logic for WeatherIntervalControl.xaml
-    /// </summary>
-    public partial class WeatherIntervalControl : UserControl
-    {
-        public WeatherIntervalControl()
-        {
-            InitializeComponent();
-        }
+namespace Dashboard.Views.Components;
 
-        private async void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+/// <summary>
+/// Interaction logic for WeatherIntervalControl.xaml
+/// </summary>
+public partial class WeatherIntervalControl : UserControl
+{
+    public WeatherIntervalControl()
+    {
+        InitializeComponent();
+    }
+
+    private async void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (DataContext is WeatherForecastItem data)
         {
-            if (DataContext is WeatherForecastItem data)
-            {
-                WebClient wc = new();
-                using MemoryStream stream = new(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl)));
-                imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
-                imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
-            }
+            WebClient wc = new();
+            using MemoryStream stream = new(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl)));
+            imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
+            imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
         }
     }
 }

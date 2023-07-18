@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Dashboard.Services
-{
-    public class SystemService : Service
-    {
-        public override bool CanAuthorize => true;
-        public override bool IsAuthorized => true;
+namespace Dashboard.Services;
 
-        public string Run(string prompt)
+public class SystemService : Service
+{
+    public override bool CanAuthorize => true;
+    public override bool IsAuthorized => true;
+
+    public string Run(string prompt)
+    {
+        try
         {
-            try
-            {
-                var uriStr = prompt.ToString().Replace("&", "^&");
-                Process.Start(new ProcessStartInfo($"cmd", $"/c start {uriStr}") { WindowStyle = ProcessWindowStyle.Hidden, UseShellExecute = true });
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var uriStr = prompt.ToString().Replace("&", "^&");
+            Process.Start(new ProcessStartInfo($"cmd", $"/c start {uriStr}") { WindowStyle = ProcessWindowStyle.Hidden, UseShellExecute = true });
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
         }
     }
 }

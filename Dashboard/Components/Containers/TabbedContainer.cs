@@ -1,45 +1,44 @@
 ﻿using Dashboard.Config;
 using Dashboard.Utilities;
 
-namespace Dashboard.Components.Containers
+namespace Dashboard.Components.Containers;
+
+public class TabbedContainer : DashboardContainer
 {
-    public class TabbedContainer : DashboardContainer
+    public override string DefaultName => "Tabbed Container";
+
+    public override string Name => CustomName.IsNullOrEmpty() ? Children[ActiveTabIndex].Name : CustomName;
+
+    private int activeTabIndex;
+
+    public int ActiveTabIndex
     {
-        public override string DefaultName => "Tabbed Container";
-
-        public override string Name => CustomName.IsNullOrEmpty() ? Children[ActiveTabIndex].Name : CustomName;
-
-        private int activeTabIndex;
-
-        public int ActiveTabIndex
+        get => activeTabIndex;
+        set
         {
-            get => activeTabIndex;
-            set
-            {
-                SetAndNotify(ref activeTabIndex, value, new[] { nameof(Name) });
-                activeTabChanged();
-            }
+            SetAndNotify(ref activeTabIndex, value, new[] { nameof(Name) });
+            activeTabChanged();
         }
+    }
 
-        [PersistentConfig]
-        public int DefaultTabIndex { get; set; }
+    [PersistentConfig]
+    public int DefaultTabIndex { get; set; }
 
-        public TabbedContainer()
+    public TabbedContainer()
+    {
+    }
+
+    private void activeTabChanged()
+    {
+        for (var i = 0; i < Children.Count; i++)
         {
+            Children[i].ThisForeground = i == ActiveTabIndex;
         }
+    }
 
-        private void activeTabChanged()
-        {
-            for (var i = 0; i < Children.Count; i++)
-            {
-                Children[i].ThisForeground = i == ActiveTabIndex;
-            }
-        }
-
-        protected override void OnInitializationComplete()
-        {
-            ActiveTabIndex = DefaultTabIndex;
-            Loaded = true;
-        }
+    protected override void OnInitializationComplete()
+    {
+        ActiveTabIndex = DefaultTabIndex;
+        Loaded = true;
     }
 }

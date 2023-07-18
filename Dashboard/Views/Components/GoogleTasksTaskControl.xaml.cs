@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Dashboard.Views.Components
+namespace Dashboard.Views.Components;
+
+/// <summary>
+/// Interaction logic for GoogleTasksTaskControl.xaml
+/// </summary>
+public partial class GoogleTasksTaskControl : UserControl
 {
-    /// <summary>
-    /// Interaction logic for GoogleTasksTaskControl.xaml
-    /// </summary>
-    public partial class GoogleTasksTaskControl : UserControl
+    public GoogleTasksTaskControl()
     {
-        public GoogleTasksTaskControl()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

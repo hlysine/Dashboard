@@ -2,49 +2,48 @@
 
 using System;
 
-namespace Dashboard.Utilities
+namespace Dashboard.Utilities;
+
+class SystemInfo
 {
-    class SystemInfo
+    public static Lazy<VersionInfo> Version { get; private set; } = new(() => GetVersionInfo());
+
+    internal static VersionInfo GetVersionInfo()
     {
-        public static Lazy<VersionInfo> Version { get; private set; } = new(() => GetVersionInfo());
+        var regkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
 
-        internal static VersionInfo GetVersionInfo()
+        if (regkey == null) return default(VersionInfo);
+
+        var majorValue = regkey.GetValue("CurrentMajorVersionNumber");
+        var minorValue = regkey.GetValue("CurrentMinorVersionNumber");
+        var buildValue = (string)regkey.GetValue("CurrentBuild", 7600);
+        var canReadBuild = int.TryParse(buildValue, out var build);
+
+        var defaultVersion = System.Environment.OSVersion.Version;
+
+        if (majorValue is int major && minorValue is int minor && canReadBuild)
         {
-            var regkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
-
-            if (regkey == null) return default(VersionInfo);
-
-            var majorValue = regkey.GetValue("CurrentMajorVersionNumber");
-            var minorValue = regkey.GetValue("CurrentMinorVersionNumber");
-            var buildValue = (string)regkey.GetValue("CurrentBuild", 7600);
-            var canReadBuild = int.TryParse(buildValue, out var build);
-
-            var defaultVersion = System.Environment.OSVersion.Version;
-
-            if (majorValue is int major && minorValue is int minor && canReadBuild)
-            {
-                return new VersionInfo(major, minor, build);
-            }
-            else
-            {
-                return new VersionInfo(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
-            }
+            return new VersionInfo(major, minor, build);
         }
-
-        internal static bool IsWin10()
+        else
         {
-            return Version.Value.Major == 10;
+            return new VersionInfo(defaultVersion.Major, defaultVersion.Minor, defaultVersion.Revision);
         }
+    }
+
+    internal static bool IsWin10()
+    {
+        return Version.Value.Major == 10;
+    }
 
 
-        internal static bool IsWin7()
-        {
-            return Version.Value.Major == 6 && Version.Value.Minor == 1;
-        }
+    internal static bool IsWin7()
+    {
+        return Version.Value.Major == 6 && Version.Value.Minor == 1;
+    }
 
-        internal static bool IsWin8x()
-        {
-            return Version.Value.Major == 6 && (Version.Value.Minor == 2 || Version.Value.Minor == 3);
-        }
+    internal static bool IsWin8x()
+    {
+        return Version.Value.Major == 6 && (Version.Value.Minor == 2 || Version.Value.Minor == 3);
     }
 }

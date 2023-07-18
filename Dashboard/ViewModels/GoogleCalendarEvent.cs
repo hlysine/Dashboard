@@ -5,109 +5,108 @@ using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Dashboard.ViewModels
+namespace Dashboard.ViewModels;
+
+public class GoogleCalendarEvent
 {
-    public class GoogleCalendarEvent
+    private Event @event;
+    private CalendarListEntry calendar;
+    private Google.Apis.Calendar.v3.Data.Colors colors;
+
+    public string Name { get => @event.Summary; }
+
+    public DateTime Start { get => @event.Start.GetDateTime(); }
+
+    public string DateTimeString
     {
-        private Event @event;
-        private CalendarListEntry calendar;
-        private Google.Apis.Calendar.v3.Data.Colors colors;
-
-        public string Name { get => @event.Summary; }
-
-        public DateTime Start { get => @event.Start.GetDateTime(); }
-
-        public string DateTimeString
+        get
         {
-            get
-            {
-                var ret = "";
-                var start = @event.Start.GetDateTime();
-                var end = @event.End.GetDateTime();
-                if (@event.Start.DateTime == null)
-                { // All day event
-                    ret += start.ToReadableDateString();
-                    if (!@event.EndTimeUnspecified.GetValueOrDefault())
+            var ret = "";
+            var start = @event.Start.GetDateTime();
+            var end = @event.End.GetDateTime();
+            if (@event.Start.DateTime == null)
+            { // All day event
+                ret += start.ToReadableDateString();
+                if (!@event.EndTimeUnspecified.GetValueOrDefault())
+                {
+                    if (end - start > TimeSpan.FromDays(1))
                     {
-                        if (end - start > TimeSpan.FromDays(1))
+                        ret += " - ";
+                        ret += end.ToReadableDateString();
+                    }
+                }
+            }
+            else
+            {
+                if (start != default)
+                {
+                    ret += start.ToReadableDateString() + " " + start.ToString("h:mm tt");
+                    if (!@event.EndTimeUnspecified.GetValueOrDefault() && end != default)
+                    {
+                        ret += " - ";
+                        if (end.Date == start.Date)
                         {
-                            ret += " - ";
-                            ret += end.ToReadableDateString();
+                            ret += end.ToString("h:mm tt");
+                        }
+                        else
+                        {
+                            ret += end.ToReadableDateString() + " " + end.ToString("h:mm tt");
                         }
                     }
                 }
                 else
                 {
-                    if (start != default)
-                    {
-                        ret += start.ToReadableDateString() + " " + start.ToString("h:mm tt");
-                        if (!@event.EndTimeUnspecified.GetValueOrDefault() && end != default)
-                        {
-                            ret += " - ";
-                            if (end.Date == start.Date)
-                            {
-                                ret += end.ToString("h:mm tt");
-                            }
-                            else
-                            {
-                                ret += end.ToReadableDateString() + " " + end.ToString("h:mm tt");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        return "";
-                    }
+                    return "";
                 }
-                return ret;
             }
+            return ret;
         }
+    }
 
-        public string CalendarName { get => calendar.SummaryOverride ?? calendar.Summary; }
+    public string CalendarName { get => calendar.SummaryOverride ?? calendar.Summary; }
 
-        public bool PrimaryCalendar { get => calendar.Primary.GetValueOrDefault(); }
+    public bool PrimaryCalendar { get => calendar.Primary.GetValueOrDefault(); }
 
-        public Color EventColor
+    public Color EventColor
+    {
+        get
         {
-            get
+            if (@event.ColorId.IsNullOrEmpty())
             {
-                if (@event.ColorId.IsNullOrEmpty())
-                {
-                    return (Color)ColorConverter.ConvertFromString(colors.Event__.First().Value.Background);
-                }
-                else
-                {
-                    return (Color)ColorConverter.ConvertFromString(colors.Event__[@event.ColorId].Background);
-                }
+                return (Color)ColorConverter.ConvertFromString(colors.Event__.First().Value.Background);
             }
-        }
-
-        private RelayCommand openCommand;
-
-        public ICommand OpenCommand
-        {
-            get
+            else
             {
-                return openCommand ?? (openCommand = new RelayCommand(
-                    // execute
-                    () =>
-                    {
-                        Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
-                    },
-                    // can execute
-                    () =>
-                    {
-                        return true;
-                    }
-                ));
+                return (Color)ColorConverter.ConvertFromString(colors.Event__[@event.ColorId].Background);
             }
         }
+    }
 
-        public GoogleCalendarEvent(CalendarListEntry _calendar, Event _event, Google.Apis.Calendar.v3.Data.Colors _colors)
+    private RelayCommand openCommand;
+
+    public ICommand OpenCommand
+    {
+        get
         {
-            @event = _event;
-            calendar = _calendar;
-            colors = _colors;
+            return openCommand ?? (openCommand = new RelayCommand(
+                // execute
+                () =>
+                {
+                    Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
+                },
+                // can execute
+                () =>
+                {
+                    return true;
+                }
+            ));
         }
+    }
+
+    public GoogleCalendarEvent(CalendarListEntry _calendar, Event _event, Google.Apis.Calendar.v3.Data.Colors _colors)
+    {
+        @event = _event;
+        calendar = _calendar;
+        colors = _colors;
     }
 }

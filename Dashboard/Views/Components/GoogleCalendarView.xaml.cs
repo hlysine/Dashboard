@@ -1,29 +1,28 @@
 ﻿using Dashboard.Components;
 
-namespace Dashboard.Views.Components
+namespace Dashboard.Views.Components;
+
+/// <summary>
+/// Interaction logic for GoogleCalendarView.xaml
+/// </summary>
+public partial class GoogleCalendarView : GoogleCalendarViewBase
 {
-    /// <summary>
-    /// Interaction logic for GoogleCalendarView.xaml
-    /// </summary>
-    public partial class GoogleCalendarView : GoogleCalendarViewBase
+    public GoogleCalendarView(GoogleCalendarComponent component = null) : base(component)
     {
-        public GoogleCalendarView(GoogleCalendarComponent component = null) : base(component)
-        {
-            InitializeComponent();
-            Load();
-        }
+        InitializeComponent();
+        Load();
+    }
+}
+
+public abstract class GoogleCalendarViewBase : DashboardView<GoogleCalendarComponent>
+{
+    protected GoogleCalendarViewBase(GoogleCalendarComponent component) : base(component)
+    {
+
     }
 
-    public abstract class GoogleCalendarViewBase : DashboardView<GoogleCalendarComponent>
+    protected GoogleCalendarViewBase() : this(null)
     {
-        protected GoogleCalendarViewBase(GoogleCalendarComponent component) : base(component)
-        {
 
-        }
-
-        protected GoogleCalendarViewBase() : this(null)
-        {
-
-        }
     }
 }

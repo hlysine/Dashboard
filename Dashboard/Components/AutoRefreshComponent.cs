@@ -1,60 +1,59 @@
 ﻿using System;
 using System.Timers;
 
-namespace Dashboard.Components
+namespace Dashboard.Components;
+
+public abstract class AutoRefreshComponent : DashboardComponent
 {
-    public abstract class AutoRefreshComponent : DashboardComponent
+    public virtual TimeSpan ForegroundRefreshRate => TimeSpan.FromMinutes(2);
+    public virtual TimeSpan BackgroundRefreshRate => TimeSpan.FromMinutes(30);
+
+    private Timer refreshTimer;
+
+    public AutoRefreshComponent()
     {
-        public virtual TimeSpan ForegroundRefreshRate => TimeSpan.FromMinutes(2);
-        public virtual TimeSpan BackgroundRefreshRate => TimeSpan.FromMinutes(30);
+        refreshTimer = new Timer();
+        refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
+        refreshTimer.AutoReset = true;
+        refreshTimer.Elapsed += RefreshTimer_Elapsed;
+    }
 
-        private Timer refreshTimer;
+    private void RefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
+    {
+        if (Loaded)
+            OnRefresh();
+    }
 
-        public AutoRefreshComponent()
-        {
-            refreshTimer = new Timer();
-            refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
-            refreshTimer.AutoReset = true;
-            refreshTimer.Elapsed += RefreshTimer_Elapsed;
-        }
+    //public override void Initialize()
+    //{
+    //    base.Initialize();
+    //}
 
-        private void RefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (Loaded)
-                OnRefresh();
-        }
+    protected virtual TimeSpan GetRefreshRate()
+    {
+        if (Foreground)
+            return ForegroundRefreshRate;
+        else
+            return BackgroundRefreshRate;
+    }
 
-        //public override void Initialize()
-        //{
-        //    base.Initialize();
-        //}
+    protected override void OnForegroundChanged()
+    {
+        refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
+    }
 
-        protected virtual TimeSpan GetRefreshRate()
-        {
-            if (Foreground)
-                return ForegroundRefreshRate;
-            else
-                return BackgroundRefreshRate;
-        }
+    protected void StartAutoRefresh()
+    {
+        refreshTimer.Start();
+    }
 
-        protected override void OnForegroundChanged()
-        {
-            refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
-        }
+    protected void StopAutoRefresh()
+    {
+        refreshTimer.Stop();
+    }
 
-        protected void StartAutoRefresh()
-        {
-            refreshTimer.Start();
-        }
+    protected virtual void OnRefresh()
+    {
 
-        protected void StopAutoRefresh()
-        {
-            refreshTimer.Stop();
-        }
-
-        protected virtual void OnRefresh()
-        {
-
-        }
     }
 }

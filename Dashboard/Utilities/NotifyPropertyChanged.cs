@@ -4,42 +4,41 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace Dashboard.Utilities
+namespace Dashboard.Utilities;
+
+public class NotifyPropertyChanged : INotifyPropertyChanged
 {
-    public class NotifyPropertyChanged : INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void NotifyChanged(string propertyName)
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyChanged(string propertyName)
+        if (Application.Current.Dispatcher.CheckAccess())
         {
-            if (Application.Current.Dispatcher.CheckAccess())
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        protected void NotifyChanged(IEnumerable<string> propertyName)
+        else
         {
-            if (Application.Current.Dispatcher.CheckAccess())
-            {
-                propertyName.ForEach(NotifyChanged);
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
-            }
+            Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
         }
+    }
 
-        protected void SetAndNotify<T>(ref T variable, T value, string[] calculatedProperties = null, [CallerMemberName] string memberName = null)
+    protected void NotifyChanged(IEnumerable<string> propertyName)
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
         {
-            Contract.Requires(memberName != null);
-            variable = value;
-            NotifyChanged(memberName);
-            if (calculatedProperties != null) NotifyChanged(calculatedProperties);
+            propertyName.ForEach(NotifyChanged);
         }
+        else
+        {
+            Application.Current.Dispatcher.Invoke(() => NotifyChanged(propertyName));
+        }
+    }
+
+    protected void SetAndNotify<T>(ref T variable, T value, string[] calculatedProperties = null, [CallerMemberName] string memberName = null)
+    {
+        Contract.Requires(memberName != null);
+        variable = value;
+        NotifyChanged(memberName);
+        if (calculatedProperties != null) NotifyChanged(calculatedProperties);
     }
 }

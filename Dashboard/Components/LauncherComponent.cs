@@ -3,57 +3,56 @@ using Dashboard.Services;
 using Dashboard.Utilities;
 using System.Windows.Input;
 
-namespace Dashboard.Components
+namespace Dashboard.Components;
+
+public class LauncherComponent : DashboardComponent
 {
-    public class LauncherComponent : DashboardComponent
+    public override string DefaultName => "Run";
+
+    [RequireService(nameof(SystemServiceId))]
+    private SystemService System { get; set; }
+
+    [PersistentConfig]
+    public string SystemServiceId { get; set; }
+
+    private string prompt;
+    public string Prompt
     {
-        public override string DefaultName => "Run";
+        get => prompt;
+        set => SetAndNotify(ref prompt, value);
+    }
 
-        [RequireService(nameof(SystemServiceId))]
-        private SystemService System { get; set; }
+    private string errorMessage;
+    public string ErrorMessage
+    {
+        get => errorMessage;
+        set => SetAndNotify(ref errorMessage, value);
+    }
 
-        [PersistentConfig]
-        public string SystemServiceId { get; set; }
+    private RelayCommand launchCommand;
 
-        private string prompt;
-        public string Prompt
+    public ICommand LaunchCommand
+    {
+        get
         {
-            get => prompt;
-            set => SetAndNotify(ref prompt, value);
+            return launchCommand ?? (launchCommand = new RelayCommand(
+                // execute
+                () =>
+                {
+                    ErrorMessage = System.Run(Prompt);
+                    Prompt = "";
+                },
+                // can execute
+                () =>
+                {
+                    return true;
+                }
+            ));
         }
+    }
 
-        private string errorMessage;
-        public string ErrorMessage
-        {
-            get => errorMessage;
-            set => SetAndNotify(ref errorMessage, value);
-        }
-
-        private RelayCommand launchCommand;
-
-        public ICommand LaunchCommand
-        {
-            get
-            {
-                return launchCommand ?? (launchCommand = new RelayCommand(
-                    // execute
-                    () =>
-                    {
-                        ErrorMessage = System.Run(Prompt);
-                        Prompt = "";
-                    },
-                    // can execute
-                    () =>
-                    {
-                        return true;
-                    }
-                ));
-            }
-        }
-
-        public LauncherComponent()
-        {
-            Loaded = true;
-        }
+    public LauncherComponent()
+    {
+        Loaded = true;
     }
 }

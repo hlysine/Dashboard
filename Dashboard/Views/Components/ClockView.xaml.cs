@@ -1,29 +1,28 @@
 ﻿using Dashboard.Components;
 
-namespace Dashboard.Views.Components
+namespace Dashboard.Views.Components;
+
+/// <summary>
+/// Interaction logic for ClockView.xaml
+/// </summary>
+public partial class ClockView : ClockViewBase
 {
-    /// <summary>
-    /// Interaction logic for ClockView.xaml
-    /// </summary>
-    public partial class ClockView : ClockViewBase
+    public ClockView(ClockComponent component = null) : base(component)
     {
-        public ClockView(ClockComponent component = null) : base(component)
-        {
-            InitializeComponent();
-            Load();
-        }
+        InitializeComponent();
+        Load();
+    }
+}
+
+public abstract class ClockViewBase : DashboardView<ClockComponent>
+{
+    protected ClockViewBase(ClockComponent component) : base(component)
+    {
+
     }
 
-    public abstract class ClockViewBase : DashboardView<ClockComponent>
+    protected ClockViewBase() : this(null)
     {
-        protected ClockViewBase(ClockComponent component) : base(component)
-        {
 
-        }
-
-        protected ClockViewBase() : this(null)
-        {
-
-        }
     }
 }

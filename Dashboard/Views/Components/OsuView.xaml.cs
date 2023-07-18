@@ -1,29 +1,28 @@
 ﻿using Dashboard.Components;
 
-namespace Dashboard.Views.Components
+namespace Dashboard.Views.Components;
+
+/// <summary>
+/// Interaction logic for OsuView.xaml
+/// </summary>
+public partial class OsuView : OsuViewBase
 {
-    /// <summary>
-    /// Interaction logic for OsuView.xaml
-    /// </summary>
-    public partial class OsuView : OsuViewBase
+    public OsuView(OsuComponent component = null) : base(component)
     {
-        public OsuView(OsuComponent component = null) : base(component)
-        {
-            InitializeComponent();
-            Load();
-        }
+        InitializeComponent();
+        Load();
+    }
+}
+
+public abstract class OsuViewBase : DashboardView<OsuComponent>
+{
+    protected OsuViewBase(OsuComponent component) : base(component)
+    {
+
     }
 
-    public abstract class OsuViewBase : DashboardView<OsuComponent>
+    protected OsuViewBase() : this(null)
     {
-        protected OsuViewBase(OsuComponent component) : base(component)
-        {
 
-        }
-
-        protected OsuViewBase() : this(null)
-        {
-
-        }
     }
 }

@@ -2,16 +2,16 @@
 
 using System;
 
-namespace Dashboard.Utilities.Auth.Models
+namespace Dashboard.Utilities.Auth.Models;
+
+public class ImplictGrantResponse
 {
-  public class ImplictGrantResponse
-  {
     public ImplictGrantResponse(string accessToken, string tokenType, int expiresIn)
     {
 
-      AccessToken = accessToken;
-      TokenType = tokenType;
-      ExpiresIn = expiresIn;
+        AccessToken = accessToken;
+        TokenType = tokenType;
+        ExpiresIn = expiresIn;
     }
 
     public string AccessToken { get; set; } = default!;
@@ -26,5 +26,4 @@ namespace Dashboard.Utilities.Auth.Models
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool IsExpired { get => CreatedAt.AddSeconds(ExpiresIn) <= DateTime.UtcNow; }
-  }
 }

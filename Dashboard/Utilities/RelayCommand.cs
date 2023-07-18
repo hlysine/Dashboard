@@ -2,62 +2,61 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Dashboard.Utilities
+namespace Dashboard.Utilities;
+
+public class RelayCommand<T> : ICommand
 {
-    public class RelayCommand<T> : ICommand
-    {
-        #region Fields
+    #region Fields
 
-        readonly Action<T> _execute;
-        readonly Predicate<T> _canExecute;
+    readonly Action<T> _execute;
+    readonly Predicate<T> _canExecute;
 
-        #endregion // Fields
+    #endregion // Fields
 
-        #region Constructors
+    #region Constructors
 
-        public RelayCommand(Action<T> execute)
+    public RelayCommand(Action<T> execute)
         : this(execute, null)
-        {
-        }
-
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
-        {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-
-            _execute = execute;
-            _canExecute = canExecute;
-        }
-        #endregion // Constructors
-
-        #region ICommand Members
-
-        [DebuggerStepThrough]
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null ? true : _canExecute((T)parameter);
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute((T)parameter);
-        }
-
-        #endregion // ICommand Members
-    }
-
-    public class RelayCommand : RelayCommand<object>
     {
-        public RelayCommand(Action execute)
-            : this(execute, null) { }
-
-        public RelayCommand(Action execute, Func<bool> canExecute)
-            : base(param => execute(), param => canExecute()) { }
     }
+
+    public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+    {
+        if (execute == null)
+            throw new ArgumentNullException("execute");
+
+        _execute = execute;
+        _canExecute = canExecute;
+    }
+    #endregion // Constructors
+
+    #region ICommand Members
+
+    [DebuggerStepThrough]
+    public bool CanExecute(object parameter)
+    {
+        return _canExecute == null ? true : _canExecute((T)parameter);
+    }
+
+    public event EventHandler CanExecuteChanged
+    {
+        add { CommandManager.RequerySuggested += value; }
+        remove { CommandManager.RequerySuggested -= value; }
+    }
+
+    public void Execute(object parameter)
+    {
+        _execute((T)parameter);
+    }
+
+    #endregion // ICommand Members
+}
+
+public class RelayCommand : RelayCommand<object>
+{
+    public RelayCommand(Action execute)
+        : this(execute, null) { }
+
+    public RelayCommand(Action execute, Func<bool> canExecute)
+        : base(param => execute(), param => canExecute()) { }
 }

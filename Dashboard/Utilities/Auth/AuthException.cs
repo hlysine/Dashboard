@@ -1,14 +1,14 @@
 // Taken from https://github.com/JohnnyCrazy/SpotifyAPI-NET/blob/master/SpotifyAPI.Web.Auth/AuthException.cs
 
-namespace Dashboard.Utilities.Auth
+namespace Dashboard.Utilities.Auth;
+
+[System.Serializable]
+public class AuthException : System.Exception
 {
-  [System.Serializable]
-  public class AuthException : System.Exception
-  {
     public AuthException(string error, string state)
     {
-      Error = error;
-      State = state;
+        Error = error;
+        State = state;
     }
     public AuthException(string message) : base(message) { }
     public AuthException(string message, System.Exception inner) : base(message, inner) { }
@@ -18,5 +18,4 @@ namespace Dashboard.Utilities.Auth
 
     public string? Error { get; set; }
     public string? State { get; set; }
-  }
 }

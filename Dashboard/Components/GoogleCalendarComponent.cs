@@ -8,67 +8,66 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dashboard.Components
+namespace Dashboard.Components;
+
+public class GoogleCalendarComponent : AutoRefreshComponent
 {
-    public class GoogleCalendarComponent : AutoRefreshComponent
+    public override string DefaultName => "Google Calendar";
+
+    [RequireService(nameof(GoogleAccountId))]
+    public GoogleCalendarService Calendar { get; set; }
+
+    [PersistentConfig]
+    public string GoogleAccountId { get; set; }
+
+    private List<GoogleCalendarEvent> events = new();
+    public List<GoogleCalendarEvent> Events
     {
-        public override string DefaultName => "Google Calendar";
+        get => events;
+        set => SetAndNotify(ref events, value);
+    }
 
-        [RequireService(nameof(GoogleAccountId))]
-        public GoogleCalendarService Calendar { get; set; }
+    Colors colors;
 
-        [PersistentConfig]
-        public string GoogleAccountId { get; set; }
+    public GoogleCalendarComponent()
+    {
+    }
 
-        private List<GoogleCalendarEvent> events = new();
-        public List<GoogleCalendarEvent> Events
+    private async Task LoadCalendar()
+    {
+        var events = await Calendar.GetAllEvents();
+        Events.Clear();
+        List<GoogleCalendarEvent> tempEvents = new();
+        foreach (var calendar in events.Keys)
         {
-            get => events;
-            set => SetAndNotify(ref events, value);
+            events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
         }
+        Events.AddRange(tempEvents.OrderBy(x => x.Start));
+        NotifyChanged(nameof(Events));
+    }
 
-        Colors colors;
-
-        public GoogleCalendarComponent()
+    protected override async void OnInitializationComplete()
+    {
+        if (Calendar.CanAuthorize)
         {
-        }
-
-        private async Task LoadCalendar()
-        {
-            var events = await Calendar.GetAllEvents();
-            Events.Clear();
-            List<GoogleCalendarEvent> tempEvents = new();
-            foreach (var calendar in events.Keys)
-            {
-                events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
-            }
-            Events.AddRange(tempEvents.OrderBy(x => x.Start));
-            NotifyChanged(nameof(Events));
-        }
-
-        protected override async void OnInitializationComplete()
-        {
-            if (Calendar.CanAuthorize)
-            {
-                if (!Calendar.IsAuthorized)
-                    await Calendar.Authorize();
-                colors = await Calendar.GetColors();
-                await LoadCalendar();
-                StartAutoRefresh();
-            }
-            Loaded = true;
-        }
-
-        protected override void OnInitialize()
-        {
-            Calendar.RequireScopes(new[] {
-                CalendarService.Scope.CalendarReadonly
-            });
-        }
-
-        protected override async void OnRefresh()
-        {
+            if (!Calendar.IsAuthorized)
+                await Calendar.Authorize();
+            colors = await Calendar.GetColors();
             await LoadCalendar();
+            StartAutoRefresh();
         }
+        Loaded = true;
+    }
+
+    protected override void OnInitialize()
+    {
+        Calendar.RequireScopes(new[] {
+            CalendarService.Scope.CalendarReadonly
+        });
+    }
+
+    protected override async void OnRefresh()
+    {
+        await LoadCalendar();
     }
 }

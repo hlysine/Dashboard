@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Dashboard.Views.Components
+namespace Dashboard.Views.Components;
+
+/// <summary>
+/// Interaction logic for GoogleCalendarEventControl.xaml
+/// </summary>
+public partial class GoogleCalendarEventControl : UserControl
 {
-    /// <summary>
-    /// Interaction logic for GoogleCalendarEventControl.xaml
-    /// </summary>
-    public partial class GoogleCalendarEventControl : UserControl
+    public GoogleCalendarEventControl()
     {
-        public GoogleCalendarEventControl()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
