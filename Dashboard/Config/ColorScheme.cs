@@ -10,5 +10,5 @@ public class ColorScheme
 public enum Theme
 {
     Dark,
-    Light
+    Light,
 }

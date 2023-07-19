@@ -42,7 +42,7 @@ public class OsuService : AuthCodeService
 
             var request = new LoginRequest(new Uri("https://osu.ppy.sh/oauth/authorize"), _server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
             {
-                Scope = requiredScopes
+                Scope = requiredScopes,
             };
             Helper.OpenUri(request.ToUri());
 

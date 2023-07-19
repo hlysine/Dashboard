@@ -177,7 +177,7 @@ public class WeatherForecastItem
             {
                 Units.Standard => "K",
                 Units.Metric => "°C",
-                _ => "°F"
+                _ => "°F",
             };
         }
     }

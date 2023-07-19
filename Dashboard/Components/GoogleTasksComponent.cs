@@ -65,7 +65,7 @@ public class GoogleTasksComponent : AutoRefreshComponent
     protected override void OnInitialize()
     {
         Tasks.RequireScopes(new[] {
-            TasksService.Scope.TasksReadonly
+            TasksService.Scope.TasksReadonly,
         });
     }
 

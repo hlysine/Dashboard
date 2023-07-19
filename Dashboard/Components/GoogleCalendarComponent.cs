@@ -62,7 +62,7 @@ public class GoogleCalendarComponent : AutoRefreshComponent
     protected override void OnInitialize()
     {
         Calendar.RequireScopes(new[] {
-            CalendarService.Scope.CalendarReadonly
+            CalendarService.Scope.CalendarReadonly,
         });
     }
 

@@ -48,7 +48,7 @@ public enum Units
 {
     Standard,
     Metric,
-    Imperial
+    Imperial,
 }
 
 public class MainInfo

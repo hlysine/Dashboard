@@ -68,7 +68,7 @@ public class WindowBlur
     {
         NoBlur,
         Blur,
-        Acrylic
+        Acrylic,
     }
 
     public static readonly DependencyProperty WindowBlurProperty = DependencyProperty.RegisterAttached(
@@ -183,7 +183,7 @@ public class WindowBlur
         {
             Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY,
             SizeOfData = accentStructSize,
-            Data = accentPtr
+            Data = accentPtr,
         };
 
         SetWindowCompositionAttribute(windowHelper.Handle, ref data);

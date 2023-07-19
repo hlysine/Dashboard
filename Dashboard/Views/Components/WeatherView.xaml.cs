@@ -108,7 +108,7 @@ public partial class WeatherView : WeatherViewBase
             TextBlock text = new()
             {
                 Text = Component.Forecast[i].MainInfo.Temperature.ToString("F0") + Component.Forecast[i].TemperatureUnit,
-                Padding = new Thickness(2)
+                Padding = new Thickness(2),
             };
             text.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryHueDarkForegroundBrush");
             text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkBrush");

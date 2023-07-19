@@ -49,7 +49,7 @@ public class GoogleService : AuthCodeService
                 new ClientSecrets
                 {
                     ClientId = ClientId,
-                    ClientSecret = ClientSecret
+                    ClientSecret = ClientSecret,
                 },
                 requiredScopes,
                 Id,

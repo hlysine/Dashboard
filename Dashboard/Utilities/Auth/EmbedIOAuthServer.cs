@@ -46,14 +46,14 @@ public class EmbedIOAuthServer
                                  query["access_token"], query["token_type"], int.Parse(query["expires_in"])
                              )
                              {
-                                 State = query["state"]
+                                 State = query["state"],
                              });
                          }
                          if (requestType == "code")
                          {
                              AuthorizationCodeReceived?.Invoke(this, new AuthorizationCodeResponse(query["code"])
                              {
-                                 State = query["state"]
+                                 State = query["state"],
                              });
                          }
 

@@ -32,7 +32,7 @@ public class SpotifyComponent : AutoRefreshComponent
             nameof(CurrentTrackName),
             nameof(CurrentTrackImageUrl),
             nameof(HasTrack),
-            nameof(CurrentTrackDuration)
+            nameof(CurrentTrackDuration),
         });
     }
 
@@ -226,7 +226,7 @@ public class SpotifyComponent : AutoRefreshComponent
             Scopes.UserReadPlaybackPosition,
             Scopes.UserReadPlaybackState,
             Scopes.UserReadRecentlyPlayed,
-            Scopes.UserModifyPlaybackState
+            Scopes.UserModifyPlaybackState,
         });
     }
 

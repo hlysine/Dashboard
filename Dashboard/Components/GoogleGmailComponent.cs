@@ -61,7 +61,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
     protected override void OnInitialize()
     {
         Gmail.RequireScopes(new[] {
-            GmailService.Scope.GmailReadonly
+            GmailService.Scope.GmailReadonly,
         });
     }
 

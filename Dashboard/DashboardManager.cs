@@ -159,7 +159,7 @@ public class DashboardManager : NotifyPropertyChanged
             var weatherService = new OpenWeatherMapService
             {
                 Id = Helper.RandomString(10),
-                LocationServiceId = locationService.Id
+                LocationServiceId = locationService.Id,
             };
 
             spotify.SpotifyAccountId = spotifyService.Id;

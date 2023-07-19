@@ -66,7 +66,7 @@ public class OsuComponent : AutoRefreshComponent
         {
             "identify",
             "friends.read",
-            "public"
+            "public",
         });
     }
 

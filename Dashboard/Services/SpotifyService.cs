@@ -39,7 +39,7 @@ public class SpotifyService : AuthCodeService
 
             var request = new SpotifyAPI.Web.LoginRequest(_server.BaseUri, ClientId, SpotifyAPI.Web.LoginRequest.ResponseType.Code)
             {
-                Scope = requiredScopes
+                Scope = requiredScopes,
             };
             Helper.OpenUri(request.ToUri());
 
@@ -69,7 +69,7 @@ public class SpotifyService : AuthCodeService
                 CreatedAt = response.CreatedAt,
                 ExpiresIn = response.ExpiresIn,
                 Scope = response.Scope,
-                TokenType = response.TokenType
+                TokenType = response.TokenType,
             };
         }
         AccessToken = tokenResponse.AccessToken;

@@ -51,6 +51,6 @@ public class LoginRequest
     public enum ResponseType
     {
         Code,
-        Token
+        Token,
     }
 }

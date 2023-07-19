@@ -54,7 +54,7 @@ public class Marquee
                 Duration = TimeSpan.FromSeconds(5),
                 BeginTime = TimeSpan.FromSeconds(3),
                 EasingFunction = new SineEase
-                    { EasingMode = EasingMode.EaseIn }
+                    { EasingMode = EasingMode.EaseIn },
             };
 
             Storyboard.SetTarget(marquee1, element);
@@ -68,7 +68,7 @@ public class Marquee
                 Duration = TimeSpan.FromSeconds(3),
                 BeginTime = TimeSpan.FromSeconds(8),
                 EasingFunction = new SineEase
-                    { EasingMode = EasingMode.EaseOut }
+                    { EasingMode = EasingMode.EaseOut },
             };
 
             Storyboard.SetTarget(marquee2, element);
