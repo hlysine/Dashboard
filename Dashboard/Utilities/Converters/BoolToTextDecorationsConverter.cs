@@ -9,7 +9,7 @@ public class BoolToTextDecorationsConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
+        bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
         if ((value as bool?).GetValueOrDefault() != param)
         {
             return TextDecorations.Strikethrough;

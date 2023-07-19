@@ -79,10 +79,10 @@ public class VisualTreeHelpers
 
         T foundChild = null;
 
-        var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
         for (var i = 0; i < childrenCount; i++)
         {
-            var child = VisualTreeHelper.GetChild(parent, i);
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
             // If the child is not of the request child type child
             var childType = child as T;
             if (childType == null)
@@ -134,10 +134,10 @@ public class VisualTreeHelpers
 
         T foundChild = null;
 
-        var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
         for (var i = 0; i < childrenCount; i++)
         {
-            var child = VisualTreeHelper.GetChild(parent, i);
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
             // If the child is not of the request child type child
             var childType = child as T;
             if (childType == null)

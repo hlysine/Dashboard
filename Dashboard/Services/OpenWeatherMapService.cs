@@ -31,7 +31,7 @@ public class OpenWeatherMapService : APIKeyService
 
     public async Task<ForecastResponse> GetDailyForecast(Units units)
     {
-        var location = await Location.GetLocation();
+        LocationResponse location = await Location.GetLocation();
         var request = new RestRequest("data/2.5/forecast", Method.Get);
         request.AddParameter("lon", location.Longitude);
         request.AddParameter("lat", location.Latitude);
@@ -39,7 +39,7 @@ public class OpenWeatherMapService : APIKeyService
             request.AddParameter("units", "metric");
         else if (units == Units.Imperial)
             request.AddParameter("units", "imperial");
-        var response = await client.ExecuteAsync<ForecastResponse>(request);
+        RestResponse<ForecastResponse> response = await client.ExecuteAsync<ForecastResponse>(request);
         return response.Data;
     }
 }

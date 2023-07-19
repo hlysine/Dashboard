@@ -17,11 +17,11 @@ public class GoogleCalendarService : AuthCodeService
 
     // Comes from GoogleService
 
-    public override string ClientId { get => Google?.ClientId; }
+    public override string ClientId => Google?.ClientId;
 
-    public override string ClientSecret { get => Google?.ClientSecret; }
+    public override string ClientSecret => Google?.ClientSecret;
 
-    public override List<string> AuthorizedScopes { get => Google?.AuthorizedScopes ?? new List<string>()  /* Prevents null ref when deserializing */; }
+    public override List<string> AuthorizedScopes => Google?.AuthorizedScopes ?? new List<string>() /* Prevents null ref when deserializing */;
 
     /// <summary>
     /// Set the list of scopes required. To be called before <see cref="Authorize(CancellationToken)"/>.
@@ -75,7 +75,7 @@ public class GoogleCalendarService : AuthCodeService
 
     public async Task<CalendarList> GetAllCalendars()
     {
-        var request = calendar.CalendarList.List();
+        CalendarListResource.ListRequest request = calendar.CalendarList.List();
 
         return await request.ExecuteAsync();
     }
@@ -90,7 +90,7 @@ public class GoogleCalendarService : AuthCodeService
     public async Task<Events> GetEvents(string calendarId, DateTime timeMin = default, int maxResults = 100)
     {
         // Define parameters of request.
-        var request = calendar.Events.List(calendarId);
+        EventsResource.ListRequest request = calendar.Events.List(calendarId);
         request.TimeMin = timeMin == default ? DateTime.Now : timeMin;
         request.ShowDeleted = false;
         request.SingleEvents = true;
@@ -108,12 +108,12 @@ public class GoogleCalendarService : AuthCodeService
     /// <param name="maxResults">Number of events to return for each calendar.</param>
     public async Task<Dictionary<CalendarListEntry, Events>> GetAllEvents(DateTime timeMin = default, int maxResults = 100)
     {
-        var calendars = await GetAllCalendars();
+        CalendarList calendars = await GetAllCalendars();
 
         var ret = new Dictionary<CalendarListEntry, Events>();
-        foreach (var calendar in calendars.Items)
+        foreach (CalendarListEntry calendar in calendars.Items)
         {
-            var events = await GetEvents(calendar.Id, timeMin, maxResults);
+            Events events = await GetEvents(calendar.Id, timeMin, maxResults);
             ret.Add(calendar, events);
         }
 
@@ -126,7 +126,7 @@ public class GoogleCalendarService : AuthCodeService
     /// <returns></returns>
     public async Task<Colors> GetColors()
     {
-        var request = calendar.Colors.Get();
+        ColorsResource.GetRequest request = calendar.Colors.Get();
 
         return await request.ExecuteAsync();
     }

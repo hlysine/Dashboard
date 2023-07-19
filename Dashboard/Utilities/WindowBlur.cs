@@ -174,9 +174,9 @@ public class WindowBlur
         accent.AccentFlags = 2;
         accent.GradientColor = 0x00ffffff;
 
-        var accentStructSize = Marshal.SizeOf(accent);
+        int accentStructSize = Marshal.SizeOf(accent);
 
-        var accentPtr = Marshal.AllocHGlobal(accentStructSize);
+        IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
         Marshal.StructureToPtr(accent, accentPtr, false);
 
         var data = new WindowCompositionAttributeData

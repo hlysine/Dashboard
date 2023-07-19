@@ -34,7 +34,7 @@ public class OsuComponent : AutoRefreshComponent
 
     private async Task LoadFriends()
     {
-        var fds = await Osu.GetFriends();
+        List<CompactUser> fds = await Osu.GetFriends();
         if (fds == null)
         {
             await Task.Delay(500);

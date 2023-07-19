@@ -169,25 +169,19 @@ public class WeatherForecastItem
 
     public Rain Rain => forecast.Rain;
 
-    public string TemperatureUnit
+    public string TemperatureUnit => units switch
     {
-        get
-        {
-            return units switch
-            {
-                Units.Standard => "K",
-                Units.Metric => "°C",
-                _ => "°F",
-            };
-        }
-    }
+        Units.Standard => "K",
+        Units.Metric => "°C",
+        _ => "°F",
+    };
 
     public string IconUrl
     {
         get
         {
-            var code = forecast.Weather.First().Id;
-            var icon = iconLabels[code].Icon;
+            int code = forecast.Weather.First().Id;
+            string icon = iconLabels[code].Icon;
 
             if (code is (<= 699 or >= 800) and (<= 899 or >= 1000))
                 icon = "day-" + icon;

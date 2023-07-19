@@ -12,7 +12,7 @@ public class SystemService : Service
     {
         try
         {
-            var uriStr = prompt.ToString().Replace("&", "^&");
+            string uriStr = prompt.ToString().Replace("&", "^&");
             Process.Start(new ProcessStartInfo($"cmd", $"/c start {uriStr}") { WindowStyle = ProcessWindowStyle.Hidden, UseShellExecute = true });
             return null;
         }

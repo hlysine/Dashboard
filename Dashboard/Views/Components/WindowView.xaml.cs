@@ -50,18 +50,18 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
     private void ChangeColorScheme(ColorScheme scheme)
     {
         PaletteHelper paletteHelper = new();
-        var theme = paletteHelper.GetTheme();
+        ITheme theme = paletteHelper.GetTheme();
         theme.SetBaseTheme(scheme.Theme == Config.Theme.Dark ? MaterialDesignThemes.Wpf.Theme.Dark : MaterialDesignThemes.Wpf.Theme.Light);
-        var swatches = new SwatchesProvider().Swatches;
+        IEnumerable<Swatch> swatches = new SwatchesProvider().Swatches;
         if (swatches.Where(x => x.ExemplarHue != null).Select(x => x.Name).Contains(scheme.PrimaryHue))
             theme.SetPrimaryColor(swatches.First(x => x.Name == scheme.PrimaryHue).ExemplarHue.Color);
         if (swatches.Where(x => x.AccentExemplarHue != null).Select(x => x.Name).Contains(scheme.AccentHue))
             theme.SetSecondaryColor(swatches.First(x => x.Name == scheme.AccentHue).AccentExemplarHue.Color);
         paletteHelper.SetTheme(theme);
 
-        var oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
-                                                    .Where(resourceDictionary => resourceDictionary != null && resourceDictionary.Source != null)
-                                                    .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
+        ResourceDictionary oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
+                                                                   .Where(resourceDictionary => resourceDictionary != null && resourceDictionary.Source != null)
+                                                                   .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
 
         var newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
         ResourceDictionary newThemeResourceDictionary = new() { Source = new Uri(newThemeSource) };
@@ -78,7 +78,7 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    var elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = GetNewViewFor(comp);
                     if (elem == null) return; //DEBUG
                     viewBindings.Add(comp, elem);
                     root.Children.Add(elem);
@@ -102,7 +102,7 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    var elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = GetNewViewFor(comp);
                     viewBindings.Add(comp, elem);
                     root.Children.Add(elem);
                 });
@@ -112,7 +112,7 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
                 root.Children.Clear();
                 Component.Children.ForEach(x =>
                 {
-                    var elem = GetNewViewFor(x);
+                    DashboardViewBase elem = GetNewViewFor(x);
                     if (elem == null) return; //DEBUG
                     viewBindings.Add(x, elem);
                     root.Children.Add(elem);
@@ -124,13 +124,13 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
     private DashboardViewBase GetNewViewFor(DashboardComponent component)
     {
         // TODO: remove BaseType? chain
-        var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+        Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
             from assemblyType in domainAssembly.GetTypes()
             where assemblyType.IsSubclassOf(typeof(DashboardViewBase))
                   && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                   && !assemblyType.IsAbstract
             select assemblyType).ToArray();
-        var target = classList.FirstOrDefault();
+        Type target = classList.FirstOrDefault();
         if (target == null)
             return null;
         else

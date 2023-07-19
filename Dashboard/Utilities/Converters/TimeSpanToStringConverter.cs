@@ -8,7 +8,7 @@ public class TimeSpanToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var val = (value as TimeSpan?).GetValueOrDefault();
+        TimeSpan val = (value as TimeSpan?).GetValueOrDefault();
         if (val == default) return "";
         if (val.TotalHours >= 1)
         {

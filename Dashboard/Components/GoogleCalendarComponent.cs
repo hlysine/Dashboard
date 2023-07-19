@@ -35,10 +35,10 @@ public class GoogleCalendarComponent : AutoRefreshComponent
 
     private async Task LoadCalendar()
     {
-        var events = await Calendar.GetAllEvents();
+        Dictionary<CalendarListEntry, Events> events = await Calendar.GetAllEvents();
         Events.Clear();
         List<GoogleCalendarEvent> tempEvents = new();
-        foreach (var calendar in events.Keys)
+        foreach (CalendarListEntry calendar in events.Keys)
         {
             events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
         }

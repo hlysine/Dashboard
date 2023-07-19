@@ -48,21 +48,15 @@ public class DashboardManager : NotifyPropertyChanged
 
     private RelayCommand quitAppCommand;
 
-    public ICommand QuitAppCommand
-    {
-        get
+    public ICommand QuitAppCommand => quitAppCommand ??= new RelayCommand(
+        // execute
+        () =>
         {
-            return quitAppCommand ??= new RelayCommand(
-                // execute
-                () =>
-                {
-                    Application.Current.Shutdown();
-                },
-                // can execute
-                () => true
-            );
-        }
-    }
+            Application.Current.Shutdown();
+        },
+        // can execute
+        () => true
+    );
 
     private const string configPath = "config.xml";
 
@@ -78,14 +72,14 @@ public class DashboardManager : NotifyPropertyChanged
         var configXmlOverrides = new XmlAttributeOverrides();
         var attributes = new XmlAttributes();
         attributes.XmlIgnore = true;
-        var classList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
+        Type[] classList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
             from assemblyType in domainAssembly.GetTypes()
             where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
             select assemblyType).ToArray();
         var props = new List<PropertyInfo>();
-        foreach (var configType in classList)
+        foreach (Type configType in classList)
         {
-            foreach (var prop in configType.GetProperties())
+            foreach (PropertyInfo prop in configType.GetProperties())
             {
                 if (!props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
                 {
@@ -101,11 +95,11 @@ public class DashboardManager : NotifyPropertyChanged
                         if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
                         {
                             xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
-                            var arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
+                            Type[] arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
                                 from assemblyType in domainAssembly.GetTypes()
                                 where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
                                 select assemblyType).ToArray();
-                            foreach (var t in arrTypeList)
+                            foreach (Type t in arrTypeList)
                             {
                                 xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
                             }
@@ -213,7 +207,7 @@ public class DashboardManager : NotifyPropertyChanged
     public Service GetService(Type type, string serviceId)
     {
         Contract.Requires(!serviceId.IsNullOrEmpty());
-        var service = Services.FirstOrDefault(x => x.GetType() == type && x.Id == serviceId);
+        Service service = Services.FirstOrDefault(x => x.GetType() == type && x.Id == serviceId);
         if (service == null)
         {
             service = (Service)Activator.CreateInstance(type);
@@ -261,9 +255,9 @@ public class DashboardManager : NotifyPropertyChanged
 
         using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
         using StreamReader reader = new(fs);
-        var document = reader.ReadToEnd();
-        var xDoc = XDocument.Parse(document);
-        foreach (var node in xDoc.Descendants().Where(x => !x.Elements().Any()))
+        string document = reader.ReadToEnd();
+        XDocument xDoc = XDocument.Parse(document);
+        foreach (XElement node in xDoc.Descendants().Where(x => !x.Elements().Any()))
         {
             node.Value = node.Value.Trim();
         }

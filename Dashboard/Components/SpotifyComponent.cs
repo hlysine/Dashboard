@@ -3,6 +3,7 @@ using Dashboard.Services;
 using Dashboard.Utilities;
 using SpotifyAPI.Web;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -36,35 +37,17 @@ public class SpotifyComponent : AutoRefreshComponent
         });
     }
 
-    public TimeSpan CurrentTrackDuration
-    {
-        get => TimeSpan.FromMilliseconds((CurrentTrack?.DurationMs).GetValueOrDefault());
-    }
+    public TimeSpan CurrentTrackDuration => TimeSpan.FromMilliseconds((CurrentTrack?.DurationMs).GetValueOrDefault());
 
-    public string CurrentTrackArtists
-    {
-        get => string.Join(", ", CurrentTrack?.Artists.Select(x => x.Name) ?? new string[] { });
-    }
+    public string CurrentTrackArtists => string.Join(", ", CurrentTrack?.Artists.Select(x => x.Name) ?? new string[] { });
 
-    public string CurrentTrackAlbum
-    {
-        get => CurrentTrack?.Album.Name;
-    }
+    public string CurrentTrackAlbum => CurrentTrack?.Album.Name;
 
-    public string CurrentTrackName
-    {
-        get => CurrentTrack?.Name;
-    }
+    public string CurrentTrackName => CurrentTrack?.Name;
 
-    public string CurrentTrackImageUrl
-    {
-        get => CurrentTrack?.Album.Images.FirstOrDefault()?.Url;
-    }
+    public string CurrentTrackImageUrl => CurrentTrack?.Album.Images.FirstOrDefault()?.Url;
 
-    public bool HasTrack
-    {
-        get => CurrentTrack != null;
-    }
+    public bool HasTrack => CurrentTrack != null;
 
     private bool isPlaying = false;
 
@@ -102,102 +85,90 @@ public class SpotifyComponent : AutoRefreshComponent
         {
             if (IsPlaying)
                 pauseTime = DateTime.Now;
-            var progress = pauseTime - startTime;
+            TimeSpan progress = pauseTime - startTime;
             return (CurrentTrackDuration > progress) ? progress : CurrentTrackDuration;
         }
     }
 
     private RelayCommand playPauseCommand;
 
-    public ICommand PlayPauseCommand
-    {
-        get
+    public ICommand PlayPauseCommand => playPauseCommand ??= new RelayCommand(
+        // execute
+        async () =>
         {
-            return playPauseCommand ??= new RelayCommand(
-                // execute
-                async () =>
+            try
+            {
+                if (isPlaying)
                 {
-                    try
-                    {
-                        if (isPlaying)
-                        {
-                            IsPlaying = !await Spotify.PausePlayback();
-                        }
-                        else
-                        {
-                            IsPlaying = await Spotify.ResumePlayback();
-                        }
-                        pauseTime = DateTime.Now;
-                    }
-                    catch (APIException)
-                    {
-                        // User clicked too frequently, or no active device
-                    }
-                    // In case something goes wrong, schedule a check
-                    _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
-                },
-                // can execute
-                () =>
-                {
-                    return HasTrack;
+                    IsPlaying = !await Spotify.PausePlayback();
                 }
-            );
+                else
+                {
+                    IsPlaying = await Spotify.ResumePlayback();
+                }
+                pauseTime = DateTime.Now;
+            }
+            catch (APIException)
+            {
+                // User clicked too frequently, or no active device
+            }
+            // In case something goes wrong, schedule a check
+            _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
+        },
+        // can execute
+        () =>
+        {
+            return HasTrack;
         }
-    }
+    );
 
     private RelayCommand radioCommand;
 
-    public ICommand RadioCommand
-    {
-        get
+    public ICommand RadioCommand => radioCommand ??= new RelayCommand(
+        // execute
+        async () =>
         {
-            return radioCommand ??= new RelayCommand(
-                // execute
-                async () =>
-                {
-                    // build radio list
-                    var recommendations = await Spotify.GetRecommendations(new[] { CurrentTrack.Id }, 100);
-                    var playlist = recommendations.Tracks.Select(x => x.Uri).ToList();
-                    playlist.RemoveAll(x => x == CurrentTrack.Uri);
-                    playlist.Insert(0, CurrentTrack.Uri);
+            // build radio list
+            RecommendationsResponse recommendations = await Spotify.GetRecommendations(new[] { CurrentTrack.Id }, 100);
+            List<string> playlist = recommendations.Tracks.Select(x => x.Uri).ToList();
+            playlist.RemoveAll(x => x == CurrentTrack.Uri);
+            playlist.Insert(0, CurrentTrack.Uri);
 
-                    // set shuffle and repeat
-                    try
-                    {
-                        await Spotify.SetShuffle(false);
-                    }
-                    catch (APIException)
-                    {
-                        // May fail if user is playing a radio
-                    }
-                    try
-                    {
-                        await Spotify.SetRepeat(PlayerSetRepeatRequest.State.Off);
-                    }
-                    catch (APIException)
-                    {
-                    }
+            // set shuffle and repeat
+            try
+            {
+                await Spotify.SetShuffle(false);
+            }
+            catch (APIException)
+            {
+                // May fail if user is playing a radio
+            }
+            try
+            {
+                await Spotify.SetRepeat(PlayerSetRepeatRequest.State.Off);
+            }
+            catch (APIException)
+            {
+            }
 
-                    // play the list
-                    try
-                    {
-                        await Spotify.StartPlayback(playlist);
-                    }
-                    catch (APIException)
-                    {
-                    }
+            // play the list
+            try
+            {
+                await Spotify.StartPlayback(playlist);
+            }
+            catch (APIException)
+            {
+            }
 
-                    // shedule a check
-                    _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
-                },
-                // can execute
-                () =>
-                {
-                    return HasTrack;
-                }
-            );
+            // shedule a check
+            _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
+        },
+        // can execute
+        () =>
+        {
+            return HasTrack;
         }
-    }
+    );
 
     public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMilliseconds(100);
 
@@ -252,7 +223,7 @@ public class SpotifyComponent : AutoRefreshComponent
 
     private async void updateCurrentlyPlaying()
     {
-        var currentlyPlaying = await Spotify.GetCurrentlyPlaying();
+        CurrentlyPlaying currentlyPlaying = await Spotify.GetCurrentlyPlaying();
         if (currentlyPlaying?.Item?.Type == ItemType.Track)
         {
             CurrentTrack = (FullTrack)currentlyPlaying.Item;

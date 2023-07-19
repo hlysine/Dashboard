@@ -8,7 +8,7 @@ public class NegativeValueConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var val = (value as double?).GetValueOrDefault();
+        double val = (value as double?).GetValueOrDefault();
         return -val;
     }
 

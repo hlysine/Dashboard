@@ -1,6 +1,7 @@
 ﻿// Taken from https://github.com/sourcechord/FluentWPF/blob/master/FluentWPF/Utility/SystemInfo.cs
 
 using System;
+using Microsoft.Win32;
 
 namespace Dashboard.Utilities;
 
@@ -10,16 +11,16 @@ internal class SystemInfo
 
     internal static VersionInfo GetVersionInfo()
     {
-        var regkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
+        RegistryKey regkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
 
         if (regkey == null) return default(VersionInfo);
 
-        var majorValue = regkey.GetValue("CurrentMajorVersionNumber");
-        var minorValue = regkey.GetValue("CurrentMinorVersionNumber");
+        object majorValue = regkey.GetValue("CurrentMajorVersionNumber");
+        object minorValue = regkey.GetValue("CurrentMinorVersionNumber");
         var buildValue = (string)regkey.GetValue("CurrentBuild", 7600);
-        var canReadBuild = int.TryParse(buildValue, out var build);
+        bool canReadBuild = int.TryParse(buildValue, out int build);
 
-        var defaultVersion = System.Environment.OSVersion.Version;
+        Version defaultVersion = System.Environment.OSVersion.Version;
 
         if (majorValue is int major && minorValue is int minor && canReadBuild)
         {

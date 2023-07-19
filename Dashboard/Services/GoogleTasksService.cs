@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Google.Apis.Tasks.v1.Data;
+using Task = System.Threading.Tasks.Task;
 
 namespace Dashboard.Services;
 
@@ -16,11 +18,11 @@ public class GoogleTasksService : AuthCodeService
 
     // Comes from GoogleService
 
-    public override string ClientId { get => Google?.ClientId; }
+    public override string ClientId => Google?.ClientId;
 
-    public override string ClientSecret { get => Google?.ClientSecret; }
+    public override string ClientSecret => Google?.ClientSecret;
 
-    public override List<string> AuthorizedScopes { get => Google?.AuthorizedScopes ?? new List<string>()  /* Prevents null ref when deserializing */; }
+    public override List<string> AuthorizedScopes => Google?.AuthorizedScopes ?? new List<string>() /* Prevents null ref when deserializing */;
 
     /// <summary>
     /// Set the list of scopes required. To be called before <see cref="Authorize(CancellationToken)"/>.
@@ -74,7 +76,7 @@ public class GoogleTasksService : AuthCodeService
 
     public async Task<Google.Apis.Tasks.v1.Data.TaskLists> GetAllTasklists()
     {
-        var request = tasks.Tasklists.List();
+        TasklistsResource.ListRequest request = tasks.Tasklists.List();
 
         return await request.ExecuteAsync();
     }
@@ -88,7 +90,7 @@ public class GoogleTasksService : AuthCodeService
     public async Task<Google.Apis.Tasks.v1.Data.Tasks> GetTasks(string tasklistId, int maxResults = 100)
     {
         // Define parameters of request.
-        var request = tasks.Tasks.List(tasklistId);
+        TasksResource.ListRequest request = tasks.Tasks.List(tasklistId);
         request.ShowCompleted = true;
         request.ShowHidden = true;
         request.MaxResults = maxResults;
@@ -103,12 +105,12 @@ public class GoogleTasksService : AuthCodeService
     /// <param name="maxResults">Number of tasks to return for each tasklist.</param>
     public async Task<Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>> GetAllTasks( int maxResults = 100)
     {
-        var tasklists = await GetAllTasklists();
+        TaskLists tasklists = await GetAllTasklists();
 
         var ret = new Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>();
-        foreach (var tasklist in tasklists.Items)
+        foreach (TaskList tasklist in tasklists.Items)
         {
-            var tasks = await GetTasks(tasklist.Id, maxResults);
+            Tasks tasks = await GetTasks(tasklist.Id, maxResults);
             ret.Add(tasklist, tasks);
         }
 

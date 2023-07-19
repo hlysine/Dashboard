@@ -38,7 +38,7 @@ public class WeatherComponent : AutoRefreshComponent
 
     private async Task LoadForecast()
     {
-        var response = await OpenWeatherMap.GetDailyForecast(Units);
+        ForecastResponse response = await OpenWeatherMap.GetDailyForecast(Units);
         Forecast.Clear();
         Forecast.AddRange(response.List.Select(x => new WeatherForecastItem(x, Units)));
         NotifyChanged(nameof(Forecast));

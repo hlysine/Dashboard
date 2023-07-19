@@ -31,21 +31,15 @@ public class WindowContainer : DashboardContainer
 
     private RelayCommand toggleWindowCommand;
 
-    public ICommand ToggleWindowCommand
-    {
-        get
+    public ICommand ToggleWindowCommand => toggleWindowCommand ??= new RelayCommand(
+        // execute
+        () =>
         {
-            return toggleWindowCommand ??= new RelayCommand(
-                // execute
-                () =>
-                {
-                    ThisForeground = !ThisForeground;
-                },
-                // can execute
-                () => true
-            );
-        }
-    }
+            ThisForeground = !ThisForeground;
+        },
+        // can execute
+        () => true
+    );
 
     public WindowContainer()
     {

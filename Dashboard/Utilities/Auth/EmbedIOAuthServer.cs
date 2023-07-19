@@ -1,6 +1,7 @@
 // Taken from https://github.com/JohnnyCrazy/SpotifyAPI-NET/blob/master/SpotifyAPI.Web.Auth/EmbedIOAuthServer.cs
 
 using System;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -33,13 +34,13 @@ public class EmbedIOAuthServer
         _webServer = new WebServer(port)
                      .WithModule(new ActionModule("/", HttpVerbs.Post, (ctx) =>
                      {
-                         var query = ctx.Request.QueryString;
+                         NameValueCollection query = ctx.Request.QueryString;
                          if (query["error"] != null)
                          {
                              throw new AuthException(query["error"], query["state"]);
                          }
 
-                         var requestType = query.Get("request_type");
+                         string requestType = query.Get("request_type");
                          if (requestType == "token")
                          {
                              ImplictGrantReceived?.Invoke(this, new ImplictGrantResponse(

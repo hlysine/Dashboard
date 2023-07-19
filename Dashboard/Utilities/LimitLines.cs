@@ -54,7 +54,7 @@ public class LimitLines
 
     private static double getLineHeight(TextBlock textBlock)
     {
-        var lineHeight = textBlock.LineHeight;
+        double lineHeight = textBlock.LineHeight;
         if (double.IsNaN(lineHeight))
             lineHeight = Math.Ceiling(textBlock.FontSize * textBlock.FontFamily.LineSpacing);
         return lineHeight;

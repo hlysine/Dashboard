@@ -8,7 +8,7 @@ public class DateTimeToReadableStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var val = (value as DateTime?).GetValueOrDefault();
+        DateTime val = (value as DateTime?).GetValueOrDefault();
         if (val == default) return "";
         if (val.Date == DateTime.Today)
         {

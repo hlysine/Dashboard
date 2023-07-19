@@ -20,7 +20,7 @@ public partial class LauncherView : LauncherViewBase
         // Do it from code behind
         if (e.Key == Key.Enter)
         {
-            var cmd = ((LauncherComponent)DataContext).LaunchCommand;
+            ICommand cmd = ((LauncherComponent)DataContext).LaunchCommand;
             if (cmd.CanExecute(null))
             {
                 cmd.Execute(null);

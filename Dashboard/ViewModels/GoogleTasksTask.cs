@@ -7,17 +7,17 @@ public class GoogleTasksTask
 {
     private Task task;
 
-    public string Title { get => task.Title; }
+    public string Title => task.Title;
 
-    public bool Completed { get => !task.Completed.IsNullOrEmpty(); }
+    public bool Completed => !task.Completed.IsNullOrEmpty();
 
-    public bool TopLevel { get => task.Parent.IsNullOrEmpty(); }
+    public bool TopLevel => task.Parent.IsNullOrEmpty();
 
-    public string Id { get => task.Id; }
+    public string Id => task.Id;
 
-    public string ParentId { get => task.Parent; }
+    public string ParentId => task.Parent;
 
-    public string Position { get => task.Position; }
+    public string Position => task.Position;
 
     public GoogleTasksTask(Task _task) => task = _task;
 }

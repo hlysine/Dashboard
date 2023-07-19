@@ -13,17 +13,17 @@ public class GoogleCalendarEvent
     private CalendarListEntry calendar;
     private Google.Apis.Calendar.v3.Data.Colors colors;
 
-    public string Name { get => @event.Summary; }
+    public string Name => @event.Summary;
 
-    public DateTime Start { get => @event.Start.GetDateTime(); }
+    public DateTime Start => @event.Start.GetDateTime();
 
     public string DateTimeString
     {
         get
         {
             var ret = "";
-            var start = @event.Start.GetDateTime();
-            var end = @event.End.GetDateTime();
+            DateTime start = @event.Start.GetDateTime();
+            DateTime end = @event.End.GetDateTime();
             if (@event.Start.DateTime == null)
             { // All day event
                 ret += start.ToReadableDateString();
@@ -63,9 +63,9 @@ public class GoogleCalendarEvent
         }
     }
 
-    public string CalendarName { get => calendar.SummaryOverride ?? calendar.Summary; }
+    public string CalendarName => calendar.SummaryOverride ?? calendar.Summary;
 
-    public bool PrimaryCalendar { get => calendar.Primary.GetValueOrDefault(); }
+    public bool PrimaryCalendar => calendar.Primary.GetValueOrDefault();
 
     public Color EventColor
     {
@@ -84,24 +84,18 @@ public class GoogleCalendarEvent
 
     private RelayCommand openCommand;
 
-    public ICommand OpenCommand
-    {
-        get
+    public ICommand OpenCommand => openCommand ?? (openCommand = new RelayCommand(
+        // execute
+        () =>
         {
-            return openCommand ?? (openCommand = new RelayCommand(
-                // execute
-                () =>
-                {
-                    Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
-                },
-                // can execute
-                () =>
-                {
-                    return true;
-                }
-            ));
+            Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
+        },
+        // can execute
+        () =>
+        {
+            return true;
         }
-    }
+    ));
 
     public GoogleCalendarEvent(CalendarListEntry _calendar, Event _event, Google.Apis.Calendar.v3.Data.Colors _colors)
     {

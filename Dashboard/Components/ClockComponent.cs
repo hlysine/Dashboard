@@ -6,10 +6,7 @@ public class ClockComponent : AutoRefreshComponent
 {
     public override string DefaultName => "Clock";
 
-    public DateTime Time
-    {
-        get { return DateTime.Now; }
-    }
+    public DateTime Time => DateTime.Now;
 
     public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMilliseconds(100);
 

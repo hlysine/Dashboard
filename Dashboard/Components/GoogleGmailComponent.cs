@@ -40,7 +40,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
     private async Task LoadGmail()
     {
         Profile = await Gmail.GetProfile();
-        var th = await Gmail.GetThreads();
+        ListThreadsResponse th = await Gmail.GetThreads();
         Threads.Clear();
         threads.AddRange(th.Threads.Select(x => new GoogleGmailThread(x, Gmail, Profile)));
         NotifyChanged(nameof(Threads));

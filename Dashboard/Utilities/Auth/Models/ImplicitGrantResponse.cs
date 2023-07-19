@@ -25,5 +25,5 @@ public class ImplictGrantResponse
     /// <value></value>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public bool IsExpired { get => CreatedAt.AddSeconds(ExpiresIn) <= DateTime.UtcNow; }
+    public bool IsExpired => CreatedAt.AddSeconds(ExpiresIn) <= DateTime.UtcNow;
 }

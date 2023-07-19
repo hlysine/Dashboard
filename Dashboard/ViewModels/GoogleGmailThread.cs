@@ -21,7 +21,7 @@ public class GoogleGmailThread : NotifyPropertyChanged
 
     private bool FetchedThread
     {
-        get { return System.Threading.Interlocked.CompareExchange(ref fetchedThread, 1, 1) == 1; }
+        get => System.Threading.Interlocked.CompareExchange(ref fetchedThread, 1, 1) == 1;
         set
         {
             if (value) System.Threading.Interlocked.CompareExchange(ref fetchedThread, 1, 0);
@@ -29,30 +29,27 @@ public class GoogleGmailThread : NotifyPropertyChanged
         }
     }
 
-    public string Snippet { get => getMessages()?.Last().Snippet ?? thread.Snippet; }
+    public string Snippet => getMessages()?.Last().Snippet ?? thread.Snippet;
 
-    public bool Unread { get => (getMessages()?.Last().LabelIds.Contains("UNREAD")).GetValueOrDefault(); }
+    public bool Unread => (getMessages()?.Last().LabelIds.Contains("UNREAD")).GetValueOrDefault();
 
-    public string Subject { get => getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "Subject")?.Value; }
+    public string Subject => getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "Subject")?.Value;
 
-    public int MessageCount { get => (getMessages()?.Count).GetValueOrDefault(); }
+    public int MessageCount => (getMessages()?.Count).GetValueOrDefault();
 
-    public bool MultipleMessages { get => (getMessages()?.Count).GetValueOrDefault() > 1; }
+    public bool MultipleMessages => (getMessages()?.Count).GetValueOrDefault() > 1;
 
-    public string From
-    {
-        get => Regex.Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "", @"^""?(.*?)""?(?: <[^<>]*>)?$").Groups[1].Value;
-    }
+    public string From => Regex.Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "", @"^""?(.*?)""?(?: <[^<>]*>)?$").Groups[1].Value;
 
-    public bool Important { get => (getMessages()?.Last().LabelIds.Contains("IMPORTANT")).GetValueOrDefault(); }
+    public bool Important => (getMessages()?.Last().LabelIds.Contains("IMPORTANT")).GetValueOrDefault();
 
-    public bool Starred { get => (getMessages()?.Last().LabelIds.Contains("STARRED")).GetValueOrDefault(); }
+    public bool Starred => (getMessages()?.Last().LabelIds.Contains("STARRED")).GetValueOrDefault();
 
     public DateTime Date
     {
         get
         {
-            var dateTimeMs = getMessages()?.Last().InternalDate;
+            long? dateTimeMs = getMessages()?.Last().InternalDate;
             return dateTimeMs == null ? default : DateTimeOffset.FromUnixTimeMilliseconds(dateTimeMs.GetValueOrDefault()).DateTime.ToLocalTime();
         }
     }
@@ -66,7 +63,7 @@ public class GoogleGmailThread : NotifyPropertyChanged
                 FetchedThread = true;
                 Task.Run(() =>
                 {
-                    var th = gmail.GetThread(thread.Id).Result;
+                    Thread th = gmail.GetThread(thread.Id).Result;
                     thread = th;
                     NotifyChanged(new[] {
                         nameof(Unread),
@@ -90,24 +87,18 @@ public class GoogleGmailThread : NotifyPropertyChanged
 
     private RelayCommand openCommand;
 
-    public ICommand OpenCommand
-    {
-        get
+    public ICommand OpenCommand => openCommand ?? (openCommand = new RelayCommand(
+        // execute
+        () =>
         {
-            return openCommand ?? (openCommand = new RelayCommand(
-                // execute
-                () =>
-                {
-                    Helper.OpenUri(new Uri($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
-                },
-                // can execute
-                () =>
-                {
-                    return true;
-                }
-            ));
+            Helper.OpenUri(new Uri($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
+        },
+        // can execute
+        () =>
+        {
+            return true;
         }
-    }
+    ));
 
     public GoogleGmailThread(Thread _thread, GoogleGmailService _gmail, Profile _profile) => (thread, gmail, profile) = (_thread, _gmail, _profile);
 }

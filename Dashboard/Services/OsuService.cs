@@ -46,7 +46,7 @@ public class OsuService : AuthCodeService
             };
             Helper.OpenUri(request.ToUri());
 
-            var response = await taskCompletionSource.Task.WaitAsync(cancel);
+            AuthorizationCodeResponse response = await taskCompletionSource.Task.WaitAsync(cancel);
 
             await _server.Stop();
 
@@ -57,7 +57,7 @@ public class OsuService : AuthCodeService
             tokenRequest.AddParameter("grant_type", "authorization_code");
             tokenRequest.AddParameter("redirect_uri", "http://localhost:5001/callback");
 
-            var codeResponse = await osu.ExecuteAsync<OsuTokenResponse>(tokenRequest, cancellationToken: cancel);
+            RestResponse<OsuTokenResponse> codeResponse = await osu.ExecuteAsync<OsuTokenResponse>(tokenRequest, cancellationToken: cancel);
             tokenResponse = codeResponse.Data;
         }
         else
@@ -68,7 +68,7 @@ public class OsuService : AuthCodeService
             tokenRequest.AddParameter("refresh_token", RefreshToken);
             tokenRequest.AddParameter("grant_type", "refresh_token");
 
-            var codeResponse = await osu.ExecuteAsync<OsuTokenResponse>(tokenRequest, cancellationToken: cancel);
+            RestResponse<OsuTokenResponse> codeResponse = await osu.ExecuteAsync<OsuTokenResponse>(tokenRequest, cancellationToken: cancel);
             tokenResponse = codeResponse.Data;
         }
 
@@ -102,7 +102,7 @@ public class OsuService : AuthCodeService
         var request = new RestRequest("api/v2/users/{id}", Method.Get);
         request.AddUrlSegment("id", userId);
 
-        var response = await osu.ExecuteAsync<User>(request);
+        RestResponse<User> response = await osu.ExecuteAsync<User>(request);
         return response.Data;
     }
 }

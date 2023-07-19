@@ -141,7 +141,7 @@ public static class BezierSpline
     {
         if (knots == null)
             throw new ArgumentNullException("knots");
-        var n = knots.Length - 1;
+        int n = knots.Length - 1;
         if (n < 1)
             throw new ArgumentException("At least two knot points required", "knots");
         if (n == 1)
@@ -168,7 +168,7 @@ public static class BezierSpline
         rhs[0] = knots[0].X + 2 * knots[1].X;
         rhs[n - 1] = (8 * knots[n - 1].X + knots[n].X) / 2.0;
         // Get first control points X-values
-        var x = GetFirstControlPoints(rhs);
+        double[] x = GetFirstControlPoints(rhs);
 
         // Set right hand side Y values
         for (var i = 1; i < n - 1; ++i)
@@ -176,7 +176,7 @@ public static class BezierSpline
         rhs[0] = knots[0].Y + 2 * knots[1].Y;
         rhs[n - 1] = (8 * knots[n - 1].Y + knots[n].Y) / 2.0;
         // Get first control points Y-values
-        var y = GetFirstControlPoints(rhs);
+        double[] y = GetFirstControlPoints(rhs);
 
         // Fill output arrays.
         firstControlPoints = new Point[n];
@@ -200,7 +200,7 @@ public static class BezierSpline
     /// <returns>Solution vector.</returns>
     private static double[] GetFirstControlPoints(double[] rhs)
     {
-        var n = rhs.Length;
+        int n = rhs.Length;
         var x = new double[n]; // Solution vector.
         var tmp = new double[n]; // Temp workspace.
 

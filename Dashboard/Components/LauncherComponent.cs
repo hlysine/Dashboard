@@ -31,25 +31,19 @@ public class LauncherComponent : DashboardComponent
 
     private RelayCommand launchCommand;
 
-    public ICommand LaunchCommand
-    {
-        get
+    public ICommand LaunchCommand => launchCommand ?? (launchCommand = new RelayCommand(
+        // execute
+        () =>
         {
-            return launchCommand ?? (launchCommand = new RelayCommand(
-                // execute
-                () =>
-                {
-                    ErrorMessage = System.Run(Prompt);
-                    Prompt = "";
-                },
-                // can execute
-                () =>
-                {
-                    return true;
-                }
-            ));
+            ErrorMessage = System.Run(Prompt);
+            Prompt = "";
+        },
+        // can execute
+        () =>
+        {
+            return true;
         }
-    }
+    ));
 
     public LauncherComponent()
     {

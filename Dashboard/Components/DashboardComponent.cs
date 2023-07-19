@@ -1,6 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -38,10 +39,7 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         set => SetAndNotify(ref customName, value, new[] { nameof(Name) });
     }
 
-    public virtual string Name
-    {
-        get => CustomName.IsNullOrEmpty() ? DefaultName : CustomName;
-    }
+    public virtual string Name => CustomName.IsNullOrEmpty() ? DefaultName : CustomName;
 
     public virtual void InitializeDependencies()
     {
@@ -83,22 +81,16 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         }
     }
 
-    public bool Foreground
-    {
-        get
-        {
-            return ThisForeground && (Parent?.Foreground ?? true);
-            //var fg = ThisForeground;
-            //var comp = this;
-            //while (comp.Parent != null)
-            //{
-            //    fg &= comp.Parent.ThisForeground;
-            //    comp = comp.Parent;
-            //}
-            //return fg;
-        }
-    }
+    public bool Foreground => ThisForeground && (Parent?.Foreground ?? true);
 
+    //var fg = ThisForeground;
+    //var comp = this;
+    //while (comp.Parent != null)
+    //{
+    //    fg &= comp.Parent.ThisForeground;
+    //    comp = comp.Parent;
+    //}
+    //return fg;
     public virtual void ForegroundChanged()
     {
         OnForegroundChanged();
@@ -110,9 +102,9 @@ public abstract class DashboardComponent : NotifyPropertyChanged
 
     public virtual void GetServices(DashboardManager manager)
     {
-        var properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-                                  .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
-                                  .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
+        IEnumerable<(PropertyInfo prop, RequireServiceAttribute)> properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                                                                                        .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
+                                                                                        .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
         properties.ForEach(x => x.prop.SetValue(this, manager.GetService(x.prop.PropertyType, (string)GetType().GetProperty(x.Item2.ServiceIdProperty).GetValue(this))));
     }
 

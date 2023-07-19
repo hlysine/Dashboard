@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Dashboard.Components;
 using Dashboard.Utilities;
+using Dashboard.ViewModels;
 
 namespace Dashboard.Views.Components;
 
@@ -39,13 +40,13 @@ public partial class WeatherView : WeatherViewBase
         const double vMargin = 10;
 
         var scroll = VisualTreeHelpers.FindChild<ScrollViewer>(listWeather);
-        var width = scroll.ExtentWidth;
-        var count = listWeather.Items.Count;
-        var itemWidth = width / count;
+        double width = scroll.ExtentWidth;
+        int count = listWeather.Items.Count;
+        double itemWidth = width / count;
 
-        var min = double.PositiveInfinity;
-        var max = double.NegativeInfinity;
-        foreach (var item in Component.Forecast)
+        double min = double.PositiveInfinity;
+        double max = double.NegativeInfinity;
+        foreach (WeatherForecastItem item in Component.Forecast)
         {
             min = Math.Min(item.MainInfo.Temperature, min);
             max = Math.Max(item.MainInfo.Temperature, max);
@@ -59,10 +60,10 @@ public partial class WeatherView : WeatherViewBase
 
         for (var i = 0; i < Component.Forecast.Count; i++)
         {
-            var top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
+            double top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
             points.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
 
-            var top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
+            double top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
             points2.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
         }
 
@@ -91,7 +92,7 @@ public partial class WeatherView : WeatherViewBase
 
     private void drawGraph()
     {
-        getTemperaturePoints(out var points, out var points2);
+        getTemperaturePoints(out Point[] points, out Point[] points2);
 
 
         Path path = new() { StrokeThickness = 3, Data = getPath(points2), Opacity = 0.5d };

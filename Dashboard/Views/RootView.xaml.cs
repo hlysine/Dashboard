@@ -28,7 +28,7 @@ public partial class RootView : Window
         else
             AutoRun.Unregister();
             
-        var view = GetNewViewFor(window);
+        Window view = GetNewViewFor(window);
         viewBindings.Add(window, view);
         // TODO: extract to helper method: load window without showing
         var helper = new WindowInteropHelper(view);
@@ -38,13 +38,13 @@ public partial class RootView : Window
     private Window GetNewViewFor(DashboardComponent component)
     {
         // TODO: accomodate types other than WindowContainer and Window
-        var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+        Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
             from assemblyType in domainAssembly.GetTypes()
             where assemblyType.GetInterface($"{nameof(IDashboardView<WindowContainer>)}`1") != null
                   && (assemblyType.GetInterface($"{nameof(IDashboardView<WindowContainer>)}`1")?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                   && !assemblyType.IsAbstract
             select assemblyType).ToArray();
-        var target = classList.FirstOrDefault();
+        Type target = classList.FirstOrDefault();
         if (target == null)
             return null;
         else

@@ -17,11 +17,11 @@ public class GoogleGmailService : AuthCodeService
 
     // Comes from GoogleService
 
-    public override string ClientId { get => Google?.ClientId; }
+    public override string ClientId => Google?.ClientId;
 
-    public override string ClientSecret { get => Google?.ClientSecret; }
+    public override string ClientSecret => Google?.ClientSecret;
 
-    public override List<string> AuthorizedScopes { get => Google?.AuthorizedScopes ?? new List<string>()  /* Prevents null ref when deserializing */; }
+    public override List<string> AuthorizedScopes => Google?.AuthorizedScopes ?? new List<string>() /* Prevents null ref when deserializing */;
 
     /// <summary>
     /// Set the list of scopes required. To be called before <see cref="Authorize(CancellationToken)"/>.
@@ -75,14 +75,14 @@ public class GoogleGmailService : AuthCodeService
 
     public async Task<Profile> GetProfile()
     {
-        var request = gmail.Users.GetProfile("me");
+        UsersResource.GetProfileRequest request = gmail.Users.GetProfile("me");
 
         return await request.ExecuteAsync();
     }
 
     public async Task<ListThreadsResponse> GetThreads()
     {
-        var request = gmail.Users.Threads.List("me");
+        UsersResource.ThreadsResource.ListRequest request = gmail.Users.Threads.List("me");
 
         return await request.ExecuteAsync();
     }
@@ -94,7 +94,7 @@ public class GoogleGmailService : AuthCodeService
     /// <returns></returns>
     public async Task<Google.Apis.Gmail.v1.Data.Thread> GetThread(string threadId)
     {
-        var request = gmail.Users.Threads.Get("me", threadId);
+        UsersResource.ThreadsResource.GetRequest request = gmail.Users.Threads.Get("me", threadId);
         request.Format = UsersResource.ThreadsResource.GetRequest.FormatEnum.Metadata;
 
         return await request.ExecuteAsync();

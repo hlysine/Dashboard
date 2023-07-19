@@ -43,7 +43,7 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    var elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = GetNewViewFor(comp);
                     if (elem == null) return;  //DEBUG
                     viewBindings.Add(comp, elem);
                     AddView(elem);
@@ -67,7 +67,7 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    var elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = GetNewViewFor(comp);
                     viewBindings.Add(comp, elem);
                     AddView(elem);
                 });
@@ -77,7 +77,7 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
                 ClearView();
                 Component.Children.ForEach(x =>
                 {
-                    var elem = GetNewViewFor(x);
+                    DashboardViewBase elem = GetNewViewFor(x);
                     if (elem == null) return;  //DEBUG
                     viewBindings.Add(x, elem);
                     AddView(elem);
@@ -89,13 +89,13 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
     private DashboardViewBase GetNewViewFor(DashboardComponent component)
     {
         // TODO: remove BaseType? chain
-        var classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+        Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
             from assemblyType in domainAssembly.GetTypes()
             where assemblyType.IsSubclassOf(typeof(DashboardViewBase))
                   && (assemblyType.BaseType?.BaseType?.GenericTypeArguments.Contains(component.GetType())).GetValueOrDefault()
                   && !assemblyType.IsAbstract
             select assemblyType).ToArray();
-        var target = classList.FirstOrDefault();
+        Type target = classList.FirstOrDefault();
         if (target == null)
             return null;
         else

@@ -1,6 +1,7 @@
 ﻿using Dashboard.Config;
 using Dashboard.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -24,9 +25,9 @@ public abstract class Service
     // TODO: unify DashboardComponent.GetServices and this
     public virtual void GetServices(DashboardManager manager)
     {
-        var properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-                                  .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
-                                  .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
+        IEnumerable<(PropertyInfo prop, RequireServiceAttribute)> properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                                                                                        .Where(x => x.IsDefined(typeof(RequireServiceAttribute), true))
+                                                                                        .Select(prop => (prop, (RequireServiceAttribute)Attribute.GetCustomAttribute(prop, typeof(RequireServiceAttribute))));
         properties.ForEach(x => x.prop.SetValue(this, manager.GetService(x.prop.PropertyType, (string)GetType().GetProperty(x.Item2.ServiceIdProperty).GetValue(this))));
         OnInitialized();
     }

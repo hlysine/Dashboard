@@ -51,7 +51,7 @@ public class SpotifyService : AuthCodeService
 
             await _server.Stop();
 
-            var response = taskCompletionSource.Task.Result;
+            AuthorizationCodeResponse response = taskCompletionSource.Task.Result;
             tokenResponse = await new OAuthClient().RequestToken(
                 new AuthorizationCodeTokenRequest(
                     ClientId, ClientSecret, response.Code, new Uri("http://localhost:5000/callback")
@@ -61,7 +61,7 @@ public class SpotifyService : AuthCodeService
         }
         else
         {
-            var response = await new OAuthClient().RequestToken(new AuthorizationCodeRefreshRequest(ClientId, ClientSecret, RefreshToken));
+            AuthorizationCodeRefreshResponse response = await new OAuthClient().RequestToken(new AuthorizationCodeRefreshRequest(ClientId, ClientSecret, RefreshToken));
             tokenResponse = new AuthorizationCodeTokenResponse
             {
                 RefreshToken = RefreshToken,
@@ -74,9 +74,9 @@ public class SpotifyService : AuthCodeService
         }
         AccessToken = tokenResponse.AccessToken;
         AuthorizedScopes = tokenResponse.Scope.Split(' ').ToList();
-        var config = SpotifyClientConfig
-                     .CreateDefault()
-                     .WithAuthenticator(new AuthorizationCodeAuthenticator(ClientId, ClientSecret, tokenResponse));
+        SpotifyClientConfig config = SpotifyClientConfig
+                                     .CreateDefault()
+                                     .WithAuthenticator(new AuthorizationCodeAuthenticator(ClientId, ClientSecret, tokenResponse));
 
         spotify = new SpotifyClient(tokenResponse.AccessToken);
         RaiseConfigUpdated(EventArgs.Empty);
