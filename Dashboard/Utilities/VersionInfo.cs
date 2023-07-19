@@ -4,7 +4,7 @@ using System;
 
 namespace Dashboard.Utilities;
 
-struct VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
+internal struct VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
 {
     public int Major;
     public int Minor;

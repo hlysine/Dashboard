@@ -27,7 +27,7 @@ public class GoogleCalendarComponent : AutoRefreshComponent
         set => SetAndNotify(ref events, value);
     }
 
-    Colors colors;
+    private Colors colors;
 
     public GoogleCalendarComponent()
     {
@@ -46,7 +46,7 @@ public class GoogleCalendarComponent : AutoRefreshComponent
         NotifyChanged(nameof(Events));
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (Calendar.CanAuthorize)
         {
@@ -59,7 +59,7 @@ public class GoogleCalendarComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
         Calendar.RequireScopes(new[] {
             CalendarService.Scope.CalendarReadonly,

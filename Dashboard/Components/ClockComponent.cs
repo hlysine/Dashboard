@@ -18,7 +18,7 @@ public class ClockComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitializationComplete()
+    protected override void OnInitializeSelf()
     {
         StartAutoRefresh();
     }

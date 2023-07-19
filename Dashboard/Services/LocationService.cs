@@ -10,7 +10,7 @@ public class LocationService : Service
     public override bool CanAuthorize => true;
     public override bool IsAuthorized => true;
 
-    readonly IRestClient client = new RestClient("http://ip-api.com/", configureSerialization: s => s.UseNewtonsoftJson());
+    private readonly IRestClient client = new RestClient("http://ip-api.com/", configureSerialization: s => s.UseNewtonsoftJson());
 
     public async Task<LocationResponse> GetLocation(string ipAddress = null)
     {

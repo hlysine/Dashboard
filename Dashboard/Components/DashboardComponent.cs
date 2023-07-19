@@ -10,47 +10,63 @@ namespace Dashboard.Components;
 public abstract class DashboardComponent : NotifyPropertyChanged
 {
     private ComponentPosition position = new();
+
     [PersistentConfig]
-    public ComponentPosition Position { get => position; set => SetAndNotify(ref position, value); }
+    public ComponentPosition Position
+    {
+        get => position;
+        set => SetAndNotify(ref position, value);
+    }
 
     private bool showTitle = true;
+
     [PersistentConfig]
-    public bool ShowTitle { get => showTitle; set => SetAndNotify(ref showTitle, value); }
+    public bool ShowTitle
+    {
+        get => showTitle;
+        set => SetAndNotify(ref showTitle, value);
+    }
 
     public abstract string DefaultName { get; }
 
     private string customName = "";
+
     [PersistentConfig]
-    public string CustomName { get => customName; set => SetAndNotify(ref customName, value, new[] { nameof(Name) }); }
-
-    public virtual string Name { get => CustomName.IsNullOrEmpty() ? DefaultName : CustomName; }
-
-    public virtual void Initialize()
+    public string CustomName
     {
-        OnInitialize();
+        get => customName;
+        set => SetAndNotify(ref customName, value, new[] { nameof(Name) });
     }
 
-    public virtual void InitializationComplete()
+    public virtual string Name
     {
-        OnInitializationComplete();
+        get => CustomName.IsNullOrEmpty() ? DefaultName : CustomName;
+    }
+
+    public virtual void InitializeDependencies()
+    {
+        OnInitializeDependencies();
+    }
+
+    public virtual void InitializeSelf()
+    {
+        OnInitializeSelf();
     }
 
     /// <summary>
-    /// To be called when <see cref="DashboardManager"/> finished the initialization of this Component (filled in required services)
-    /// <para>A good place to call <see cref="Services.AuthCodeService.RequireScopes(string[])"/>.</para>
+    /// Called when the services required by this component have been filled in.
+    /// <para>All dependencies should be configured here, such as calling <see cref="Services.AuthCodeService.RequireScopes(string[])"/>.</para>
     /// </summary>
-    protected virtual void OnInitialize()
+    protected virtual void OnInitializeDependencies()
     {
-
     }
 
     /// <summary>
-    /// To be called when <see cref="DashboardManager"/> instantiated all components.
-    /// <para>A good place to call <see cref="Services.AuthCodeService.Authorize(System.Threading.CancellationToken)"/>.</para>
+    /// Called when all components have initialized their dependencies.
+    /// <para>All services are now safe to use, such as requesting authorization via <see cref="Services.AuthCodeService.Authorize(System.Threading.CancellationToken)"/>.</para>
     /// </summary>
-    protected virtual void OnInitializationComplete()
+    protected virtual void OnInitializeSelf()
     {
-
     }
 
     public virtual DashboardComponent Parent { get; set; }
@@ -90,7 +106,6 @@ public abstract class DashboardComponent : NotifyPropertyChanged
 
     protected virtual void OnForegroundChanged()
     {
-
     }
 
     public virtual void GetServices(DashboardManager manager)

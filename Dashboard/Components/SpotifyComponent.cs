@@ -205,7 +205,7 @@ public class SpotifyComponent : AutoRefreshComponent
     {
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (Spotify.CanAuthorize)
         {
@@ -217,7 +217,7 @@ public class SpotifyComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
         Spotify.RequireScopes(new[] {
             Scopes.UserLibraryRead,

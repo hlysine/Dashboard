@@ -32,16 +32,16 @@ public abstract class DashboardContainer : DashboardComponent
         Children.ForEach(x => x.GetServices(manager));
     }
 
-    public override void Initialize()
+    public override void InitializeDependencies()
     {
-        Children.ForEach(x => x.Initialize());
-        OnInitialize();
+        Children.ForEach(x => x.InitializeDependencies());
+        OnInitializeDependencies();
     }
 
-    public override void InitializationComplete()
+    public override void InitializeSelf()
     {
-        Children.ForEach(x => x.InitializationComplete());
-        OnInitializationComplete();
+        Children.ForEach(x => x.InitializeSelf());
+        OnInitializeSelf();
     }
 
     public override void ForegroundChanged()

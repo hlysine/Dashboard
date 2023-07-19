@@ -17,12 +17,16 @@ public partial class TabbedContainerView : TabbedContainerViewBase
 
     protected override void AddView(DashboardViewBase element)
     {
-        var tab = new TabItem();
-        tab.Tag = element;
-        tab.Content = element;
-        Binding binding = new("Name");
-        binding.Source = element.DataContext;
-        tab.SetBinding(TabItem.HeaderProperty, binding);
+        var tab = new TabItem
+        {
+            Tag = element,
+            Content = element,
+        };
+        Binding binding = new("Name")
+        {
+            Source = element.DataContext,
+        };
+        tab.SetBinding(HeaderedContentControl.HeaderProperty, binding);
         root.Items.Add(tab);
     }
 
@@ -33,12 +37,12 @@ public partial class TabbedContainerView : TabbedContainerViewBase
 
     protected override void RemoveView(DashboardViewBase element)
     {
-        for (var i = root.Items.Count - 1; i >= 0; i--)
+        for (int i = root.Items.Count - 1; i >= 0; i--)
         {
-            if (root.Items[i] is TabItem item)
-            {
-                if (item.Tag == element) root.Items.RemoveAt(i);
-            }
+            if (root.Items[i] is not TabItem item)
+                continue;
+
+            if (Equals(item.Tag, element)) root.Items.RemoveAt(i);
         }
     }
 }
@@ -47,11 +51,9 @@ public abstract class TabbedContainerViewBase : DashboardContainerView<TabbedCon
 {
     protected TabbedContainerViewBase(TabbedContainer component) : base(component)
     {
-
     }
 
     protected TabbedContainerViewBase() : this(null)
     {
-
     }
 }

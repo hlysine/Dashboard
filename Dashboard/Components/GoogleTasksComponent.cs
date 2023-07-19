@@ -50,7 +50,7 @@ public class GoogleTasksComponent : AutoRefreshComponent
         NotifyChanged(nameof(CurrentTasklist));
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (Tasks.CanAuthorize)
         {
@@ -62,7 +62,7 @@ public class GoogleTasksComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
         Tasks.RequireScopes(new[] {
             TasksService.Scope.TasksReadonly,

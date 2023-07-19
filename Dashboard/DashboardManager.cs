@@ -196,7 +196,7 @@ public class DashboardManager : NotifyPropertyChanged
 
         InitializeComponent(RootComponent);
 
-        RootComponent.InitializationComplete();
+        RootComponent.InitializeSelf();
 
         SaveConfig();
 
@@ -251,7 +251,7 @@ public class DashboardManager : NotifyPropertyChanged
     private void InitializeComponent(DashboardComponent component)
     {
         component.GetServices(this);
-        component.Initialize();
+        component.InitializeDependencies();
     }
 
     public void LoadConfig()

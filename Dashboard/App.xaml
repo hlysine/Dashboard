@@ -2,7 +2,6 @@
     x:Class="Dashboard.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Dashboard"
     xmlns:converters="clr-namespace:Dashboard.Utilities.Converters"
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     StartupUri="Views/RootView.xaml"

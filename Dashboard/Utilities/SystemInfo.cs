@@ -4,7 +4,7 @@ using System;
 
 namespace Dashboard.Utilities;
 
-class SystemInfo
+internal class SystemInfo
 {
     public static Lazy<VersionInfo> Version { get; private set; } = new(() => GetVersionInfo());
 

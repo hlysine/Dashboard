@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,6 +14,8 @@ namespace Dashboard.Views.Components;
 /// </summary>
 public partial class WeatherIntervalControl : UserControl
 {
+    private readonly HttpClient httpClient = new();
+
     public WeatherIntervalControl()
     {
         InitializeComponent();
@@ -21,12 +23,11 @@ public partial class WeatherIntervalControl : UserControl
 
     private async void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        if (DataContext is WeatherForecastItem data)
-        {
-            WebClient wc = new();
-            using MemoryStream stream = new(await wc.DownloadDataTaskAsync(new Uri(data.IconUrl)));
-            imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(stream)) { Stretch = Stretch.Uniform };
-            imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
-        }
+        if (DataContext is not WeatherForecastItem data)
+            return;
+
+        Stream netStream = await httpClient.GetStreamAsync(new Uri(data.IconUrl));
+        imgWeather.OpacityMask = new ImageBrush(SvgReader.Load(netStream)) { Stretch = Stretch.Uniform };
+        imgWeather.SetResourceReference(Image.SourceProperty, "EmptyImageDrawing");
     }
 }

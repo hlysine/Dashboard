@@ -46,7 +46,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
         NotifyChanged(nameof(Threads));
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (Gmail.CanAuthorize)
         {
@@ -58,7 +58,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
         Gmail.RequireScopes(new[] {
             GmailService.Scope.GmailReadonly,

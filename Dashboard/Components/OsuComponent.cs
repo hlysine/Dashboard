@@ -47,7 +47,7 @@ public class OsuComponent : AutoRefreshComponent
         NotifyChanged(nameof(Friends));
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (Osu.CanAuthorize)
         {
@@ -60,7 +60,7 @@ public class OsuComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
         Osu.RequireScopes(new[]
         {

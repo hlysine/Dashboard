@@ -36,7 +36,7 @@ public class TabbedContainer : DashboardContainer
         }
     }
 
-    protected override void OnInitializationComplete()
+    protected override void OnInitializeSelf()
     {
         ActiveTabIndex = DefaultTabIndex;
         Loaded = true;

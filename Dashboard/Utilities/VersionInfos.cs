@@ -2,7 +2,7 @@
 
 namespace Dashboard.Utilities;
 
-sealed class VersionInfos
+internal sealed class VersionInfos
 {
     public static VersionInfo Windows7 => new(6, 1, 7600);
     public static VersionInfo Windows7_SP1 => new(6, 1, 7601);

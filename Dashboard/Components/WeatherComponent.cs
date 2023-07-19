@@ -44,7 +44,7 @@ public class WeatherComponent : AutoRefreshComponent
         NotifyChanged(nameof(Forecast));
     }
 
-    protected override async void OnInitializationComplete()
+    protected override async void OnInitializeSelf()
     {
         if (OpenWeatherMap.CanAuthorize)
         {
@@ -57,7 +57,7 @@ public class WeatherComponent : AutoRefreshComponent
         Loaded = true;
     }
 
-    protected override void OnInitialize()
+    protected override void OnInitializeDependencies()
     {
     }
 

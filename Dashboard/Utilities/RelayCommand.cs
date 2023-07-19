@@ -8,8 +8,8 @@ public class RelayCommand<T> : ICommand
 {
     #region Fields
 
-    readonly Action<T> _execute;
-    readonly Predicate<T> _canExecute;
+    private readonly Action<T> _execute;
+    private readonly Predicate<T> _canExecute;
 
     #endregion // Fields
 

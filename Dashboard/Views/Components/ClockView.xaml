@@ -1,14 +1,11 @@
-﻿<components:ClockViewBase
+﻿<componentViews:ClockViewBase
     x:Class="Dashboard.Views.Components.ClockView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:local="clr-namespace:Dashboard"
-    xmlns:view="clr-namespace:Dashboard.Views"
-    xmlns:comp="clr-namespace:Dashboard.Components"
-    xmlns:components="clr-namespace:Dashboard.Views.Components"
+    xmlns:componentViews="clr-namespace:Dashboard.Views.Components"
+    xmlns:components="clr-namespace:Dashboard.Components"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
     TextOptions.TextFormattingMode="Ideal"
@@ -18,6 +15,7 @@
     mc:Ignorable="d"
     d:DesignHeight="200"
     d:DesignWidth="500"
+    d:DataContext="{d:DesignInstance Type=components:ClockComponent, IsDesignTimeCreatable=True}"
     Margin="{Binding Position.Margin}"
     HorizontalAlignment="{Binding Position.HorizontalAlignment}"
     VerticalAlignment="{Binding Position.VerticalAlignment}"
@@ -47,4 +45,4 @@
             </StackPanel>
         </Grid>
     </Viewbox>
-</components:ClockViewBase>
+</componentViews:ClockViewBase>

@@ -5,10 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:local="clr-namespace:Dashboard"
-    xmlns:view="clr-namespace:Dashboard.Views"
-    xmlns:comp="clr-namespace:Dashboard.Components"
-    xmlns:cmd="clr-namespace:AttachedCommandBehavior;assembly=AttachedCommandBehavior"
+    xmlns:viewModels="clr-namespace:Dashboard.ViewModels"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
     TextOptions.TextFormattingMode="Ideal"
@@ -16,7 +13,8 @@
     Background="Transparent"
     FontFamily="{DynamicResource MaterialDesignFont}"
     mc:Ignorable="d"
-    d:DesignWidth="200">
+    d:DesignWidth="200"
+    d:DataContext="{d:DesignInstance Type=viewModels:GoogleTasksTask, IsDesignTimeCreatable=True}">
     <md:ColorZone
         Margin="5"
         Mode="PrimaryDark"
