@@ -2,7 +2,7 @@
 
 public class LayoutContainer : DashboardContainer
 {
-    public override string DefaultName => "Layout Container";
+    protected override string DefaultName => "Layout Container";
 
     public LayoutContainer()
     {

@@ -11,33 +11,37 @@ using System.Text.RegularExpressions;
 
 namespace Dashboard.Utilities;
 
-public static class Helper
+public static partial class Helper
 {
     public static readonly Random Rnd = new();
 
+    public static bool ParseXamlBoolean(object parameter) => parameter as bool? ?? Convert.ToBoolean((string)parameter);
+
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
     {
-        foreach (T item in enumeration)
+        IEnumerable<T> forEach = enumeration.ToList();
+        foreach (T item in forEach)
         {
             action(item);
         }
 
-        return enumeration;
+        return forEach;
     }
 
     public static IEnumerable ForEach(this IEnumerable enumeration, Action<object> action)
     {
-        foreach (object item in enumeration)
+        IEnumerable forEach = enumeration.Cast<object>().ToList();
+        foreach (object item in forEach)
         {
             action(item);
         }
 
-        return enumeration;
+        return forEach;
     }
 
     public static string RandomString(int length)
     {
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var stringChars = new char[length];
 
         for (var i = 0; i < stringChars.Length; i++)
@@ -87,23 +91,25 @@ public static class Helper
         {
             return "Today";
         }
-        else if (date.Date == DateTime.Today - TimeSpan.FromDays(1))
+
+        if (date.Date == DateTime.Today - TimeSpan.FromDays(1))
         {
             return "Yesterday";
         }
-        else if (date.Date == DateTime.Today + TimeSpan.FromDays(1))
+
+        if (date.Date == DateTime.Today + TimeSpan.FromDays(1))
         {
             return "Tomorrow";
         }
-        else if (date.Year == DateTime.Now.Year)
-        {
-            return date.ToString("MMM dd");
-        }
-        else
-        {
-            return date.ToString("MMM dd, yyyy");
-        }
+
+        return date.ToString(date.Year == DateTime.Now.Year ? "MMM dd" : "MMM dd, yyyy");
     }
+
+    [GeneratedRegex(".*(?= \\+0000| GMT| UTC| \\(UTC\\))")]
+    private static partial Regex excludeUTCRegex();
+
+    [GeneratedRegex(".*(?= [A-Z]{3}| \\([A-Z]{3}\\))")]
+    private static partial Regex excludeTimeZoneRegex();
 
     public static DateTime ParseDateTime(this string str)
     {
@@ -112,7 +118,7 @@ public static class Helper
             return res1;
         }
 
-        Match match = Regex.Match(str, @".*(?= \+0000| GMT| UTC| \(UTC\))");
+        Match match = excludeUTCRegex().Match(str);
         if (match.Success)
         {
             if (DateTime.TryParseExact(match.Value, "ddd, d MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res2))
@@ -121,7 +127,7 @@ public static class Helper
             }
         }
 
-        Match match2 = Regex.Match(str, @".*(?= [A-Z]{3}| \([A-Z]{3}\))");
+        Match match2 = excludeTimeZoneRegex().Match(str);
         if (DateTime.TryParseExact(match2.Value, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out DateTime res3))
         {
             return res3;
@@ -144,10 +150,12 @@ public static class Helper
     {
         if (eventDateTime.DateTimeRaw == null)
         {
-            return DateTime.ParseExact(eventDateTime.Date,
+            return DateTime.ParseExact(
+                eventDateTime.Date,
                 "yyyy-MM-dd",
                 CultureInfo.InvariantCulture,
-                DateTimeStyles.None);
+                DateTimeStyles.None
+            );
         }
         else
         {

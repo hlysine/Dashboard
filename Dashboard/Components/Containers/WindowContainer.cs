@@ -7,7 +7,7 @@ namespace Dashboard.Components.Containers;
 
 public class WindowContainer : DashboardContainer
 {
-    public override string DefaultName => "Dashboard";
+    protected override string DefaultName => "Dashboard";
 
     public Action<object> LostFocus { get; private set; }
 

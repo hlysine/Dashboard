@@ -18,13 +18,13 @@ public partial class LauncherView : LauncherViewBase
     {
         // No command binding for pressing the enter key
         // Do it from code behind
-        if (e.Key == Key.Enter)
+        if (e.Key != Key.Enter)
+            return;
+
+        ICommand cmd = ((LauncherComponent)DataContext).LaunchCommand;
+        if (cmd.CanExecute(null))
         {
-            ICommand cmd = ((LauncherComponent)DataContext).LaunchCommand;
-            if (cmd.CanExecute(null))
-            {
-                cmd.Execute(null);
-            }
+            cmd.Execute(null);
         }
     }
 }

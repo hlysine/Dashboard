@@ -11,7 +11,7 @@ namespace Dashboard.Components;
 
 public class GoogleGmailComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Gmail";
+    protected override string DefaultName => "Gmail";
 
     [RequireService(nameof(GoogleAccountId))]
     public GoogleGmailService Gmail { get; set; }
@@ -33,11 +33,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
         set => SetAndNotify(ref threads, value);
     }
 
-    public GoogleGmailComponent()
-    {
-    }
-
-    private async Task LoadGmail()
+    private async Task loadGmail()
     {
         Profile = await Gmail.GetProfile();
         ListThreadsResponse th = await Gmail.GetThreads();
@@ -52,7 +48,7 @@ public class GoogleGmailComponent : AutoRefreshComponent
         {
             if (!Gmail.IsAuthorized)
                 await Gmail.Authorize();
-            await LoadGmail();
+            await loadGmail();
             StartAutoRefresh();
         }
         Loaded = true;
@@ -67,6 +63,6 @@ public class GoogleGmailComponent : AutoRefreshComponent
 
     protected override async void OnRefresh()
     {
-        await LoadGmail();
+        await loadGmail();
     }
 }

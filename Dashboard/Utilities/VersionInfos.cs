@@ -1,7 +1,10 @@
 ﻿// Taken from https://github.com/sourcechord/FluentWPF/blob/master/FluentWPF/Utility/VersionInfos.cs
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Dashboard.Utilities;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 internal sealed class VersionInfos
 {
     public static VersionInfo Windows7 => new(6, 1, 7600);

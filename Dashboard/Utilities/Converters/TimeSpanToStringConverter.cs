@@ -9,15 +9,8 @@ public class TimeSpanToStringConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         TimeSpan val = (value as TimeSpan?).GetValueOrDefault();
-        if (val == default) return "";
-        if (val.TotalHours >= 1)
-        {
-            return val.ToString(@"h\:mm\:ss");
-        }
-        else
-        {
-            return val.ToString(@"mm\:ss");
-        }
+
+        return val == default ? "" : val.ToString(val.TotalHours >= 1 ? @"h\:mm\:ss" : @"mm\:ss");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

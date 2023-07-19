@@ -22,7 +22,7 @@ public partial class WeatherView : WeatherViewBase
         Component.PropertyChanged += Component_PropertyChanged;
     }
 
-    private void ScrollViewer_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
+    private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {
         imgTransform.X = -((ScrollViewer)sender).HorizontalOffset;
     }
@@ -37,7 +37,7 @@ public partial class WeatherView : WeatherViewBase
 
     private void getTemperaturePoints(out Point[] temp, out Point[] feelsLike)
     {
-        const double vMargin = 10;
+        const double v_margin = 10;
 
         var scroll = VisualTreeHelpers.FindChild<ScrollViewer>(listWeather);
         double width = scroll.ExtentWidth;
@@ -61,10 +61,10 @@ public partial class WeatherView : WeatherViewBase
         for (var i = 0; i < Component.Forecast.Count; i++)
         {
             double top = 1 - (Component.Forecast[i].MainInfo.Temperature - min) / (max - min);
-            points.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top + vMargin));
+            points.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - v_margin * 2) * top + v_margin));
 
             double top2 = 1 - (Component.Forecast[i].MainInfo.FeelsLike - min) / (max - min);
-            points2.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - vMargin * 2) * top2 + vMargin));
+            points2.Add(new Point(itemWidth / 2 + i * itemWidth, (canvasTemperature.ActualHeight - v_margin * 2) * top2 + v_margin));
         }
 
         temp = points.ToArray();
@@ -76,10 +76,9 @@ public partial class WeatherView : WeatherViewBase
         drawGraph();
     }
 
-    private PathGeometry getPath(Point[] points)
+    private static PathGeometry getPath(Point[] points)
     {
-        Point[] cp1, cp2;
-        BezierSpline.GetCurveControlPoints(points, out cp1, out cp2);
+        BezierSpline.GetCurveControlPoints(points, out Point[] cp1, out Point[] cp2);
 
         PathSegmentCollection lines = new();
         for (var i = 0; i < cp1.Length; ++i)
@@ -87,7 +86,7 @@ public partial class WeatherView : WeatherViewBase
             lines.Add(new BezierSegment(cp1[i], cp2[i], points[i + 1], true));
         }
         PathFigure f = new(points[0], lines, false);
-        return new PathGeometry(new PathFigure[] { f });
+        return new PathGeometry(new[] { f });
     }
 
     private void drawGraph()
@@ -96,11 +95,11 @@ public partial class WeatherView : WeatherViewBase
 
 
         Path path = new() { StrokeThickness = 3, Data = getPath(points2), Opacity = 0.5d };
-        path.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
+        path.SetResourceReference(Shape.StrokeProperty, "PrimaryHueDarkForegroundBrush");
         canvasTemperature.Children.Add(path);
 
         Path path2 = new() { StrokeThickness = 3, Data = getPath(points) };
-        path2.SetResourceReference(Path.StrokeProperty, "PrimaryHueDarkForegroundBrush");
+        path2.SetResourceReference(Shape.StrokeProperty, "PrimaryHueDarkForegroundBrush");
         canvasTemperature.Children.Add(path2);
 
 

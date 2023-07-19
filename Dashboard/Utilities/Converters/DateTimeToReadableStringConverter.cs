@@ -9,15 +9,10 @@ public class DateTimeToReadableStringConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         DateTime val = (value as DateTime?).GetValueOrDefault();
+
         if (val == default) return "";
-        if (val.Date == DateTime.Today)
-        {
-            return val.ToString("h:mm tt");
-        }
-        else
-        {
-            return val.ToReadableDateString();
-        }
+
+        return val.Date == DateTime.Today ? val.ToString("h:mm tt") : val.ToReadableDateString();
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

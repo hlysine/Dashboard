@@ -14,6 +14,6 @@ public static class ToolWindowHelper
         var exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
 
         exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
-        SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+        SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, exStyle);
     }
 }

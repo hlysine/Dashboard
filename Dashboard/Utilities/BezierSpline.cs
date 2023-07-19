@@ -6,11 +6,12 @@
 // <date>2008-12-17</date>
 // <summary>
 // Methods to calculate Bezier Spline points.
-// Modified: Peter Lee (peterlee.com.cn < at > gmail.com)
+// Modified: Peter Lee (peterlee.com.cn@gmail.com)
 //   Update: 2009-03-16
 //</summary>
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Dashboard.Utilities;
@@ -19,7 +20,7 @@ namespace Dashboard.Utilities;
 /// Bezier Spline methods
 /// </summary>
 /// <remarks>
-/// Modified: Peter Lee (peterlee.com.cn < at > gmail.com)
+/// Modified: Peter Lee (peterlee.com.cn@gmail.com)
 ///   Update: 2009-03-16
 ///
 /// see also:
@@ -136,16 +137,20 @@ public static class BezierSpline
     /// <param name="firstControlPoints">Output First Control points array of knots.Length - 1 length.</param>
     /// <param name="secondControlPoints">Output Second Control points array of knots.Length - 1 length.</param>
     /// <exception cref="ArgumentNullException"><paramref name="knots"/> parameter must be not null.</exception>
-    /// <exception cref="ArgumentException"><paramref name="knots"/> array must containg at least two points.</exception>
+    /// <exception cref="ArgumentException"><paramref name="knots"/> array must contain at least two points.</exception>
     public static void GetCurveControlPoints(Point[] knots, out Point[] firstControlPoints, out Point[] secondControlPoints)
     {
         if (knots == null)
-            throw new ArgumentNullException("knots");
+            throw new ArgumentNullException(nameof(knots));
+
         int n = knots.Length - 1;
+
         if (n < 1)
-            throw new ArgumentException("At least two knot points required", "knots");
+            throw new ArgumentException("At least two knot points required", nameof(knots));
+
         if (n == 1)
-        { // Special case: Bezier curve should be a straight line.
+        {
+            // Special case: Bezier curve should be a straight line.
             firstControlPoints = new Point[1];
             // 3P1 = 2P0 + P3
             firstControlPoints[0].X = (2 * knots[0].X + knots[1].X) / 3;
@@ -155,6 +160,7 @@ public static class BezierSpline
             // P2 = 2P1 – P0
             secondControlPoints[0].X = 2 * firstControlPoints[0].X - knots[0].X;
             secondControlPoints[0].Y = 2 * firstControlPoints[0].Y - knots[0].Y;
+
             return;
         }
 
@@ -168,7 +174,7 @@ public static class BezierSpline
         rhs[0] = knots[0].X + 2 * knots[1].X;
         rhs[n - 1] = (8 * knots[n - 1].X + knots[n].X) / 2.0;
         // Get first control points X-values
-        double[] x = GetFirstControlPoints(rhs);
+        double[] x = getFirstControlPoints(rhs);
 
         // Set right hand side Y values
         for (var i = 1; i < n - 1; ++i)
@@ -176,7 +182,7 @@ public static class BezierSpline
         rhs[0] = knots[0].Y + 2 * knots[1].Y;
         rhs[n - 1] = (8 * knots[n - 1].Y + knots[n].Y) / 2.0;
         // Get first control points Y-values
-        double[] y = GetFirstControlPoints(rhs);
+        double[] y = getFirstControlPoints(rhs);
 
         // Fill output arrays.
         firstControlPoints = new Point[n];
@@ -194,13 +200,13 @@ public static class BezierSpline
     }
 
     /// <summary>
-    /// Solves a tridiagonal system for one of coordinates (x or y) of first Bezier control points.
+    /// Solves a tri-diagonal system for one of coordinates (x or y) of first Bezier control points.
     /// </summary>
     /// <param name="rhs">Right hand side vector.</param>
     /// <returns>Solution vector.</returns>
-    private static double[] GetFirstControlPoints(double[] rhs)
+    private static double[] getFirstControlPoints(IReadOnlyList<double> rhs)
     {
-        int n = rhs.Length;
+        int n = rhs.Count;
         var x = new double[n]; // Solution vector.
         var tmp = new double[n]; // Temp workspace.
 
@@ -212,8 +218,9 @@ public static class BezierSpline
             b = (i < n - 1 ? 4.0 : 3.5) - tmp[i];
             x[i] = (rhs[i] - x[i - 1]) / b;
         }
+
         for (var i = 1; i < n; i++)
-            x[n - i - 1] -= tmp[n - i] * x[n - i]; // Backsubstitution.
+            x[n - i - 1] -= tmp[n - i] * x[n - i]; // Back-substitution.
 
         return x;
     }

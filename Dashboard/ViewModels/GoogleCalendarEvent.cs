@@ -9,9 +9,9 @@ namespace Dashboard.ViewModels;
 
 public class GoogleCalendarEvent
 {
-    private Event @event;
-    private CalendarListEntry calendar;
-    private Google.Apis.Calendar.v3.Data.Colors colors;
+    private readonly Event @event;
+    private readonly CalendarListEntry calendar;
+    private readonly Google.Apis.Calendar.v3.Data.Colors colors;
 
     public string Name => @event.Summary;
 
@@ -24,34 +24,37 @@ public class GoogleCalendarEvent
             var ret = "";
             DateTime start = @event.Start.GetDateTime();
             DateTime end = @event.End.GetDateTime();
-            if (@event.Start.DateTime == null)
-            { // All day event
+            if (@event.Start.DateTimeRaw == null)
+            {
+                // All day event
                 ret += start.ToReadableDateString();
-                if (!@event.EndTimeUnspecified.GetValueOrDefault())
-                {
-                    if (end - start > TimeSpan.FromDays(1))
-                    {
-                        ret += " - ";
-                        ret += end.ToReadableDateString();
-                    }
-                }
+
+                if (@event.EndTimeUnspecified.GetValueOrDefault())
+                    return ret;
+
+                if (end - start <= TimeSpan.FromDays(1))
+                    return ret;
+
+                ret += " - ";
+                ret += end.ToReadableDateString();
             }
             else
             {
                 if (start != default)
                 {
                     ret += start.ToReadableDateString() + " " + start.ToString("h:mm tt");
-                    if (!@event.EndTimeUnspecified.GetValueOrDefault() && end != default)
+
+                    if (@event.EndTimeUnspecified.GetValueOrDefault() || end == default)
+                        return ret;
+
+                    ret += " - ";
+                    if (end.Date == start.Date)
                     {
-                        ret += " - ";
-                        if (end.Date == start.Date)
-                        {
-                            ret += end.ToString("h:mm tt");
-                        }
-                        else
-                        {
-                            ret += end.ToReadableDateString() + " " + end.ToString("h:mm tt");
-                        }
+                        ret += end.ToString("h:mm tt");
+                    }
+                    else
+                    {
+                        ret += end.ToReadableDateString() + " " + end.ToString("h:mm tt");
                     }
                 }
                 else
@@ -59,6 +62,7 @@ public class GoogleCalendarEvent
                     return "";
                 }
             }
+
             return ret;
         }
     }
@@ -84,23 +88,20 @@ public class GoogleCalendarEvent
 
     private RelayCommand openCommand;
 
-    public ICommand OpenCommand => openCommand ?? (openCommand = new RelayCommand(
+    public ICommand OpenCommand => openCommand ??= new RelayCommand(
         // execute
         () =>
         {
             Helper.OpenUri(new Uri($"https://calendar.google.com/calendar/r/agenda/{@event.Start.GetDateTime().Year}/{@event.Start.GetDateTime().Month}/{@event.Start.GetDateTime().Day}"));
         },
         // can execute
-        () =>
-        {
-            return true;
-        }
-    ));
+        () => true
+    );
 
-    public GoogleCalendarEvent(CalendarListEntry _calendar, Event _event, Google.Apis.Calendar.v3.Data.Colors _colors)
+    public GoogleCalendarEvent(CalendarListEntry calendar, Event @event, Google.Apis.Calendar.v3.Data.Colors colors)
     {
-        @event = _event;
-        calendar = _calendar;
-        colors = _colors;
+        this.@event = @event;
+        this.calendar = calendar;
+        this.colors = colors;
     }
 }

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Dashboard.Utilities;
 
-public static class Native
+public static partial class Native
 {
     internal enum AccentFlagsType
     {
@@ -45,15 +45,8 @@ public static class Native
         // ...
     }
 
-    [DllImport("user32.dll")]
-    internal static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
-
-    // Registers a hot key with Windows.
-    [DllImport("user32.dll")]
-    internal static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-    // Unregisters the hot key with Windows.
-    [DllImport("user32.dll")]
-    internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+    [LibraryImport("user32.dll")]
+    internal static partial int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
     [Flags]
     internal enum ExtendedWindowStyles
@@ -66,35 +59,38 @@ public static class Native
     internal enum GetWindowLongFields
     {
         // ...
-        GWL_EXSTYLE = (-20),
+        GWL_EXSTYLE = -20,
         // ...
     }
 
-    [DllImport("user32.dll")]
-    internal static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+    [LibraryImport("user32.dll", EntryPoint = "GetWindowLongW")]
+    internal static partial IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
 
-    internal static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+    [LibraryImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
+    internal static partial IntPtr GetWindowLong64(IntPtr hWnd, int nIndex);
+
+    internal static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
     {
         var error = 0;
-        IntPtr result = IntPtr.Zero;
+        IntPtr result;
         // Win32 SetWindowLong doesn't clear error on success
         SetLastError(0);
 
         if (IntPtr.Size == 4)
         {
-            // use SetWindowLong
-            int tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+            // use GetWindowLong
+            IntPtr tempResult = GetWindowLong32(hWnd, nIndex);
             error = Marshal.GetLastWin32Error();
             result = new IntPtr(tempResult);
         }
         else
         {
-            // use SetWindowLongPtr
-            result = IntSetWindowLongPtr(hWnd, nIndex, dwNewLong);
+            // use GetWindowLongPtr
+            result = GetWindowLong64(hWnd, nIndex);
             error = Marshal.GetLastWin32Error();
         }
 
-        if ((result == IntPtr.Zero) && (error != 0))
+        if (result == IntPtr.Zero && error != 0)
         {
             throw new System.ComponentModel.Win32Exception(error);
         }
@@ -102,17 +98,47 @@ public static class Native
         return result;
     }
 
-    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
-    internal static extern IntPtr IntSetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-    [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
-    internal static extern Int32 IntSetWindowLong(IntPtr hWnd, int nIndex, Int32 dwNewLong);
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
+    internal static partial IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+    internal static partial IntPtr SetWindowLong64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    internal static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+    {
+        var error = 0;
+        IntPtr result;
+        // Win32 SetWindowLong doesn't clear error on success
+        SetLastError(0);
+
+        if (IntPtr.Size == 4)
+        {
+            // use SetWindowLong
+            IntPtr tempResult = SetWindowLong32(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+            error = Marshal.GetLastWin32Error();
+            result = new IntPtr(tempResult);
+        }
+        else
+        {
+            // use SetWindowLongPtr
+            result = SetWindowLong64(hWnd, nIndex, dwNewLong);
+            error = Marshal.GetLastWin32Error();
+        }
+
+        if (result == IntPtr.Zero && error != 0)
+        {
+            throw new System.ComponentModel.Win32Exception(error);
+        }
+
+        return result;
+    }
 
     internal static int IntPtrToInt32(IntPtr intPtr)
     {
         return unchecked((int)intPtr.ToInt64());
     }
 
-    [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
-    internal static extern void SetLastError(int dwErrorCode);
+    [LibraryImport("kernel32.dll", EntryPoint = "SetLastError")]
+    internal static partial void SetLastError(int dwErrorCode);
 }

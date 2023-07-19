@@ -17,7 +17,7 @@ public abstract class DashboardView<TComponent> : DashboardViewBase, IDashboardV
 
     private object loadedContent;
 
-    public DashboardView(TComponent component)
+    protected DashboardView(TComponent component)
     {
         Component = component;
         DataContext = Component;
@@ -30,10 +30,12 @@ public abstract class DashboardView<TComponent> : DashboardViewBase, IDashboardV
         {
             Component.FinishedLoading += Component_FinishedLoading;
 
-            ProgressBar loadingBar = new();
-            loadingBar.Style = (Style)FindResource("MaterialDesignCircularProgressBar");
-            loadingBar.Value = 0;
-            loadingBar.IsIndeterminate = true;
+            ProgressBar loadingBar = new()
+            {
+                Style = (Style)FindResource("MaterialDesignCircularProgressBar"),
+                Value = 0,
+                IsIndeterminate = true,
+            };
 
             Content = wrapWithTitle(loadingBar);
         }
@@ -59,32 +61,40 @@ public abstract class DashboardView<TComponent> : DashboardViewBase, IDashboardV
         grid.RowDefinitions.Add(new RowDefinition
             { Height = new GridLength(1, GridUnitType.Star) });
 
-        TextBlock text = new();
-        text.Text = Component.Name;
-        text.SetResourceReference(TextBlock.StyleProperty, "MaterialDesignCaptionTextBlock");
+        TextBlock text = new()
+        {
+            Text = Component.Name,
+        };
+        text.SetResourceReference(StyleProperty, "MaterialDesignCaptionTextBlock");
         text.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryHueDarkForegroundBrush");
 
-        Binding b = new();
-        b.Source = DataContext;
-        b.Path = new PropertyPath("ShowTitle");
-        b.Converter = new BoolToVisibilityConverter();
-        b.Mode = BindingMode.OneWay;
-        text.SetBinding(TextBlock.VisibilityProperty, b);
+        Binding b = new()
+        {
+            Source = DataContext,
+            Path = new PropertyPath("ShowTitle"),
+            Converter = new BoolToVisibilityConverter(),
+            Mode = BindingMode.OneWay,
+        };
+        text.SetBinding(VisibilityProperty, b);
 
         Grid.SetRow(text, 0);
 
-        Border border = new();
-        border.Background = (Brush)FindResource("PrimaryHueDarkForegroundBrush");
-        border.SnapsToDevicePixels = true;
-        border.Height = 1;
-        border.HorizontalAlignment = HorizontalAlignment.Stretch;
+        Border border = new()
+        {
+            Background = (Brush)FindResource("PrimaryHueDarkForegroundBrush"),
+            SnapsToDevicePixels = true,
+            Height = 1,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+        };
 
-        Binding b2 = new();
-        b2.Source = DataContext;
-        b2.Path = new PropertyPath("ShowTitle");
-        b2.Converter = new BoolToVisibilityConverter();
-        b2.Mode = BindingMode.OneWay;
-        border.SetBinding(Border.VisibilityProperty, b2);
+        Binding b2 = new()
+        {
+            Source = DataContext,
+            Path = new PropertyPath("ShowTitle"),
+            Converter = new BoolToVisibilityConverter(),
+            Mode = BindingMode.OneWay,
+        };
+        border.SetBinding(VisibilityProperty, b2);
 
         Grid.SetRow(border, 1);
 

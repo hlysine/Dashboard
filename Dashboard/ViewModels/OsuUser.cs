@@ -14,7 +14,7 @@ public class OsuUser : NotifyPropertyChanged
     private readonly OsuService osu;
 
     // default is false, set 1 for true.
-    private int fetchedUser = 0;
+    private int fetchedUser;
 
     private bool FetchedUser
     {

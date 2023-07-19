@@ -45,12 +45,12 @@ public class GoogleTasksService : AuthCodeService
     public override bool IsAuthorized => tasks != null;
 
     [Obsolete("RequiredScopes is saved in GoogleService", true)]
-    protected new List<string> requiredScopes;
+    protected new List<string> RequiredScopes;
 
     private TasksService tasks;
 
     /// <summary>
-    /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
+    /// Start the authorization code flow or request for an access token if a refresh token is present and the scopes match.
     /// </summary>
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the wait for users to authorize on their browsers</param>
     /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
@@ -58,11 +58,13 @@ public class GoogleTasksService : AuthCodeService
     {
         if (!Google.IsAuthorized)
             await Google.Authorize(cancel);
-        tasks = new TasksService(new BaseClientService.Initializer
-        {
-            HttpClientInitializer = Google.GetCredential(),
-            ApplicationName = Helper.GetProductName(),
-        });
+        tasks = new TasksService(
+            new BaseClientService.Initializer
+            {
+                HttpClientInitializer = Google.GetCredential(),
+                ApplicationName = Helper.GetProductName(),
+            }
+        );
     }
 
     /// <summary>
@@ -71,10 +73,10 @@ public class GoogleTasksService : AuthCodeService
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the operation (may not be cancelable)</param>
     public override async Task Unauthorize(CancellationToken cancel = default)
     {
-        await Google.Unauthorize();
+        await Google.Unauthorize(cancel);
     }
 
-    public async Task<Google.Apis.Tasks.v1.Data.TaskLists> GetAllTasklists()
+    public async Task<TaskLists> GetAllTaskLists()
     {
         TasklistsResource.ListRequest request = tasks.Tasklists.List();
 
@@ -82,15 +84,15 @@ public class GoogleTasksService : AuthCodeService
     }
 
     /// <summary>
-    /// Get all tasks in a tasklist.
+    /// Get all tasks in a task list.
     /// </summary>
-    /// <param name="calendarId">ID of the tasklist.</param>
+    /// <param name="taskListId">ID of the task list.</param>
     /// <param name="maxResults">Number of tasks to return.</param>
     /// <returns></returns>
-    public async Task<Google.Apis.Tasks.v1.Data.Tasks> GetTasks(string tasklistId, int maxResults = 100)
+    public async Task<Tasks> GetTasks(string taskListId, int maxResults = 100)
     {
         // Define parameters of request.
-        TasksResource.ListRequest request = tasks.Tasks.List(tasklistId);
+        TasksResource.ListRequest request = tasks.Tasks.List(taskListId);
         request.ShowCompleted = true;
         request.ShowHidden = true;
         request.MaxResults = maxResults;
@@ -100,18 +102,18 @@ public class GoogleTasksService : AuthCodeService
     }
 
     /// <summary>
-    /// Get all tasks in all tasklists.
+    /// Get all tasks in all task lists.
     /// </summary>
-    /// <param name="maxResults">Number of tasks to return for each tasklist.</param>
-    public async Task<Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>> GetAllTasks( int maxResults = 100)
+    /// <param name="maxResults">Number of tasks to return for each task list.</param>
+    public async Task<Dictionary<TaskList, Tasks>> GetAllTasks(int maxResults = 100)
     {
-        TaskLists tasklists = await GetAllTasklists();
+        TaskLists taskLists = await GetAllTaskLists();
 
-        var ret = new Dictionary<Google.Apis.Tasks.v1.Data.TaskList, Google.Apis.Tasks.v1.Data.Tasks>();
-        foreach (TaskList tasklist in tasklists.Items)
+        var ret = new Dictionary<TaskList, Tasks>();
+        foreach (TaskList taskList in taskLists.Items)
         {
-            Tasks tasks = await GetTasks(tasklist.Id, maxResults);
-            ret.Add(tasklist, tasks);
+            Tasks downloadedTasks = await GetTasks(taskList.Id, maxResults);
+            ret.Add(taskList, downloadedTasks);
         }
 
         return ret;

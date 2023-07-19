@@ -18,7 +18,7 @@ public class OsuService : AuthCodeService
     public override bool IsAuthorized => osu != null;
 
     /// <summary>
-    /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
+    /// Start the authorization code flow or request for an access token if a refresh token is present and the scopes match.
     /// </summary>
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the wait for users to authorize on their browsers</param>
     /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
@@ -27,28 +27,29 @@ public class OsuService : AuthCodeService
         OsuTokenResponse tokenResponse;
         osu = new RestClient("https://osu.ppy.sh/", configureSerialization: s => s.UseNewtonsoftJson());
 
-        if (RefreshToken.IsNullOrEmpty() || !requiredScopes.IsSubsetOf(AuthorizedScopes))
+        if (RefreshToken.IsNullOrEmpty() || !RequiredScopes.IsSubsetOf(AuthorizedScopes))
         {
             var taskCompletionSource = new TaskCompletionSource<AuthorizationCodeResponse>();
 
-            var _server = new EmbedIOAuthServer(new Uri("http://localhost:5001/callback"), 5001);
-            await _server.Start();
+            var server = new EmbedIOAuthServer(new Uri("http://localhost:5001/callback"), 5001);
+            await server.Start();
 
-            _server.AuthorizationCodeReceived += (_, response) =>
+            server.AuthorizationCodeReceived += (_, response) =>
             {
                 taskCompletionSource.SetResult(response);
+
                 return Task.CompletedTask;
             };
 
-            var request = new LoginRequest(new Uri("https://osu.ppy.sh/oauth/authorize"), _server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
+            var request = new LoginRequest(new Uri("https://osu.ppy.sh/oauth/authorize"), server.BaseUri, ClientId, LoginRequest.ResponseType.Code)
             {
-                Scope = requiredScopes,
+                Scope = RequiredScopes,
             };
             Helper.OpenUri(request.ToUri());
 
             AuthorizationCodeResponse response = await taskCompletionSource.Task.WaitAsync(cancel);
 
-            await _server.Stop();
+            await server.Stop();
 
             var tokenRequest = new RestRequest("oauth/token/", Method.Post);
             tokenRequest.AddParameter("client_id", ClientId);
@@ -72,11 +73,11 @@ public class OsuService : AuthCodeService
             tokenResponse = codeResponse.Data;
         }
 
-        RefreshToken = tokenResponse.refresh_token;
-        AccessToken = tokenResponse.access_token;
-        AuthorizedScopes = new List<string>(requiredScopes);
+        RefreshToken = tokenResponse.RefreshToken;
+        AccessToken = tokenResponse.AccessToken;
+        AuthorizedScopes = new List<string>(RequiredScopes);
 
-        osu.AddDefaultHeader("Authorization", "Bearer " + tokenResponse.access_token);
+        osu.AddDefaultHeader("Authorization", "Bearer " + tokenResponse.AccessToken);
 
         RaiseConfigUpdated(EventArgs.Empty);
     }
@@ -87,51 +88,48 @@ public class OsuService : AuthCodeService
         AccessToken = null;
         AuthorizedScopes.Clear();
         RaiseConfigUpdated(EventArgs.Empty);
+
         return Task.CompletedTask;
     }
 
     public async Task<List<CompactUser>> GetFriends()
     {
-        var request = new RestRequest("api/v2/friends", Method.Get);
+        var request = new RestRequest("api/v2/friends");
 
         return (await osu.ExecuteAsync<List<CompactUser>>(request)).Data;
     }
 
     public async Task<User> GetUser(string userId)
     {
-        var request = new RestRequest("api/v2/users/{id}", Method.Get);
+        var request = new RestRequest("api/v2/users/{id}");
         request.AddUrlSegment("id", userId);
 
         RestResponse<User> response = await osu.ExecuteAsync<User>(request);
+
         return response.Data;
     }
 }
 
 public class Kudosu
 {
-
     [JsonProperty("total")]
     public long Total { get; set; }
 
     [JsonProperty("available")]
     public long Available { get; set; }
-
 }
 
 public class Country
 {
-
     [JsonProperty("code")]
     public string Code { get; set; }
 
     [JsonProperty("name")]
     public string Name { get; set; }
-
 }
 
 public class Cover
 {
-
     [JsonProperty("custom_url")]
     public object CustomUrl { get; set; }
 
@@ -140,45 +138,37 @@ public class Cover
 
     [JsonProperty("id")]
     public string Id { get; set; }
-
 }
 
 public class MonthlyPlaycount
 {
-
     [JsonProperty("start_date")]
     public string StartDate { get; set; }
 
     [JsonProperty("count")]
     public long Count { get; set; }
-
 }
 
 public class Page
 {
-
     [JsonProperty("html")]
     public string Html { get; set; }
 
     [JsonProperty("raw")]
     public string Raw { get; set; }
-
 }
 
 public class Level
 {
-
     [JsonProperty("current")]
     public long Current { get; set; }
 
     [JsonProperty("progress")]
     public long Progress { get; set; }
-
 }
 
 public class GradeCounts
 {
-
     [JsonProperty("ss")]
     public long Ss { get; set; }
 
@@ -193,23 +183,19 @@ public class GradeCounts
 
     [JsonProperty("a")]
     public long A { get; set; }
-
 }
 
 public class HighestRank
 {
-
     [JsonProperty("rank")]
     public long Rank { get; set; }
 
     [JsonProperty("updated_at")]
     public DateTime UpdatedAt { get; set; }
-
 }
 
 public class Statistics
 {
-
     [JsonProperty("count_100")]
     public long Count100 { get; set; }
 
@@ -220,7 +206,7 @@ public class Statistics
     public long Count50 { get; set; }
 
     [JsonProperty("count_miss")]
-    public long CountMiss{ get; set; }
+    public long CountMiss { get; set; }
 
     [JsonProperty("level")]
     public Level Level { get; set; }
@@ -266,34 +252,28 @@ public class Statistics
 
     [JsonProperty("grade_counts")]
     public GradeCounts GradeCounts { get; set; }
-
 }
 
 public class UserAchievement
 {
-
     [JsonProperty("achieved_at")]
     public DateTime AchievedAt { get; set; }
 
     [JsonProperty("achievement_id")]
     public long AchievementId { get; set; }
-
 }
 
 public class RankHistory
 {
-
     [JsonProperty("mode")]
     public string Mode { get; set; }
 
     [JsonProperty("data")]
     public List<int> Data { get; set; }
-
 }
 
 public class CompactUser
 {
-
     [JsonProperty("avatar_url")]
     public string AvatarUrl { get; set; }
 
@@ -347,12 +327,10 @@ public class CompactUser
 
     [JsonProperty("support_level")]
     public int SupportLevel { get; set; }
-
 }
 
 public class User : CompactUser
 {
-
     [JsonProperty("cover_url")]
     public string CoverUrl { get; set; }
 
@@ -484,5 +462,4 @@ public class User : CompactUser
 
     [JsonProperty("unranked_beatmapset_count")]
     public long UnrankedBeatmapsetCount { get; set; }
-
 }

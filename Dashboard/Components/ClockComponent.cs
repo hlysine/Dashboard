@@ -4,7 +4,7 @@ namespace Dashboard.Components;
 
 public class ClockComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Clock";
+    protected override string DefaultName => "Clock";
 
     public DateTime Time => DateTime.Now;
 

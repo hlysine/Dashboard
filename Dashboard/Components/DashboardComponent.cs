@@ -28,7 +28,10 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         set => SetAndNotify(ref showTitle, value);
     }
 
-    public abstract string DefaultName { get; }
+    /// <summary>
+    /// The default name of this component, shown if a <see cref="CustomName"/> is not given.
+    /// </summary>
+    protected abstract string DefaultName { get; }
 
     private string customName = "";
 
@@ -39,6 +42,9 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         set => SetAndNotify(ref customName, value, new[] { nameof(Name) });
     }
 
+    /// <summary>
+    /// The actual name of this component, which is the <see cref="CustomName"/> if set, and <see cref="DefaultName"/> otherwise.
+    /// </summary>
     public virtual string Name => CustomName.IsNullOrEmpty() ? DefaultName : CustomName;
 
     public virtual void InitializeDependencies()
@@ -83,14 +89,6 @@ public abstract class DashboardComponent : NotifyPropertyChanged
 
     public bool Foreground => ThisForeground && (Parent?.Foreground ?? true);
 
-    //var fg = ThisForeground;
-    //var comp = this;
-    //while (comp.Parent != null)
-    //{
-    //    fg &= comp.Parent.ThisForeground;
-    //    comp = comp.Parent;
-    //}
-    //return fg;
     public virtual void ForegroundChanged()
     {
         OnForegroundChanged();
@@ -100,6 +98,7 @@ public abstract class DashboardComponent : NotifyPropertyChanged
     {
     }
 
+    // TODO: improve logic
     public virtual void GetServices(DashboardManager manager)
     {
         IEnumerable<(PropertyInfo prop, RequireServiceAttribute)> properties = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
@@ -108,7 +107,7 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         properties.ForEach(x => x.prop.SetValue(this, manager.GetService(x.prop.PropertyType, (string)GetType().GetProperty(x.Item2.ServiceIdProperty).GetValue(this))));
     }
 
-    private bool loaded = false;
+    private bool loaded;
 
     /// <summary>
     /// Whether the Component has finished the initial load (including authentication and initial data load).
@@ -121,7 +120,7 @@ public abstract class DashboardComponent : NotifyPropertyChanged
         {
             if (value && !loaded)
             {
-                loaded = value;
+                loaded = true;
                 FinishedLoading?.Invoke(this, EventArgs.Empty);
             }
             else

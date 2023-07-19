@@ -34,6 +34,7 @@ public class NotifyPropertyChanged : INotifyPropertyChanged
         }
     }
 
+    // ReSharper disable once RedundantAssignment
     protected void SetAndNotify<T>(ref T variable, T value, string[] calculatedProperties = null, [CallerMemberName] string memberName = null)
     {
         Contract.Requires(memberName != null);

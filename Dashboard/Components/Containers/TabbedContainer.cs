@@ -5,7 +5,7 @@ namespace Dashboard.Components.Containers;
 
 public class TabbedContainer : DashboardContainer
 {
-    public override string DefaultName => "Tabbed Container";
+    protected override string DefaultName => "Tabbed Container";
 
     public override string Name => CustomName.IsNullOrEmpty() ? Children[ActiveTabIndex].Name : CustomName;
 
@@ -23,10 +23,6 @@ public class TabbedContainer : DashboardContainer
 
     [PersistentConfig]
     public int DefaultTabIndex { get; set; }
-
-    public TabbedContainer()
-    {
-    }
 
     private void activeTabChanged()
     {

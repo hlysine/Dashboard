@@ -10,7 +10,7 @@ namespace Dashboard.Components;
 
 public class WeatherComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Weather";
+    protected override string DefaultName => "Weather";
 
     [RequireService(nameof(OpenWeatherMapServiceId))]
     public OpenWeatherMapService OpenWeatherMap { get; set; }
@@ -32,11 +32,7 @@ public class WeatherComponent : AutoRefreshComponent
         set => SetAndNotify(ref forecast, value);
     }
 
-    public WeatherComponent()
-    {
-    }
-
-    private async Task LoadForecast()
+    private async Task loadForecast()
     {
         ForecastResponse response = await OpenWeatherMap.GetDailyForecast(Units);
         Forecast.Clear();
@@ -50,7 +46,7 @@ public class WeatherComponent : AutoRefreshComponent
         {
             if (OpenWeatherMap.IsAuthorized)
             {
-                await LoadForecast();
+                await loadForecast();
                 StartAutoRefresh();
             }
         }
@@ -63,6 +59,6 @@ public class WeatherComponent : AutoRefreshComponent
 
     protected override async void OnRefresh()
     {
-        await LoadForecast();
+        await loadForecast();
     }
 }

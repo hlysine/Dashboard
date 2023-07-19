@@ -58,7 +58,7 @@ public class DashboardManager : NotifyPropertyChanged
         () => true
     );
 
-    private const string configPath = "config.xml";
+    private const string config_path = "config.xml";
 
     private XmlSerializer xmlSerializer;
 
@@ -70,9 +70,11 @@ public class DashboardManager : NotifyPropertyChanged
     {
         //Prepare an XmlSerializer to be used when saving config
         var configXmlOverrides = new XmlAttributeOverrides();
-        var attributes = new XmlAttributes();
-        attributes.XmlIgnore = true;
-        Type[] classList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
+        var attributes = new XmlAttributes
+        {
+            XmlIgnore = true,
+        };
+        Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
             from assemblyType in domainAssembly.GetTypes()
             where assemblyType.IsDefined(typeof(ContainsConfigAttribute), true) && !assemblyType.IsAbstract
             select assemblyType).ToArray();
@@ -81,43 +83,43 @@ public class DashboardManager : NotifyPropertyChanged
         {
             foreach (PropertyInfo prop in configType.GetProperties())
             {
-                if (!props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
-                {
-                    props.Add(prop);
-                    if (!prop.IsDefined(typeof(PersistentConfigAttribute), false))
-                    {
-                        configXmlOverrides.Add(prop.DeclaringType, prop.Name, attributes);
-                    }
-                    else
-                    {
-                        var attribute = (PersistentConfigAttribute)prop.GetCustomAttribute(typeof(PersistentConfigAttribute));
-                        var xmlElem = new XmlAttributes();
-                        if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
-                        {
-                            xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
-                            Type[] arrTypeList = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
-                                from assemblyType in domainAssembly.GetTypes()
-                                where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
-                                select assemblyType).ToArray();
-                            foreach (Type t in arrTypeList)
-                            {
-                                xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
-                            }
-                        }
-                        else if (attribute.Generated)
-                        {
-                            xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
-                        }
+                if (props.Any(x => x.PropertyType == prop.PropertyType && x.Name == prop.Name))
+                    continue;
 
-                        configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
+                props.Add(prop);
+                if (!prop.IsDefined(typeof(PersistentConfigAttribute), false))
+                {
+                    configXmlOverrides.Add(prop.DeclaringType, prop.Name, attributes);
+                }
+                else
+                {
+                    var attribute = (PersistentConfigAttribute)prop.GetCustomAttribute(typeof(PersistentConfigAttribute));
+                    var xmlElem = new XmlAttributes();
+                    if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && !typeof(string).IsAssignableFrom(prop.PropertyType))
+                    {
+                        xmlElem.XmlArray = new XmlArrayAttribute((attribute.Generated ? "_" : "") + prop.Name);
+                        Type[] arrTypeList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                            from assemblyType in domainAssembly.GetTypes()
+                            where prop.PropertyType.GetGenericArguments()[0].IsAssignableFrom(assemblyType)
+                            select assemblyType).ToArray();
+                        foreach (Type t in arrTypeList)
+                        {
+                            xmlElem.XmlArrayItems.Add(new XmlArrayItemAttribute(t));
+                        }
                     }
+                    else if (attribute.Generated)
+                    {
+                        xmlElem.XmlElements.Add(new XmlElementAttribute("_" + prop.Name));
+                    }
+
+                    configXmlOverrides.Add(prop.DeclaringType, prop.Name, xmlElem);
                 }
             }
         }
 
         xmlSerializer = new XmlSerializer(typeof(DashboardManager), configXmlOverrides, classList, new XmlRootAttribute("DashboardConfig"), "");
 
-        if (File.Exists(configPath.ToAbsolutePath()))
+        if (File.Exists(config_path.ToAbsolutePath()))
             LoadConfig();
         else
         {
@@ -186,9 +188,9 @@ public class DashboardManager : NotifyPropertyChanged
             RootComponent = root;
         }
 
-        Services.ForEach(InitializeService);
+        Services.ForEach(initializeService);
 
-        InitializeComponent(RootComponent);
+        initializeComponent(RootComponent);
 
         RootComponent.InitializeSelf();
 
@@ -208,14 +210,15 @@ public class DashboardManager : NotifyPropertyChanged
     {
         Contract.Requires(!serviceId.IsNullOrEmpty());
         Service service = Services.FirstOrDefault(x => x.GetType() == type && x.Id == serviceId);
-        if (service == null)
-        {
-            service = (Service)Activator.CreateInstance(type);
-            // fill in required services
-            InitializeService(service);
-            service.Id = serviceId;
-            Services.Add(service);
-        }
+
+        if (service != null)
+            return service;
+
+        service = (Service)Activator.CreateInstance(type);
+        // fill in required services
+        initializeService(service);
+        service.Id = serviceId;
+        Services.Add(service);
 
         return service;
     }
@@ -232,17 +235,17 @@ public class DashboardManager : NotifyPropertyChanged
 
     public void SaveConfig()
     {
-        using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Create);
+        using var fs = new FileStream(config_path.ToAbsolutePath(), FileMode.Create);
         xmlSerializer.Serialize(fs, this);
     }
 
-    private void InitializeService(Service service)
+    private void initializeService(Service service)
     {
         service.GetServices(this);
         service.ConfigUpdated += Service_ConfigUpdated;
     }
 
-    private void InitializeComponent(DashboardComponent component)
+    private void initializeComponent(DashboardComponent component)
     {
         component.GetServices(this);
         component.InitializeDependencies();
@@ -250,10 +253,10 @@ public class DashboardManager : NotifyPropertyChanged
 
     public void LoadConfig()
     {
-        if (!File.Exists(configPath.ToAbsolutePath()))
+        if (!File.Exists(config_path.ToAbsolutePath()))
             return;
 
-        using var fs = new FileStream(configPath.ToAbsolutePath(), FileMode.Open);
+        using var fs = new FileStream(config_path.ToAbsolutePath(), FileMode.Open);
         using StreamReader reader = new(fs);
         string document = reader.ReadToEnd();
         XDocument xDoc = XDocument.Parse(document);

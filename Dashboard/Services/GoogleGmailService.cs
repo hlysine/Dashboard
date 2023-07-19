@@ -44,12 +44,12 @@ public class GoogleGmailService : AuthCodeService
     public override bool IsAuthorized => gmail != null;
 
     [Obsolete("RequiredScopes is saved in GoogleService", true)]
-    protected new List<string> requiredScopes;
+    protected new List<string> RequiredScopes;
 
     private GmailService gmail;
 
     /// <summary>
-    /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
+    /// Start the authorization code flow or request for an access token if a refresh token is present and the scopes match.
     /// </summary>
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the wait for users to authorize on their browsers</param>
     /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
@@ -70,7 +70,7 @@ public class GoogleGmailService : AuthCodeService
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the operation (may not be cancelable)</param>
     public override async Task Unauthorize(CancellationToken cancel = default)
     {
-        await Google.Unauthorize();
+        await Google.Unauthorize(cancel);
     }
 
     public async Task<Profile> GetProfile()

@@ -12,7 +12,7 @@ namespace Dashboard.Components;
 
 public class GoogleCalendarComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Google Calendar";
+    protected override string DefaultName => "Google Calendar";
 
     [RequireService(nameof(GoogleAccountId))]
     public GoogleCalendarService Calendar { get; set; }
@@ -21,6 +21,7 @@ public class GoogleCalendarComponent : AutoRefreshComponent
     public string GoogleAccountId { get; set; }
 
     private List<GoogleCalendarEvent> events = new();
+
     public List<GoogleCalendarEvent> Events
     {
         get => events;
@@ -29,19 +30,16 @@ public class GoogleCalendarComponent : AutoRefreshComponent
 
     private Colors colors;
 
-    public GoogleCalendarComponent()
+    private async Task loadCalendar()
     {
-    }
-
-    private async Task LoadCalendar()
-    {
-        Dictionary<CalendarListEntry, Events> events = await Calendar.GetAllEvents();
+        Dictionary<CalendarListEntry, Events> downloadedEvents = await Calendar.GetAllEvents();
         Events.Clear();
         List<GoogleCalendarEvent> tempEvents = new();
-        foreach (CalendarListEntry calendar in events.Keys)
+        foreach (CalendarListEntry calendar in downloadedEvents.Keys)
         {
-            events[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
+            downloadedEvents[calendar].Items.ForEach(x => tempEvents.Add(new GoogleCalendarEvent(calendar, x, colors)));
         }
+
         Events.AddRange(tempEvents.OrderBy(x => x.Start));
         NotifyChanged(nameof(Events));
     }
@@ -53,21 +51,25 @@ public class GoogleCalendarComponent : AutoRefreshComponent
             if (!Calendar.IsAuthorized)
                 await Calendar.Authorize();
             colors = await Calendar.GetColors();
-            await LoadCalendar();
+            await loadCalendar();
             StartAutoRefresh();
         }
+
         Loaded = true;
     }
 
     protected override void OnInitializeDependencies()
     {
-        Calendar.RequireScopes(new[] {
-            CalendarService.Scope.CalendarReadonly,
-        });
+        Calendar.RequireScopes(
+            new[]
+            {
+                CalendarService.Scope.CalendarReadonly,
+            }
+        );
     }
 
     protected override async void OnRefresh()
     {
-        await LoadCalendar();
+        await loadCalendar();
     }
 }

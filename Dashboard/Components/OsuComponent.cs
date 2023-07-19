@@ -10,7 +10,7 @@ namespace Dashboard.Components;
 
 public class OsuComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "osu!";
+    protected override string DefaultName => "osu!";
 
     [RequireService(nameof(OsuAccountId))]
     public OsuService Osu { get; set; }
@@ -28,22 +28,18 @@ public class OsuComponent : AutoRefreshComponent
         set => SetAndNotify(ref friends, value);
     }
 
-    public OsuComponent()
+    private async Task loadFriends()
     {
-    }
-
-    private async Task LoadFriends()
-    {
-        List<CompactUser> fds = await Osu.GetFriends();
-        if (fds == null)
+        List<CompactUser> downloadedFriends = await Osu.GetFriends();
+        if (downloadedFriends == null)
         {
             await Task.Delay(500);
-            fds = await Osu.GetFriends();
+            downloadedFriends = await Osu.GetFriends();
         }
 
         Friends.Clear();
-        if (fds != null)
-            Friends.AddRange(fds.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
+        if (downloadedFriends != null)
+            Friends.AddRange(downloadedFriends.OrderByDescending(x => x.LastVisit).Select(x => new OsuUser(x, Osu)));
         NotifyChanged(nameof(Friends));
     }
 
@@ -53,7 +49,7 @@ public class OsuComponent : AutoRefreshComponent
         {
             if (!Osu.IsAuthorized)
                 await Osu.Authorize();
-            await LoadFriends();
+            await loadFriends();
             StartAutoRefresh();
         }
 
@@ -72,6 +68,6 @@ public class OsuComponent : AutoRefreshComponent
 
     protected override async void OnRefresh()
     {
-        await LoadFriends();
+        await loadFriends();
     }
 }

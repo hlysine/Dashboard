@@ -7,20 +7,20 @@ namespace Dashboard.Utilities;
 
 internal class SystemInfo
 {
-    public static Lazy<VersionInfo> Version { get; private set; } = new(() => GetVersionInfo());
+    public static Lazy<VersionInfo> Version { get; private set; } = new(getVersionInfo);
 
-    internal static VersionInfo GetVersionInfo()
+    private static VersionInfo getVersionInfo()
     {
-        RegistryKey regkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
+        RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\", false);
 
-        if (regkey == null) return default(VersionInfo);
+        if (registryKey == null) return default;
 
-        object majorValue = regkey.GetValue("CurrentMajorVersionNumber");
-        object minorValue = regkey.GetValue("CurrentMinorVersionNumber");
-        var buildValue = (string)regkey.GetValue("CurrentBuild", 7600);
+        object majorValue = registryKey.GetValue("CurrentMajorVersionNumber");
+        object minorValue = registryKey.GetValue("CurrentMinorVersionNumber");
+        var buildValue = (string)registryKey.GetValue("CurrentBuild", 7600);
         bool canReadBuild = int.TryParse(buildValue, out int build);
 
-        Version defaultVersion = System.Environment.OSVersion.Version;
+        Version defaultVersion = Environment.OSVersion.Version;
 
         if (majorValue is int major && minorValue is int minor && canReadBuild)
         {
@@ -40,11 +40,11 @@ internal class SystemInfo
 
     internal static bool IsWin7()
     {
-        return Version.Value.Major == 6 && Version.Value.Minor == 1;
+        return Version.Value is { Major: 6, Minor: 1 };
     }
 
-    internal static bool IsWin8x()
+    internal static bool IsWin8X()
     {
-        return Version.Value.Major == 6 && (Version.Value.Minor == 2 || Version.Value.Minor == 3);
+        return Version.Value is { Major: 6, Minor: 2 or 3 };
     }
 }

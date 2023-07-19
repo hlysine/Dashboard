@@ -10,14 +10,14 @@ using System.Windows.Input;
 
 namespace Dashboard.ViewModels;
 
-public class GoogleGmailThread : NotifyPropertyChanged
+public partial class GoogleGmailThread : NotifyPropertyChanged
 {
     private Thread thread;
-    private GoogleGmailService gmail;
-    private Profile profile;
+    private readonly GoogleGmailService gmail;
+    private readonly Profile profile;
 
     // default is false, set 1 for true.
-    private int fetchedThread = 0;
+    private int fetchedThread;
 
     private bool FetchedThread
     {
@@ -39,7 +39,10 @@ public class GoogleGmailThread : NotifyPropertyChanged
 
     public bool MultipleMessages => (getMessages()?.Count).GetValueOrDefault() > 1;
 
-    public string From => Regex.Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "", @"^""?(.*?)""?(?: <[^<>]*>)?$").Groups[1].Value;
+    [GeneratedRegex("^\"?(.*?)\"?(?: <[^<>]*>)?$")]
+    private static partial Regex EmailFromFieldRegex();
+
+    public string From => EmailFromFieldRegex().Match(getMessages()?.Last().Payload.Headers.FirstOrDefault(x => x.Name == "From")?.Value ?? "").Groups[1].Value;
 
     public bool Important => (getMessages()?.Last().LabelIds.Contains("IMPORTANT")).GetValueOrDefault();
 
@@ -50,22 +53,27 @@ public class GoogleGmailThread : NotifyPropertyChanged
         get
         {
             long? dateTimeMs = getMessages()?.Last().InternalDate;
+
             return dateTimeMs == null ? default : DateTimeOffset.FromUnixTimeMilliseconds(dateTimeMs.GetValueOrDefault()).DateTime.ToLocalTime();
         }
     }
 
     private List<Message> getMessages()
     {
-        if (thread.Messages == null)
-        {
-            if (!FetchedThread)
+        if (thread.Messages != null)
+            return thread.Messages.ToList();
+        if (FetchedThread)
+            return null;
+
+        FetchedThread = true;
+        Task.Run(
+            () =>
             {
-                FetchedThread = true;
-                Task.Run(() =>
-                {
-                    Thread th = gmail.GetThread(thread.Id).Result;
-                    thread = th;
-                    NotifyChanged(new[] {
+                Thread th = gmail.GetThread(thread.Id).Result;
+                thread = th;
+                NotifyChanged(
+                    new[]
+                    {
                         nameof(Unread),
                         nameof(Subject),
                         nameof(MessageCount),
@@ -74,31 +82,25 @@ public class GoogleGmailThread : NotifyPropertyChanged
                         nameof(Important),
                         nameof(Starred),
                         nameof(Date),
-                    });
-                });
+                    }
+                );
             }
-            return null;
-        }
-        else
-        {
-            return thread.Messages.ToList();
-        }
+        );
+
+        return null;
     }
 
     private RelayCommand openCommand;
 
-    public ICommand OpenCommand => openCommand ?? (openCommand = new RelayCommand(
+    public ICommand OpenCommand => openCommand ??= new RelayCommand(
         // execute
         () =>
         {
             Helper.OpenUri(new Uri($"https://mail.google.com/mail?authuser={profile.EmailAddress}#{((getMessages()?.Last().LabelIds.Contains("INBOX")).GetValueOrDefault() ? "inbox" : "all")}/{thread.Id}"));
         },
         // can execute
-        () =>
-        {
-            return true;
-        }
-    ));
+        () => true
+    );
 
-    public GoogleGmailThread(Thread _thread, GoogleGmailService _gmail, Profile _profile) => (thread, gmail, profile) = (_thread, _gmail, _profile);
+    public GoogleGmailThread(Thread thread, GoogleGmailService gmail, Profile profile) => (this.thread, this.gmail, this.profile) = (thread, gmail, profile);
 }

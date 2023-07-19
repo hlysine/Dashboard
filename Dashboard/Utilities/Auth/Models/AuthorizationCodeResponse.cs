@@ -4,11 +4,11 @@ namespace Dashboard.Utilities.Auth.Models;
 
 public class AuthorizationCodeResponse
 {
+    public string Code { get; set; }
+    public string State { get; set; } = default!;
+
     public AuthorizationCodeResponse(string code)
     {
         Code = code;
     }
-
-    public string Code { get; set; } = default!;
-    public string State { get; set; } = default!;
 }

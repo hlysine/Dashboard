@@ -30,7 +30,7 @@ public class GoogleService : AuthCodeService
     private UserCredential credential;
 
     /// <summary>
-    /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
+    /// Start the authorization code flow or request for an access token if a refresh token is present and the scopes match.
     /// </summary>
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the wait for users to authorize on their browsers</param>
     /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
@@ -40,7 +40,7 @@ public class GoogleService : AuthCodeService
         await semaphore.WaitAsync(cancel);
         try
         {
-            if (!requiredScopes.IsSubsetOf(AuthorizedScopes))
+            if (!RequiredScopes.IsSubsetOf(AuthorizedScopes))
             {
                 await Unauthorize(cancel);
             }
@@ -51,11 +51,11 @@ public class GoogleService : AuthCodeService
                     ClientId = ClientId,
                     ClientSecret = ClientSecret,
                 },
-                requiredScopes,
+                RequiredScopes,
                 Id,
                 cancel,
                 new ConfigDataStore(this));
-            AuthorizedScopes = requiredScopes;
+            AuthorizedScopes = RequiredScopes;
             RaiseConfigUpdated(EventArgs.Empty);
         }
         finally
@@ -84,7 +84,7 @@ public class CredentialKeyValuePair<TKey, TValue>
     public TKey Key { get; set; }
     public TValue Value { get; set; }
 
-    public CredentialKeyValuePair(TKey _key, TValue _value) => (Key, Value) = (_key, _value);
+    public CredentialKeyValuePair(TKey key, TValue value) => (Key, Value) = (key, value);
     public CredentialKeyValuePair()
     {
 
@@ -95,7 +95,7 @@ public class ConfigDataStore : IDataStore
 {
     private readonly GoogleService service;
 
-    public ConfigDataStore(GoogleService _service) => service = _service;
+    public ConfigDataStore(GoogleService service) => this.service = service;
 
     public Task ClearAsync()
     {

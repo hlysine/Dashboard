@@ -157,9 +157,9 @@ public class WeatherForecastItem
             { Label = "hurricane", Icon = "cloudy-gusts" },
     };
 
-    private ForecastItem forecast;
+    private readonly ForecastItem forecast;
 
-    private Units units;
+    private readonly Units units;
 
     public DateTime DateTime => forecast.UtcDateTime.ToLocalTime();
 
@@ -173,7 +173,8 @@ public class WeatherForecastItem
     {
         Units.Standard => "K",
         Units.Metric => "°C",
-        _ => "°F",
+        Units.Imperial => "°F",
+        _ => "",
     };
 
     public string IconUrl
@@ -190,7 +191,7 @@ public class WeatherForecastItem
         }
     }
 
-    public WeatherForecastItem(ForecastItem _forecast, Units _units) => (forecast, units) = (_forecast, _units);
+    public WeatherForecastItem(ForecastItem forecast, Units units) => (this.forecast, this.units) = (forecast, units);
 }
 
 public class IconLabelPair

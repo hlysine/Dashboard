@@ -11,7 +11,7 @@ namespace Dashboard.Views.Components;
 
 public abstract class DashboardContainerView<TComponent> : DashboardView<TComponent> where TComponent : DashboardContainer, new()
 {
-    private Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new();
+    private readonly Dictionary<DashboardComponent, DashboardViewBase> viewBindings = new();
 
     protected DashboardContainerView(TComponent component) : base(component)
     {
@@ -20,7 +20,7 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
 
     private void DashboardContainerView_Loaded(object sender, RoutedEventArgs e)
     {
-        Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+        Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         Component.Children.CollectionChanged += Children_CollectionChanged;
     }
 
@@ -35,21 +35,21 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
 
     protected abstract void ClearView();
 
-    private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
         {
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+            case NotifyCollectionChangedAction.Add:
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    DashboardViewBase elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = getNewViewFor(comp);
                     if (elem == null) return;  //DEBUG
                     viewBindings.Add(comp, elem);
                     AddView(elem);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+            case NotifyCollectionChangedAction.Remove:
                 e.OldItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
@@ -57,7 +57,7 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
                     viewBindings.Remove(comp);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+            case NotifyCollectionChangedAction.Replace:
                 e.OldItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
@@ -67,17 +67,17 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    DashboardViewBase elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = getNewViewFor(comp);
                     viewBindings.Add(comp, elem);
                     AddView(elem);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Reset:
                 viewBindings.Clear();
                 ClearView();
                 Component.Children.ForEach(x =>
                 {
-                    DashboardViewBase elem = GetNewViewFor(x);
+                    DashboardViewBase elem = getNewViewFor(x);
                     if (elem == null) return;  //DEBUG
                     viewBindings.Add(x, elem);
                     AddView(elem);
@@ -86,7 +86,8 @@ public abstract class DashboardContainerView<TComponent> : DashboardView<TCompon
         }
     }
 
-    private DashboardViewBase GetNewViewFor(DashboardComponent component)
+    // TODO: cache types
+    private static DashboardViewBase getNewViewFor(DashboardComponent component)
     {
         // TODO: remove BaseType? chain
         Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()

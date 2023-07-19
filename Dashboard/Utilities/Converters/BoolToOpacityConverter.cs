@@ -8,7 +8,7 @@ public class BoolToOpacityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
+        bool param = Helper.ParseXamlBoolean(parameter);
         if ((value as bool?).GetValueOrDefault() != param)
         {
             return 1;

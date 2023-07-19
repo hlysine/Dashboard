@@ -8,9 +8,9 @@ public abstract class AutoRefreshComponent : DashboardComponent
     public virtual TimeSpan ForegroundRefreshRate => TimeSpan.FromMinutes(2);
     public virtual TimeSpan BackgroundRefreshRate => TimeSpan.FromMinutes(30);
 
-    private Timer refreshTimer;
+    private readonly Timer refreshTimer;
 
-    public AutoRefreshComponent()
+    protected AutoRefreshComponent()
     {
         refreshTimer = new Timer();
         refreshTimer.Interval = GetRefreshRate().TotalMilliseconds;
@@ -24,17 +24,9 @@ public abstract class AutoRefreshComponent : DashboardComponent
             OnRefresh();
     }
 
-    //public override void Initialize()
-    //{
-    //    base.Initialize();
-    //}
-
     protected virtual TimeSpan GetRefreshRate()
     {
-        if (Foreground)
-            return ForegroundRefreshRate;
-        else
-            return BackgroundRefreshRate;
+        return Foreground ? ForegroundRefreshRate : BackgroundRefreshRate;
     }
 
     protected override void OnForegroundChanged()
@@ -52,8 +44,5 @@ public abstract class AutoRefreshComponent : DashboardComponent
         refreshTimer.Stop();
     }
 
-    protected virtual void OnRefresh()
-    {
-
-    }
+    protected abstract void OnRefresh();
 }

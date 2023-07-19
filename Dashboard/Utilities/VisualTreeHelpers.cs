@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace Dashboard.Utilities;
 
-public class VisualTreeHelpers
+public static class VisualTreeHelpers
 {
     /// <summary>
     /// Returns the first ancestor of specified type
@@ -51,8 +51,7 @@ public class VisualTreeHelpers
         {
             if (!string.IsNullOrEmpty(parentName))
             {
-                var frameworkElement = current as FrameworkElement;
-                if (current is T && frameworkElement != null && frameworkElement.Name == parentName)
+                if (current is T && current is FrameworkElement frameworkElement && frameworkElement.Name == parentName)
                 {
                     return (T)current;
                 }
@@ -95,9 +94,8 @@ public class VisualTreeHelpers
             }
             else if (!string.IsNullOrEmpty(childName))
             {
-                var frameworkElement = child as FrameworkElement;
                 // If the child's name is set for search
-                if (frameworkElement != null && frameworkElement.Name == childName)
+                if (child is FrameworkElement frameworkElement && frameworkElement.Name == childName)
                 {
                     // if the child's name is of the request name
                     foundChild = (T)child;

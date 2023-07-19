@@ -12,56 +12,69 @@ using EmbedIO.Actions;
 
 namespace Dashboard.Utilities.Auth;
 
-public class EmbedIOAuthServer
+public class EmbedIOAuthServer : IDisposable
 {
     public event Func<object, AuthorizationCodeResponse, Task>? AuthorizationCodeReceived;
-    public event Func<object, ImplictGrantResponse, Task>? ImplictGrantReceived;
+    public event Func<object, ImplicitGrantResponse, Task>? ImplicitGrantReceived;
 
-    private const string AssetsResourcePath = "Dashboard.Assets.auth_assets";
-    private const string DefaultResourcePath = "Dashboard.Assets.default_site";
+    private const string assets_resource_path = "Dashboard.Assets.auth_assets";
+    private const string default_resource_path = "Dashboard.Assets.default_site";
 
-    private CancellationTokenSource? _cancelTokenSource;
-    private readonly WebServer _webServer;
+    private CancellationTokenSource? cancelTokenSource;
+    private readonly WebServer webServer;
 
     public EmbedIOAuthServer(Uri baseUri, int port)
-        : this(baseUri, port, Assembly.GetExecutingAssembly(), DefaultResourcePath) { }
+        : this(baseUri, port, Assembly.GetExecutingAssembly(), default_resource_path)
+    {
+    }
 
     public EmbedIOAuthServer(Uri baseUri, int port, Assembly resourceAssembly, string resourcePath)
     {
         BaseUri = baseUri;
         Port = port;
 
-        _webServer = new WebServer(port)
-                     .WithModule(new ActionModule("/", HttpVerbs.Post, (ctx) =>
-                     {
-                         NameValueCollection query = ctx.Request.QueryString;
-                         if (query["error"] != null)
-                         {
-                             throw new AuthException(query["error"], query["state"]);
-                         }
+        webServer = new WebServer(port)
+                    .WithModule(
+                        new ActionModule(
+                            "/", HttpVerbs.Post, (ctx) =>
+                            {
+                                NameValueCollection query = ctx.Request.QueryString;
+                                if (query["error"] != null)
+                                {
+                                    throw new AuthException(query["error"], query["state"]);
+                                }
 
-                         string requestType = query.Get("request_type");
-                         if (requestType == "token")
-                         {
-                             ImplictGrantReceived?.Invoke(this, new ImplictGrantResponse(
-                                 query["access_token"], query["token_type"], int.Parse(query["expires_in"])
-                             )
-                             {
-                                 State = query["state"],
-                             });
-                         }
-                         if (requestType == "code")
-                         {
-                             AuthorizationCodeReceived?.Invoke(this, new AuthorizationCodeResponse(query["code"])
-                             {
-                                 State = query["state"],
-                             });
-                         }
+                                string requestType = query.Get("request_type");
+                                switch (requestType)
+                                {
+                                    case "token":
+                                        ImplicitGrantReceived?.Invoke(
+                                            this, new ImplicitGrantResponse(
+                                                query["access_token"], query["token_type"], int.Parse(query["expires_in"])
+                                            )
+                                            {
+                                                State = query["state"],
+                                            }
+                                        );
 
-                         return ctx.SendStringAsync("OK", "text/plain", Encoding.UTF8);
-                     }))
-                     .WithEmbeddedResources("/auth_assets", Assembly.GetExecutingAssembly(), AssetsResourcePath)
-                     .WithEmbeddedResources(baseUri.AbsolutePath, resourceAssembly, resourcePath);
+                                        break;
+                                    case "code":
+                                        AuthorizationCodeReceived?.Invoke(
+                                            this, new AuthorizationCodeResponse(query["code"])
+                                            {
+                                                State = query["state"],
+                                            }
+                                        );
+
+                                        break;
+                                }
+
+                                return ctx.SendStringAsync("OK", "text/plain", Encoding.UTF8);
+                            }
+                        )
+                    )
+                    .WithEmbeddedResources("/auth_assets", Assembly.GetExecutingAssembly(), assets_resource_path)
+                    .WithEmbeddedResources(baseUri.AbsolutePath, resourceAssembly, resourcePath);
     }
 
     public Uri BaseUri { get; }
@@ -69,14 +82,16 @@ public class EmbedIOAuthServer
 
     public Task Start()
     {
-        _cancelTokenSource = new CancellationTokenSource();
-        _webServer.Start(_cancelTokenSource.Token);
+        cancelTokenSource = new CancellationTokenSource();
+        webServer.Start(cancelTokenSource.Token);
+
         return Task.CompletedTask;
     }
 
     public Task Stop()
     {
-        _cancelTokenSource?.Cancel();
+        cancelTokenSource?.Cancel();
+
         return Task.CompletedTask;
     }
 
@@ -90,7 +105,7 @@ public class EmbedIOAuthServer
     {
         if (disposing)
         {
-            _webServer?.Dispose();
+            webServer?.Dispose();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Dashboard.ViewModels;
 
 public class GoogleTasksTask
 {
-    private Task task;
+    private readonly Task task;
 
     public string Title => task.Title;
 
@@ -19,5 +19,5 @@ public class GoogleTasksTask
 
     public string Position => task.Position;
 
-    public GoogleTasksTask(Task _task) => task = _task;
+    public GoogleTasksTask(Task task) => this.task = task;
 }

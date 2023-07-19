@@ -7,7 +7,7 @@ namespace Dashboard.Components;
 
 public class LauncherComponent : DashboardComponent
 {
-    public override string DefaultName => "Run";
+    protected override string DefaultName => "Run";
 
     [RequireService(nameof(SystemServiceId))]
     private SystemService System { get; set; }
@@ -31,7 +31,7 @@ public class LauncherComponent : DashboardComponent
 
     private RelayCommand launchCommand;
 
-    public ICommand LaunchCommand => launchCommand ?? (launchCommand = new RelayCommand(
+    public ICommand LaunchCommand => launchCommand ??= new RelayCommand(
         // execute
         () =>
         {
@@ -39,11 +39,8 @@ public class LauncherComponent : DashboardComponent
             Prompt = "";
         },
         // can execute
-        () =>
-        {
-            return true;
-        }
-    ));
+        () => true
+    );
 
     public LauncherComponent()
     {

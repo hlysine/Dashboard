@@ -8,20 +8,17 @@ using System.Threading.Tasks;
 
 namespace Dashboard.Services;
 
-public class OpenWeatherMapService : APIKeyService
+public class OpenWeatherMapService : ApiKeyService
 {
     [RequireService(nameof(LocationServiceId))]
     private LocationService Location { get; set; }
+
     [PersistentConfig]
     public string LocationServiceId { get; set; }
 
     public override bool IsAuthorized => client != null;
 
     private IRestClient client;
-
-    public OpenWeatherMapService()
-    {
-    }
 
     protected override void OnInitialized()
     {
@@ -32,14 +29,21 @@ public class OpenWeatherMapService : APIKeyService
     public async Task<ForecastResponse> GetDailyForecast(Units units)
     {
         LocationResponse location = await Location.GetLocation();
-        var request = new RestRequest("data/2.5/forecast", Method.Get);
+        var request = new RestRequest("data/2.5/forecast");
         request.AddParameter("lon", location.Longitude);
         request.AddParameter("lat", location.Latitude);
-        if (units == Units.Metric)
-            request.AddParameter("units", "metric");
-        else if (units == Units.Imperial)
-            request.AddParameter("units", "imperial");
+        request.AddParameter(
+            "units", units switch
+            {
+                Units.Metric => "metric",
+                Units.Imperial => "imperial",
+                Units.Standard => "standard",
+                _ => "metric",
+            }
+        );
+
         RestResponse<ForecastResponse> response = await client.ExecuteAsync<ForecastResponse>(request);
+
         return response.Data;
     }
 }
@@ -53,7 +57,6 @@ public enum Units
 
 public class MainInfo
 {
-
     [JsonProperty("temp")]
     public double Temperature { get; set; }
 
@@ -80,12 +83,10 @@ public class MainInfo
 
     [JsonProperty("temp_kf")]
     public double TemperatureKf { get; set; }
-
 }
 
 public class Weather
 {
-
     [JsonProperty("id")]
     public int Id { get; set; }
 
@@ -97,47 +98,37 @@ public class Weather
 
     [JsonProperty("icon")]
     public string Icon { get; set; }
-
 }
 
 public class Clouds
 {
-
     [JsonProperty("all")]
     public int All { get; set; }
-
 }
 
 public class Wind
 {
-
     [JsonProperty("speed")]
     public double Speed { get; set; }
 
     [JsonProperty("deg")]
     public int Degree { get; set; }
-
 }
 
 public class System
 {
-
     [JsonProperty("pod")]
     public string Pod { get; set; }
-
 }
 
 public class Rain
 {
-
     [JsonProperty("3h")]
     public double ThreeHours { get; set; }
-
 }
 
 public class ForecastItem
 {
-
     [JsonProperty("dt")]
     public long UtcSeconds { get; set; }
 
@@ -161,23 +152,19 @@ public class ForecastItem
 
     [JsonProperty("rain")]
     public Rain Rain { get; set; }
-
 }
 
 public class Coordinates
 {
-
     [JsonProperty("lat")]
     public double Latitude { get; set; }
 
     [JsonProperty("lon")]
     public double Longitude { get; set; }
-
 }
 
 public class City
 {
-
     [JsonProperty("id")]
     public int Id { get; set; }
 
@@ -201,12 +188,10 @@ public class City
 
     [JsonProperty("sunset")]
     public int Sunset { get; set; }
-
 }
 
 public class ForecastResponse
 {
-
     [JsonProperty("cod")]
     public string Code { get; set; }
 
@@ -221,5 +206,4 @@ public class ForecastResponse
 
     [JsonProperty("city")]
     public City City { get; set; }
-
 }

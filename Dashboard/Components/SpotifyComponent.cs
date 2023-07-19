@@ -12,7 +12,7 @@ namespace Dashboard.Components;
 
 public class SpotifyComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Spotify";
+    protected override string DefaultName => "Spotify";
 
     [RequireService(nameof(SpotifyAccountId))]
     public SpotifyService Spotify { get; set; }
@@ -27,19 +27,22 @@ public class SpotifyComponent : AutoRefreshComponent
     public FullTrack CurrentTrack
     {
         get => currentTrack;
-        set => SetAndNotify(ref currentTrack, value, new[] {
-            nameof(CurrentTrackArtists),
-            nameof(CurrentTrackAlbum),
-            nameof(CurrentTrackName),
-            nameof(CurrentTrackImageUrl),
-            nameof(HasTrack),
-            nameof(CurrentTrackDuration),
-        });
+        set => SetAndNotify(
+            ref currentTrack, value, new[]
+            {
+                nameof(CurrentTrackArtists),
+                nameof(CurrentTrackAlbum),
+                nameof(CurrentTrackName),
+                nameof(CurrentTrackImageUrl),
+                nameof(HasTrack),
+                nameof(CurrentTrackDuration),
+            }
+        );
     }
 
     public TimeSpan CurrentTrackDuration => TimeSpan.FromMilliseconds((CurrentTrack?.DurationMs).GetValueOrDefault());
 
-    public string CurrentTrackArtists => string.Join(", ", CurrentTrack?.Artists.Select(x => x.Name) ?? new string[] { });
+    public string CurrentTrackArtists => string.Join(", ", CurrentTrack?.Artists.Select(x => x.Name) ?? Array.Empty<string>());
 
     public string CurrentTrackAlbum => CurrentTrack?.Album.Name;
 
@@ -49,7 +52,7 @@ public class SpotifyComponent : AutoRefreshComponent
 
     public bool HasTrack => CurrentTrack != null;
 
-    private bool isPlaying = false;
+    private bool isPlaying;
 
     public bool IsPlaying
     {
@@ -57,7 +60,7 @@ public class SpotifyComponent : AutoRefreshComponent
         set => SetAndNotify(ref isPlaying, value);
     }
 
-    private bool savedTrack = false;
+    private bool savedTrack;
 
     public bool SavedTrack
     {
@@ -86,6 +89,7 @@ public class SpotifyComponent : AutoRefreshComponent
             if (IsPlaying)
                 pauseTime = DateTime.Now;
             TimeSpan progress = pauseTime - startTime;
+
             return (CurrentTrackDuration > progress) ? progress : CurrentTrackDuration;
         }
     }
@@ -106,20 +110,19 @@ public class SpotifyComponent : AutoRefreshComponent
                 {
                     IsPlaying = await Spotify.ResumePlayback();
                 }
+
                 pauseTime = DateTime.Now;
             }
             catch (APIException)
             {
                 // User clicked too frequently, or no active device
             }
+
             // In case something goes wrong, schedule a check
             _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
         },
         // can execute
-        () =>
-        {
-            return HasTrack;
-        }
+        () => HasTrack
     );
 
     private RelayCommand radioCommand;
@@ -143,6 +146,7 @@ public class SpotifyComponent : AutoRefreshComponent
             {
                 // May fail if user is playing a radio
             }
+
             try
             {
                 await Spotify.SetRepeat(PlayerSetRepeatRequest.State.Off);
@@ -160,21 +164,14 @@ public class SpotifyComponent : AutoRefreshComponent
             {
             }
 
-            // shedule a check
+            // schedule a check after some time, allowing the track to start playing
             _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
         },
         // can execute
-        () =>
-        {
-            return HasTrack;
-        }
+        () => HasTrack
     );
 
     public override TimeSpan ForegroundRefreshRate => TimeSpan.FromMilliseconds(100);
-
-    public SpotifyComponent()
-    {
-    }
 
     protected override async void OnInitializeSelf()
     {
@@ -185,20 +182,24 @@ public class SpotifyComponent : AutoRefreshComponent
             updateCurrentlyPlaying();
             StartAutoRefresh();
         }
+
         Loaded = true;
     }
 
     protected override void OnInitializeDependencies()
     {
-        Spotify.RequireScopes(new[] {
-            Scopes.UserLibraryRead,
-            Scopes.UserLibraryModify,
-            Scopes.UserReadCurrentlyPlaying,
-            Scopes.UserReadPlaybackPosition,
-            Scopes.UserReadPlaybackState,
-            Scopes.UserReadRecentlyPlayed,
-            Scopes.UserModifyPlaybackState,
-        });
+        Spotify.RequireScopes(
+            new[]
+            {
+                Scopes.UserLibraryRead,
+                Scopes.UserLibraryModify,
+                Scopes.UserReadCurrentlyPlaying,
+                Scopes.UserReadPlaybackPosition,
+                Scopes.UserReadPlaybackState,
+                Scopes.UserReadRecentlyPlayed,
+                Scopes.UserModifyPlaybackState,
+            }
+        );
     }
 
     protected override void OnForegroundChanged()
@@ -208,36 +209,39 @@ public class SpotifyComponent : AutoRefreshComponent
             updateCurrentlyPlaying();
     }
 
-    private int tick = 0;
+    private int tick;
 
     protected override void OnRefresh()
     {
         NotifyChanged(nameof(PlaybackProgress));
         tick++;
-        if (tick >= 100)
-        {
-            updateCurrentlyPlaying();
-            tick = 0;
-        }
+
+        if (tick < 100)
+            return;
+
+        updateCurrentlyPlaying();
+        tick = 0;
     }
 
     private async void updateCurrentlyPlaying()
     {
         CurrentlyPlaying currentlyPlaying = await Spotify.GetCurrentlyPlaying();
-        if (currentlyPlaying?.Item?.Type == ItemType.Track)
-        {
-            CurrentTrack = (FullTrack)currentlyPlaying.Item;
-            IsPlaying = currentlyPlaying.IsPlaying;
-            pauseTime = DateTime.Now;
-            startTime = pauseTime - TimeSpan.FromMilliseconds(currentlyPlaying.ProgressMs.GetValueOrDefault());
-            savedTrack = (await Spotify.IsInLibrary(new[] { currentTrack.Id })).FirstOrDefault();
-            NotifyChanged(nameof(SavedTrack));
-            if (scheduledCheck != currentTrack)
-            {
-                _ = Task.Delay(CurrentTrack.DurationMs - currentlyPlaying.ProgressMs.GetValueOrDefault() + 100).ContinueWith(_ => updateCurrentlyPlaying());
-                scheduledCheck = currentTrack;
-            }
-        }
+
+        if (currentlyPlaying?.Item.Type != ItemType.Track)
+            return;
+
+        CurrentTrack = (FullTrack)currentlyPlaying.Item;
+        IsPlaying = currentlyPlaying.IsPlaying;
+        pauseTime = DateTime.Now;
+        startTime = pauseTime - TimeSpan.FromMilliseconds(currentlyPlaying.ProgressMs.GetValueOrDefault());
+        savedTrack = (await Spotify.IsInLibrary(new[] { currentTrack.Id })).FirstOrDefault();
+        NotifyChanged(nameof(SavedTrack));
+
+        if (scheduledCheck == currentTrack)
+            return;
+
+        _ = Task.Delay(CurrentTrack.DurationMs - currentlyPlaying.ProgressMs.GetValueOrDefault() + 100).ContinueWith(_ => updateCurrentlyPlaying());
+        scheduledCheck = currentTrack;
     }
 
     private async void updateSavedTrack()
@@ -250,6 +254,7 @@ public class SpotifyComponent : AutoRefreshComponent
         {
             await Spotify.RemoveFromLibrary(new[] { CurrentTrack.Id });
         }
+
         // In case something goes wrong, schedule a check
         _ = Task.Delay(500).ContinueWith(_ => updateCurrentlyPlaying());
     }

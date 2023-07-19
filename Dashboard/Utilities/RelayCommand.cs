@@ -8,26 +8,19 @@ public class RelayCommand<T> : ICommand
 {
     #region Fields
 
-    private readonly Action<T> _execute;
-    private readonly Predicate<T> _canExecute;
+    private readonly Action<T> execute;
+    private readonly Predicate<T> canExecute;
 
     #endregion // Fields
 
     #region Constructors
 
-    public RelayCommand(Action<T> execute)
-        : this(execute, null)
+    public RelayCommand(Action<T> execute, Predicate<T> canExecute = null)
     {
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        this.canExecute = canExecute;
     }
 
-    public RelayCommand(Action<T> execute, Predicate<T> canExecute)
-    {
-        if (execute == null)
-            throw new ArgumentNullException("execute");
-
-        _execute = execute;
-        _canExecute = canExecute;
-    }
     #endregion // Constructors
 
     #region ICommand Members
@@ -35,7 +28,7 @@ public class RelayCommand<T> : ICommand
     [DebuggerStepThrough]
     public bool CanExecute(object parameter)
     {
-        return _canExecute == null ? true : _canExecute((T)parameter);
+        return canExecute?.Invoke((T)parameter) ?? true;
     }
 
     public event EventHandler CanExecuteChanged
@@ -46,7 +39,7 @@ public class RelayCommand<T> : ICommand
 
     public void Execute(object parameter)
     {
-        _execute((T)parameter);
+        execute((T)parameter);
     }
 
     #endregion // ICommand Members
@@ -54,9 +47,8 @@ public class RelayCommand<T> : ICommand
 
 public class RelayCommand : RelayCommand<object>
 {
-    public RelayCommand(Action execute)
-        : this(execute, null) { }
-
-    public RelayCommand(Action execute, Func<bool> canExecute)
-        : base(param => execute(), param => canExecute()) { }
+    public RelayCommand(Action execute, Func<bool> canExecute = null)
+        : base(param => execute(), canExecute == null ? null : param => canExecute())
+    {
+    }
 }

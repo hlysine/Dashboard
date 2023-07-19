@@ -30,8 +30,8 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
 
         InitializeComponent();
 
-        Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
-        ChangeColorScheme(Component.ColorScheme);
+        Children_CollectionChanged(Component.Children, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        changeColorScheme(Component.ColorScheme);
 
 
         Component.Children.CollectionChanged += Children_CollectionChanged;
@@ -43,16 +43,19 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
         // Observe changes in ColorScheme since it can only be applied from code behind
         if (e.PropertyName == nameof(WindowContainer.ColorScheme))
         {
-            ChangeColorScheme(Component.ColorScheme);
+            changeColorScheme(Component.ColorScheme);
         }
     }
 
-    private void ChangeColorScheme(ColorScheme scheme)
+    [GeneratedRegex("(\\/MaterialDesignExtensions;component\\/Themes\\/MaterialDesign)((Light)|(Dark))Theme\\.")]
+    private static partial Regex MaterialDesignThemeRegex();
+
+    private static void changeColorScheme(ColorScheme scheme)
     {
         PaletteHelper paletteHelper = new();
         ITheme theme = paletteHelper.GetTheme();
         theme.SetBaseTheme(scheme.Theme == Config.Theme.Dark ? MaterialDesignThemes.Wpf.Theme.Dark : MaterialDesignThemes.Wpf.Theme.Light);
-        IEnumerable<Swatch> swatches = new SwatchesProvider().Swatches;
+        IEnumerable<Swatch> swatches = new SwatchesProvider().Swatches.ToList();
         if (swatches.Where(x => x.ExemplarHue != null).Select(x => x.Name).Contains(scheme.PrimaryHue))
             theme.SetPrimaryColor(swatches.First(x => x.Name == scheme.PrimaryHue).ExemplarHue.Color);
         if (swatches.Where(x => x.AccentExemplarHue != null).Select(x => x.Name).Contains(scheme.AccentHue))
@@ -61,7 +64,7 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
 
         ResourceDictionary oldThemeResourceDictionary = Application.Current.Resources.MergedDictionaries
                                                                    .Where(resourceDictionary => resourceDictionary != null && resourceDictionary.Source != null)
-                                                                   .SingleOrDefault(resourceDictionary => Regex.IsMatch(resourceDictionary.Source.OriginalString, @"(\/MaterialDesignExtensions;component\/Themes\/MaterialDesign)((Light)|(Dark))Theme\."));
+                                                                   .SingleOrDefault(resourceDictionary => MaterialDesignThemeRegex().IsMatch(resourceDictionary.Source.OriginalString));
 
         var newThemeSource = $"pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesign{(scheme.Theme == Config.Theme.Dark ? "Dark" : "Light")}Theme.xaml";
         ResourceDictionary newThemeResourceDictionary = new() { Source = new Uri(newThemeSource) };
@@ -70,21 +73,21 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
         Application.Current.Resources.MergedDictionaries.Add(newThemeResourceDictionary);
     }
 
-    private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
         {
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+            case NotifyCollectionChangedAction.Add:
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    DashboardViewBase elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = getNewViewFor(comp);
                     if (elem == null) return; //DEBUG
                     viewBindings.Add(comp, elem);
                     root.Children.Add(elem);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+            case NotifyCollectionChangedAction.Remove:
                 e.OldItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
@@ -92,7 +95,7 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
                     viewBindings.Remove(comp);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+            case NotifyCollectionChangedAction.Replace:
                 e.OldItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
@@ -102,17 +105,17 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
                 e.NewItems.ForEach(x =>
                 {
                     var comp = (DashboardComponent)x;
-                    DashboardViewBase elem = GetNewViewFor(comp);
+                    DashboardViewBase elem = getNewViewFor(comp);
                     viewBindings.Add(comp, elem);
                     root.Children.Add(elem);
                 });
                 break;
-            case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Reset:
                 viewBindings.Clear();
                 root.Children.Clear();
                 Component.Children.ForEach(x =>
                 {
-                    DashboardViewBase elem = GetNewViewFor(x);
+                    DashboardViewBase elem = getNewViewFor(x);
                     if (elem == null) return; //DEBUG
                     viewBindings.Add(x, elem);
                     root.Children.Add(elem);
@@ -121,7 +124,8 @@ public partial class WindowView : Window, IDashboardView<WindowContainer>
         }
     }
 
-    private DashboardViewBase GetNewViewFor(DashboardComponent component)
+    // TODO: unify with DashboardViewBase
+    private static DashboardViewBase getNewViewFor(DashboardComponent component)
     {
         // TODO: remove BaseType? chain
         Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()

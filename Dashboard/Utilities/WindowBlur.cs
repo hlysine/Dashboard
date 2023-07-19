@@ -10,7 +10,8 @@ public class WindowBlur
 {
     public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
         "IsEnabled", typeof(bool), typeof(WindowBlur),
-        new PropertyMetadata(false, OnIsEnabledChanged));
+        new PropertyMetadata(false, OnIsEnabledChanged)
+    );
 
     public static void SetIsEnabled(DependencyObject element, bool value)
     {
@@ -24,23 +25,25 @@ public class WindowBlur
 
     private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is Window window)
+        if (d is not Window window)
+            return;
+
+        if (true.Equals(e.OldValue))
         {
-            if (true.Equals(e.OldValue))
-            {
-                window.ClearValue(WindowBlurProperty);
-            }
-            if (true.Equals(e.NewValue))
-            {
-                var blur = new WindowBlur(GetBlurType(d));
-                window.SetValue(WindowBlurProperty, blur);
-            }
+            window.ClearValue(WindowBlurProperty);
+        }
+
+        if (true.Equals(e.NewValue))
+        {
+            var blur = new WindowBlur(GetBlurType(d));
+            window.SetValue(WindowBlurProperty, blur);
         }
     }
 
     public static readonly DependencyProperty BlurTypeProperty = DependencyProperty.RegisterAttached(
         "BlurType", typeof(BlurType), typeof(WindowBlur),
-        new PropertyMetadata(BlurType.Acrylic, OnBlurTypeChanged));
+        new PropertyMetadata(BlurType.Acrylic, OnBlurTypeChanged)
+    );
 
     public static void SetBlurType(DependencyObject element, BlurType value)
     {
@@ -54,14 +57,14 @@ public class WindowBlur
 
     private static void OnBlurTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is Window window)
-        {
-            if (GetIsEnabled(d))
-            {
-                var blur = new WindowBlur((BlurType)e.NewValue);
-                window.SetValue(WindowBlurProperty, blur);
-            }
-        }
+        if (d is not Window window)
+            return;
+
+        if (!GetIsEnabled(d))
+            return;
+
+        var blur = new WindowBlur((BlurType)e.NewValue);
+        window.SetValue(WindowBlurProperty, blur);
     }
 
     public enum BlurType
@@ -73,7 +76,8 @@ public class WindowBlur
 
     public static readonly DependencyProperty WindowBlurProperty = DependencyProperty.RegisterAttached(
         "WindowBlur", typeof(WindowBlur), typeof(WindowBlur),
-        new PropertyMetadata(null, OnWindowBlurChanged));
+        new PropertyMetadata(null, OnWindowBlurChanged)
+    );
 
     public static void SetWindowBlur(DependencyObject element, WindowBlur value)
     {
@@ -87,92 +91,92 @@ public class WindowBlur
 
     private static void OnWindowBlurChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is Window window)
-        {
-            (e.OldValue as WindowBlur)?.Detach();
-            (e.NewValue as WindowBlur)?.Attach(window);
-        }
+        if (d is not Window window)
+            return;
+
+        (e.OldValue as WindowBlur)?.detach();
+        (e.NewValue as WindowBlur)?.attach(window);
     }
 
-    private Window _window;
-    private BlurType type;
+    private Window window;
+    private readonly BlurType type;
 
-    public WindowBlur(BlurType _type) => type = _type;
+    public WindowBlur(BlurType type) => this.type = type;
 
-    private void Attach(Window window)
+    private void attach(Window windowToAttach)
     {
-        _window = window;
-        var source = (HwndSource)PresentationSource.FromVisual(window);
+        window = windowToAttach;
+        var source = (HwndSource)PresentationSource.FromVisual(windowToAttach);
         if (source == null)
         {
-            window.SourceInitialized += OnSourceInitialized;
+            windowToAttach.SourceInitialized += OnSourceInitialized;
         }
         else
         {
-            AttachCore();
+            attachCore();
         }
     }
 
-    private void Detach()
+    private void detach()
     {
         try
         {
-            DetachCore();
+            detachCore();
         }
         finally
         {
-            _window = null;
+            window = null;
         }
     }
 
     private void OnSourceInitialized(object sender, EventArgs e)
     {
         ((Window)sender).SourceInitialized -= OnSourceInitialized;
-        AttachCore();
+        attachCore();
     }
 
-    private void AttachCore()
+    private void attachCore()
     {
-        EnableBlur(_window, type);
+        enableBlur(window, type);
     }
 
-    private void DetachCore()
+    private void detachCore()
     {
-        _window.SourceInitialized -= OnSourceInitialized;
+        window.SourceInitialized -= OnSourceInitialized;
     }
 
-    private static void EnableBlur(Window window, BlurType type)
+    private static void enableBlur(Window window, BlurType type)
     {
         var windowHelper = new WindowInteropHelper(window);
 
-        var accent = new AccentPolicy();
-
-        //var currentVersion = SystemInfo.Version.Value;
-        //if (currentVersion >= VersionInfos.Windows10_1903)
-        //{
-        //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
-        //}
-        //else if (currentVersion >= VersionInfos.Windows10_1809)
-        //{
-        //    accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
-        //}
-        //else if (currentVersion >= VersionInfos.Windows10)
-        //{
-        //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
-        //}
-        //else
-        //{
-        //    accent.AccentState = AccentState.ACCENT_ENABLE_TRANSPARENTGRADIENT;
-        //}
-        if (type == BlurType.NoBlur)
-            accent.AccentState = AccentState.ACCENT_DISABLED;
-        else if (type == BlurType.Blur)
-            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
-        else
-            accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
-
-        accent.AccentFlags = 2;
-        accent.GradientColor = 0x00ffffff;
+        var accent = new AccentPolicy
+        {
+            AccentState = type switch
+            {
+                //var currentVersion = SystemInfo.Version.Value;
+                //if (currentVersion >= VersionInfos.Windows10_1903)
+                //{
+                //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+                //}
+                //else if (currentVersion >= VersionInfos.Windows10_1809)
+                //{
+                //    accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND;
+                //}
+                //else if (currentVersion >= VersionInfos.Windows10)
+                //{
+                //    accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+                //}
+                //else
+                //{
+                //    accent.AccentState = AccentState.ACCENT_ENABLE_TRANSPARENTGRADIENT;
+                //}
+                BlurType.NoBlur => AccentState.ACCENT_DISABLED,
+                BlurType.Blur => AccentState.ACCENT_ENABLE_BLURBEHIND,
+                _ => AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND
+            },
+            AccentFlags = 2,
+            GradientColor = 0x00ffffff,
+        };
 
         int accentStructSize = Marshal.SizeOf(accent);
 

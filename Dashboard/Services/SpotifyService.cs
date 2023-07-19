@@ -17,51 +17,52 @@ public class SpotifyService : AuthCodeService
     public override bool IsAuthorized => spotify != null;
 
     /// <summary>
-    /// Start the authroization code flow or request for an access token if a refresh token is present and the scopes match.
+    /// Start the authorization code flow or request for an access token if a refresh token is present and the scopes match.
     /// </summary>
     /// <param name="cancel">A <see cref="CancellationToken"/> to cancel the wait for users to authorize on their browsers</param>
     /// <exception cref="OperationCanceledException">Thrown if the wait is canceled</exception>
     public override async Task Authorize(CancellationToken cancel = default)
     {
         AuthorizationCodeTokenResponse tokenResponse;
-        if (RefreshToken.IsNullOrEmpty() || !requiredScopes.IsSubsetOf(AuthorizedScopes))
+        if (RefreshToken.IsNullOrEmpty() || !RequiredScopes.IsSubsetOf(AuthorizedScopes))
         {
             var taskCompletionSource = new TaskCompletionSource<AuthorizationCodeResponse>();
 
-            EmbedIOAuthServer _server = new(new Uri("http://localhost:5000/callback"), 5000);
-            await _server.Start();
+            EmbedIOAuthServer server = new(new Uri("http://localhost:5000/callback"), 5000);
+            await server.Start();
 
-            _server.AuthorizationCodeReceived += (_, response) =>
+            server.AuthorizationCodeReceived += (_, response) =>
             {
                 taskCompletionSource.SetResult(response);
+
                 return Task.CompletedTask;
             };
 
-            var request = new SpotifyAPI.Web.LoginRequest(_server.BaseUri, ClientId, SpotifyAPI.Web.LoginRequest.ResponseType.Code)
+            var request = new SpotifyAPI.Web.LoginRequest(server.BaseUri, ClientId, SpotifyAPI.Web.LoginRequest.ResponseType.Code)
             {
-                Scope = requiredScopes,
+                Scope = RequiredScopes,
             };
             Helper.OpenUri(request.ToUri());
 
             while (!taskCompletionSource.Task.IsCompleted)
             {
                 cancel.ThrowIfCancellationRequested();
-                await Task.Delay(500);
+                await Task.Delay(500, cancel);
             }
 
-            await _server.Stop();
+            await server.Stop();
 
             AuthorizationCodeResponse response = taskCompletionSource.Task.Result;
             tokenResponse = await new OAuthClient().RequestToken(
                 new AuthorizationCodeTokenRequest(
                     ClientId, ClientSecret, response.Code, new Uri("http://localhost:5000/callback")
-                )
+                ), cancel
             );
             RefreshToken = tokenResponse.RefreshToken;
         }
         else
         {
-            AuthorizationCodeRefreshResponse response = await new OAuthClient().RequestToken(new AuthorizationCodeRefreshRequest(ClientId, ClientSecret, RefreshToken));
+            AuthorizationCodeRefreshResponse response = await new OAuthClient().RequestToken(new AuthorizationCodeRefreshRequest(ClientId, ClientSecret, RefreshToken), cancel);
             tokenResponse = new AuthorizationCodeTokenResponse
             {
                 RefreshToken = RefreshToken,
@@ -72,6 +73,7 @@ public class SpotifyService : AuthCodeService
                 TokenType = response.TokenType,
             };
         }
+
         AccessToken = tokenResponse.AccessToken;
         AuthorizedScopes = tokenResponse.Scope.Split(' ').ToList();
         SpotifyClientConfig config = SpotifyClientConfig
@@ -82,12 +84,14 @@ public class SpotifyService : AuthCodeService
         RaiseConfigUpdated(EventArgs.Empty);
     }
 
-    public override async Task Unauthorize(CancellationToken cancel = default)
+    public override Task Unauthorize(CancellationToken cancel = default)
     {
         RefreshToken = null;
         AccessToken = null;
         AuthorizedScopes.Clear();
         RaiseConfigUpdated(EventArgs.Empty);
+
+        return Task.CompletedTask;
     }
 
     public async Task<CurrentlyPlaying> GetCurrentlyPlaying()
@@ -97,8 +101,10 @@ public class SpotifyService : AuthCodeService
 
     public async Task<bool> StartPlayback(IEnumerable<string> uris)
     {
-        return await spotify.Player.ResumePlayback(new PlayerResumePlaybackRequest
-            { Uris = uris.ToList() });
+        return await spotify.Player.ResumePlayback(
+            new PlayerResumePlaybackRequest
+                { Uris = uris.ToList() }
+        );
     }
 
     public async Task<bool> ResumePlayback()
@@ -126,11 +132,12 @@ public class SpotifyService : AuthCodeService
         return await spotify.Library.CheckTracks(new LibraryCheckTracksRequest(trackId));
     }
 
-    public async Task<RecommendationsResponse> GetRecommendations(string[] seedTrackIds, int limit = 20)
+    public async Task<RecommendationsResponse> GetRecommendations(IEnumerable<string> seedTrackIds, int limit = 20)
     {
         var request = new RecommendationsRequest();
         seedTrackIds.ForEach(x => request.SeedTracks.Add(x));
         request.Limit = limit;
+
         return await spotify.Browse.GetRecommendations(request);
     }
 

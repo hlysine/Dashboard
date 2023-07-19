@@ -9,15 +9,9 @@ public class BoolToBulletIconConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
-        if ((value as bool?).GetValueOrDefault() != param)
-        {
-            return PackIconKind.Tick;
-        }
-        else
-        {
-            return PackIconKind.SquareSmall;
-        }
+        bool param = Helper.ParseXamlBoolean(parameter);
+
+        return (value as bool?).GetValueOrDefault() != param ? PackIconKind.Tick : PackIconKind.SquareSmall;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

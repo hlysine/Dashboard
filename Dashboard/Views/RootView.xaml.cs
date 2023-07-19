@@ -22,20 +22,21 @@ public partial class RootView : Window
 
         // TODO: check that Initialize() does return a WindowContainer
         var window = (WindowContainer)manager.Initialize();
-        
+
         if (manager.Autostart)
             AutoRun.Register();
         else
             AutoRun.Unregister();
-            
-        Window view = GetNewViewFor(window);
+
+        Window view = getNewViewFor(window);
         viewBindings.Add(window, view);
         // TODO: extract to helper method: load window without showing
         var helper = new WindowInteropHelper(view);
         helper.EnsureHandle();
     }
 
-    private Window GetNewViewFor(DashboardComponent component)
+    // TODO: unify with WindowView
+    private static Window getNewViewFor(DashboardComponent component)
     {
         // TODO: accomodate types other than WindowContainer and Window
         Type[] classList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -45,6 +46,7 @@ public partial class RootView : Window
                   && !assemblyType.IsAbstract
             select assemblyType).ToArray();
         Type target = classList.FirstOrDefault();
+
         if (target == null)
             return null;
         else

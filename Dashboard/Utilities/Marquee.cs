@@ -27,7 +27,7 @@ public class Marquee
     private static void OnIsEnabledPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var element = d as FrameworkElement;
-        UpdateAnimation(element);
+        updateAnimation(element);
         if (GetIsEnabled(element))
             element.SizeChanged += Element_SizeChanged;
     }
@@ -35,10 +35,10 @@ public class Marquee
     private static void Element_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var element = sender as FrameworkElement;
-        UpdateAnimation(element);
+        updateAnimation(element);
     }
 
-    private static void UpdateAnimation(FrameworkElement element)
+    private static void updateAnimation(FrameworkElement element)
     {
         var parent = (FrameworkElement)element.Parent;
         if (GetIsEnabled(element) && parent.ActualWidth <= element.ActualWidth)
@@ -83,13 +83,13 @@ public class Marquee
         }
         else
         {
-            if (element.RenderTransform != null)
-            {
-                if (!element.RenderTransform.IsSealed && !element.RenderTransform.IsFrozen)
-                    element.RenderTransform.BeginAnimation(TranslateTransform.XProperty, null);
-                if (element.RenderTransform is TranslateTransform)
-                    ((TranslateTransform)element.RenderTransform).X = 0;
-            }
+            if (element.RenderTransform == null)
+                return;
+
+            if (!element.RenderTransform.IsSealed && !element.RenderTransform.IsFrozen)
+                element.RenderTransform.BeginAnimation(TranslateTransform.XProperty, null);
+            if (element.RenderTransform is TranslateTransform transform)
+                transform.X = 0;
         }
     }
 }

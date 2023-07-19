@@ -7,7 +7,7 @@ namespace Dashboard.Config;
 /// Specify that the <see cref="DashboardManager"/> should provide an instance of the required <see cref="Service"/> through this property.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class RequireServiceAttribute : System.Attribute
+public class RequireServiceAttribute : Attribute
 {
     public string ServiceIdProperty { get; set; }
 

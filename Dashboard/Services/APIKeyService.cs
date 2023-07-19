@@ -3,7 +3,7 @@ using Dashboard.Utilities;
 
 namespace Dashboard.Services;
 
-public abstract class APIKeyService : Service
+public abstract class ApiKeyService : Service
 {
     [PersistentConfig]
     public virtual string ApiKey { get; set; } = "";

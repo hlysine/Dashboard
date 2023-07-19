@@ -9,15 +9,9 @@ public class BoolToStarredIconConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
-        if ((value as bool?).GetValueOrDefault() != param)
-        {
-            return PackIconKind.Star;
-        }
-        else
-        {
-            return PackIconKind.StarOutline;
-        }
+        bool param = Helper.ParseXamlBoolean(parameter);
+
+        return (value as bool?).GetValueOrDefault() != param ? PackIconKind.Star : PackIconKind.StarOutline;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

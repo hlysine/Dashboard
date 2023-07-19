@@ -12,7 +12,7 @@ namespace Dashboard.Components;
 
 public class GoogleTasksComponent : AutoRefreshComponent
 {
-    public override string DefaultName => "Google Tasks";
+    protected override string DefaultName => "Google Tasks";
 
     [RequireService(nameof(GoogleAccountId))]
     public GoogleTasksService Tasks { get; set; }
@@ -20,35 +20,44 @@ public class GoogleTasksComponent : AutoRefreshComponent
     [PersistentConfig]
     public string GoogleAccountId { get; set; }
 
-    private List<GoogleTasksTask> currentTasklist = new();
-    public List<GoogleTasksTask> CurrentTasklist
+    private List<GoogleTasksTask> currentTaskList = new();
+
+    public List<GoogleTasksTask> CurrentTaskList
     {
-        get => currentTasklist;
-        set => SetAndNotify(ref currentTasklist, value);
+        get => currentTaskList;
+        set => SetAndNotify(ref currentTaskList, value);
     }
 
-    private Dictionary<Google.Apis.Tasks.v1.Data.TaskList, List<GoogleTasksTask>> allTasks = new();
+    private readonly Dictionary<TaskList, List<GoogleTasksTask>> allTasks = new();
 
-    public GoogleTasksComponent()
-    {
-    }
-
-    private async Task LoadTasks()
+    private async Task loadTasks()
     {
         Dictionary<TaskList, Tasks> tasks = await Tasks.GetAllTasks();
         allTasks.Clear();
-        foreach (TaskList tasklist in tasks.Keys)
+        foreach (TaskList taskList in tasks.Keys)
         {
             var convertedTasks = new List<GoogleTasksTask>();
             var tmp = new List<GoogleTasksTask>();
-            allTasks.Add(tasklist, convertedTasks);
-            tasks[tasklist].Items?.ForEach(x => tmp.Add(new GoogleTasksTask(x)));
-            IEnumerable<IGrouping<string, GoogleTasksTask>> groups = tmp.GroupBy(x => x.ParentId);
-            convertedTasks.AddRange(groups.Where(x => x.Key == null).SelectMany(x => x).OrderBy(x => x.Position));
-            groups.Where(x => x.Key != null).ForEach(x => convertedTasks.InsertRange(convertedTasks.FindIndex(y => y.Id == x.Key) + 1, x.OrderBy(x => x.Position)));
+            allTasks.Add(taskList, convertedTasks);
+            tasks[taskList].Items?.ForEach(x => tmp.Add(new GoogleTasksTask(x)));
+            List<IGrouping<string, GoogleTasksTask>> groups = tmp.GroupBy(x => x.ParentId).ToList();
+            convertedTasks.AddRange(
+                groups.Where(x => x.Key == null)
+                      .SelectMany(x => x)
+                      .OrderBy(x => x.Position)
+            );
+            groups.Where(x => x.Key != null)
+                  .ForEach(
+                      x =>
+                          convertedTasks.InsertRange(
+                              convertedTasks.FindIndex(y => y.Id == x.Key) + 1,
+                              x.OrderBy(y => y.Position)
+                          )
+                  );
         }
-        CurrentTasklist = allTasks.Values.First();
-        NotifyChanged(nameof(CurrentTasklist));
+
+        CurrentTaskList = allTasks.Values.First();
+        NotifyChanged(nameof(CurrentTaskList));
     }
 
     protected override async void OnInitializeSelf()
@@ -57,21 +66,25 @@ public class GoogleTasksComponent : AutoRefreshComponent
         {
             if (!Tasks.IsAuthorized)
                 await Tasks.Authorize();
-            await LoadTasks();
+            await loadTasks();
             StartAutoRefresh();
         }
+
         Loaded = true;
     }
 
     protected override void OnInitializeDependencies()
     {
-        Tasks.RequireScopes(new[] {
-            TasksService.Scope.TasksReadonly,
-        });
+        Tasks.RequireScopes(
+            new[]
+            {
+                TasksService.Scope.TasksReadonly,
+            }
+        );
     }
 
     protected override async void OnRefresh()
     {
-        await LoadTasks();
+        await loadTasks();
     }
 }

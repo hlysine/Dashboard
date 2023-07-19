@@ -14,7 +14,7 @@ public class LocationService : Service
 
     public async Task<LocationResponse> GetLocation(string ipAddress = null)
     {
-        var request = new RestRequest("json/{ip}", Method.Get);
+        var request = new RestRequest("json/{ip}");
         if (ipAddress != null)
             request.AddUrlSegment("ip", ipAddress);
         return (await client.ExecuteAsync<LocationResponse>(request)).Data;

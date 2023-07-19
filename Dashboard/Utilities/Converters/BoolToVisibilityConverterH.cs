@@ -9,15 +9,9 @@ public class BoolToVisibilityConverterH : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool param = (parameter as bool?) ?? System.Convert.ToBoolean((string)parameter);
-        if ((value as bool?).GetValueOrDefault() != param)
-        {
-            return Visibility.Visible;
-        }
-        else
-        {
-            return Visibility.Hidden;
-        }
+        bool param = Helper.ParseXamlBoolean(parameter);
+
+        return (value as bool?).GetValueOrDefault() != param ? Visibility.Visible : Visibility.Hidden;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
