@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Dashboard.Utilities;
 
-public static partial class Native
+internal static partial class Native
 {
     internal enum AccentFlagsType
     {
